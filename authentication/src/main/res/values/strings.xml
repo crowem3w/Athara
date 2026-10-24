@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="authentication_logo_description">App logo</string>
+    <string name="authentication_title_sign_in">Welcome back</string>
+    <string name="authentication_title_sign_up">Create your account</string>
+    <string name="authentication_title_reset">Reset password</string>
+    <string name="authentication_subtitle_reset">Enter your username, email or mobile number and choose a new password.</string>
+
+    <string name="authentication_label_name">Name</string>
+    <string name="authentication_label_first_name">First name</string>
+    <string name="authentication_label_surname">Surname (optional)</string>
+    <string name="authentication_label_username">Username</string>
+    <string name="authentication_label_birth_month">MM</string>
+    <string name="authentication_label_birth_day">DD</string>
+    <string name="authentication_label_birth_year">YYYY</string>
+    <string name="authentication_birthday_pick">Pick your birthday</string>
+    <string name="authentication_action_ok">OK</string>
+    <string name="authentication_action_cancel">Cancel</string>
+    <string name="authentication_label_email_optional">Email (optional)</string>
+    <string name="authentication_label_password">Password</string>
+    <string name="authentication_label_new_password">New password</string>
+    <string name="authentication_label_confirm_password">Confirm password</string>
+    <string name="authentication_show">Show</string>
+    <string name="authentication_hide">Hide</string>
+
+    <string name="authentication_action_sign_in">Sign in</string>
+    <string name="authentication_action_sign_up">Create account</string>
+    <string name="authentication_action_reset">Reset password</string>
+    <string name="authentication_action_forgot">Forgot password?</string>
+    <string name="authentication_action_to_sign_up">New here? Create an account</string>
+    <string name="authentication_action_to_sign_in">Already have an account? Sign in</string>
+    <string name="authentication_action_back_to_sign_in">Back to sign in</string>
+
+    <string name="authentication_or">or</string>
+    <string name="authentication_social_google">Continue with Google</string>
+    <string name="authentication_social_apple">Continue with Apple</string>
+    <string name="authentication_social_google_short">Google</string>
+    <string name="authentication_social_apple_short">Apple</string>
+    <string name="authentication_social_demo_note">Demo mode: social buttons sign you in as a local demo user.</string>
+
+    <string name="authentication_error_name_required">Please enter your name</string>
+    <string name="authentication_error_first_name_required">Please enter your first name</string>
+    <string name="authentication_error_birthday_required">Please enter your birthday</string>
+    <string name="authentication_error_birthday_invalid">Enter a valid date (MM / DD / YYYY)</string>
+    <string name="authentication_error_birthday_underage">You must be at least 13 years old to sign up</string>
+    <string name="authentication_error_mobile_invalid_ph">Enter 10 digits starting with 9, e.g. 917 123 4567</string>
+    <string name="authentication_error_username_required">Please choose a username</string>
+    <string name="authentication_error_username_invalid">3–20 characters: letters, numbers or _, starting with a letter</string>
+    <string name="authentication_error_username_taken">This username is already taken</string>
+    <string name="authentication_error_email_invalid">Enter a valid email address</string>
+    <string name="authentication_error_email_taken">An account with this email already exists</string>
+    <string name="authentication_error_login_required">Enter your username, email or mobile number</string>
+    <string name="authentication_error_password_required">Please enter a password</string>
+    <string name="authentication_error_password_weak">At least 8 characters, with a letter and a number</string>
+    <string name="authentication_error_password_mismatch">Passwords do not match</string>
+    <string name="authentication_error_invalid_credentials">Incorrect username, email, mobile number or password</string>
+    <string name="authentication_error_identifier_taken">An account with this mobile number already exists</string>
+    <string name="authentication_error_account_not_found">No account found for these details</string>
+    <string name="authentication_error_unknown">Something went wrong. Please try again.</string>
+    <string name="authentication_message_password_reset">Password updated. You can now sign in.</string>
+
+    <!-- Login screen -->
+    <string name="authentication_login_subtitle">Log in to continue your journey.</string>
+    <string name="authentication_action_log_in">Log In</string>
+    <string name="authentication_or_continue_with">or continue with</string>
+    <string name="authentication_login_no_account">Don\'t have an account?</string>
+    <string name="authentication_action_sign_up_short">Sign up</string>
+
+    <!-- Account type selection (first screen after onboarding) -->
+    <string name="authentication_action_back">Back</string>
+    <string name="authentication_action_close">Close</string>
+    <string name="authentication_action_continue">Continue</string>
+    <string name="authentication_account_title">Choose your account type</string>
+    <string name="authentication_account_subtitle">Pick the option that fits how you will use the app. You can sign in later if you already have an account.</string>
+    <string name="authentication_account_personal">Personal</string>
+    <string name="authentication_account_personal_desc">For individuals: manage your own profile and activity.</string>
+    <string name="authentication_account_business">Business</string>
+    <string name="authentication_account_business_desc">For companies and sole traders: customers, orders and revenue.</string>
+    <string name="authentication_account_organization">Organization</string>
+    <string name="authentication_account_organization_desc">For nonprofits, schools and teams: members and groups.</string>
+    <string name="authentication_title_sign_up_personal">Create your personal account</string>
+    <string name="authentication_title_sign_up_business">Create your business account</string>
+    <string name="authentication_title_sign_up_organization">Create your organization account</string>
+    <string name="authentication_setup_photo">Profile picture</string>
+    <string name="authentication_setup_photo_gallery">Choose from gallery</string>
+    <string name="authentication_setup_photo_camera">Take a photo</string>
+    <string name="authentication_setup_cover_hint">Cover</string>
+    <string name="authentication_setup_crop_hint">Drag and pinch to adjust</string>
+    <string name="authentication_setup_crop_cancel">Cancel</string>
+    <string name="authentication_setup_crop_done">Done</string>
+    <string name="authentication_setup_cover">Cover photo</string>
+    <string name="authentication_setup_cover_remove">Remove cover photo</string>
+    <string name="authentication_setup_photo_remove">Remove profile picture</string>
+    <string name="authentication_setup_about">About</string>
+    <string name="authentication_setup_about_hint">Tell people a little about yourself</string>
+    <string name="authentication_setup_continue">Continue</string>
+    <string name="authentication_setup_skip">Skip for now</string>
+    <string name="authentication_title_location">Choose your location</string>
+    <string name="authentication_title_setup_personal">Set up your personal account</string>
+    <string name="authentication_title_setup_business">Set up your business account</string>
+    <string name="authentication_title_setup_organization">Set up your organization account</string>
+    <string name="authentication_label_name_personal">Full name</string>
+    <string name="authentication_label_name_business">Business name</string>
+    <string name="authentication_label_name_organization">Organization name</string>
+
+    <!-- Business / organization details -->
+    <string name="authentication_label_industry_business">Industry</string>
+    <string name="authentication_label_industry_organization">Organization type</string>
+    <string name="authentication_label_phone">Phone number</string>
+    <string name="authentication_label_registration_business">Business registration / tax ID (optional)</string>
+    <string name="authentication_label_registration_organization">Registration / tax ID (optional)</string>
+    <string name="authentication_error_industry_required">This field is required</string>
+    <string name="authentication_error_phone_required">Please enter a phone number</string>
+    <string name="authentication_error_phone_invalid">Enter a valid phone number</string>
+    <string name="authentication_error_identifier_taken_type">This mobile number is already registered (%1$s account). Please sign in instead.</string>
+
+    <!-- Mobile identifier -->
+    <string name="authentication_hint_mobile">Mobile number</string>
+    <string name="authentication_hint_mobile_optional">Mobile number (optional)</string>
+    <string name="authentication_hint_login_id">Username, email or mobile</string>
+    <string name="authentication_hint_mobile_ph">9XX XXX XXXX</string>
+    <string name="authentication_error_mobile_required">Please enter your mobile number</string>
+    <string name="authentication_error_mobile_invalid">Enter a valid mobile number</string>
+    <string name="authentication_country_change">Change country code</string>
+    <string name="authentication_country_title">Select country</string>
+    <string name="authentication_country_search">Search country or code</string>
+    <string name="authentication_country_popular">Popular</string>
+    <string name="authentication_country_all">All countries</string>
+    <string name="authentication_country_none">No matching country</string>
+    <string name="authentication_country_close">Close</string>
+    <string name="authentication_error_google_not_configured">Google sign-in isn\'t set up yet. Add the web client id in google_auth.xml.</string>
+    <string name="authentication_error_google_no_account">No Google account found on this device. Add one in Settings and try again.</string>
+    <string name="authentication_error_google_failed">Couldn\'t sign in with Google. Please try again.</string>
+    <string name="authentication_error_social_not_registered">No account is linked to this Google account yet. Sign up first.</string>
+    <string name="authentication_social_complete_title">One more step</string>
+    <string name="authentication_social_complete_subtitle">Add your mobile number to finish signing up.</string>
+    <string name="authentication_social_complete_action">Finish sign up</string>
+    <string name="authentication_social_complete_other">Use a different account</string>
+    <string name="authentication_social_apple_account">Apple demo account</string>
+</resources>

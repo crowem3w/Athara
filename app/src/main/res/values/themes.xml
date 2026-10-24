@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Pure Compose app: this only needs to cover the brief window
+         before Compose takes over (launch background, status/nav bar
+         icon contrast), since all real theming lives in ui/theme/Theme.kt. -->
+    <style name="Theme.Test" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Launch splash (androidx.core:core-splashscreen, backports the
+         Android 12 splash API to API 30). Hands over to Theme.Test. -->
+    <style name="Theme.Test.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.Test</item>
+    </style>
+</resources>

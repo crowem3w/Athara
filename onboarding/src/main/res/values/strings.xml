@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_title">Explore the world, together</string>
+    <string name="onboarding_body">Share your trips, discover new places and connect with fellow travelers.</string>
+    <string name="onboarding_get_started">Get Started</string>
+    <string name="terms_title">Terms &amp; Conditions</string>
+    <string name="terms_intro">Please read and accept the following to continue.</string>
+    <string name="terms_body">PLACEHOLDER TEXT – replace with your final Terms &amp; Conditions.\n\n1. Acceptance. By using this app you agree to these Terms &amp; Conditions.\n\n2. Your account. You are responsible for the information you provide and for keeping your login details secure.\n\n3. Content. You are responsible for the posts, photos and reels you share, and must not share unlawful or harmful content.\n\n4. Privacy. We handle your personal data, including your saved places and location, as described in our Privacy Policy.\n\n5. Changes. We may update these terms from time to time; continued use means you accept the updated terms.</string>
+    <string name="terms_accept">Accept</string>
+    <string name="terms_decline">Decline</string>
+</resources>

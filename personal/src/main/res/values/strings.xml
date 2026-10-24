@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="personal_home_title">Personal</string>
+    <string name="personal_home_greeting">Hi, %1$s</string>
+    <string name="personal_profile_title">Your profile</string>
+    <string name="personal_profile_login">Mobile: %1$s</string>
+    <string name="personal_profile_type">Account type: Personal</string>
+    <string name="personal_tips_title">Getting started</string>
+    <string name="personal_tip_1">• Complete your profile</string>
+    <string name="personal_tip_2">• Explore your dashboard</string>
+    <string name="personal_tip_3">• Review your privacy settings</string>
+    <string name="personal_action_sign_out">Sign out</string>
+    <string name="personal_setup_back_title">Go back to sign-up?</string>
+    <string name="personal_setup_back_message">Your new account will be deleted. You can sign up again any time.</string>
+    <string name="personal_setup_back_confirm">Delete and go back</string>
+    <string name="personal_setup_back_stay">Stay</string>
+</resources>

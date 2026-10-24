@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      OAuth 2.0 *Web application* client id from Google Cloud Console (APIs & Services > Credentials).
+      Also create an *Android* OAuth client for this app's package name and signing SHA-1.
+      Replace the placeholder, or Google sign-in shows "not configured".
+    -->
+    <string name="authentication_google_web_client_id" translatable="false">YOUR_WEB_CLIENT_ID.apps.googleusercontent.com</string>
+</resources>

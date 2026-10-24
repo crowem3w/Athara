@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="account_title">Account</string>
+    <string name="account_back">Back</string>
+
+    <string name="account_tab_profile">Profile</string>
+    <string name="account_tab_dashboard">Dashboard</string>
+
+    <string name="account_section_profile">Profile</string>
+    <string name="account_login">Login: %1$s</string>
+    <string name="account_username">Username: @%1$s</string>
+    <string name="account_email">Email: %1$s</string>
+    <string name="account_birthday">Birthday: %1$s</string>
+    <string name="account_type">Account type: %1$s</string>
+    <string name="account_industry">Industry: %1$s</string>
+    <string name="account_phone">Phone: %1$s</string>
+    <string name="account_registration">Registration ID: %1$s</string>
+
+    <string name="account_section_about">About</string>
+    <string name="account_section_places">Places</string>
+    <string name="account_place_main">%1$s (main)</string>
+    <string name="account_places_empty">No saved places yet. Add them from the location chips on the home feed.</string>
+
+    <string name="account_action_sign_out">Sign out</string>
+</resources>

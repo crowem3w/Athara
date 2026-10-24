@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Share (three connected nodes) outline icon. Black stroke; tinted at the call site. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    <!-- Left node -->
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="18"
+        android:pathData="M10,256 a63,63 0 1,0 126,0 a63,63 0 1,0 -126,0" />
+    <!-- Top-right node -->
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="18"
+        android:pathData="M381,68 a57,57 0 1,0 114,0 a57,57 0 1,0 -114,0" />
+    <!-- Bottom-right node -->
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="18"
+        android:pathData="M381,440 a57,57 0 1,0 114,0 a57,57 0 1,0 -114,0" />
+    <!-- Connectors -->
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="18"
+        android:strokeLineCap="butt"
+        android:pathData="M129,227 L387,94 M129,284 L387,414" />
+</vector>

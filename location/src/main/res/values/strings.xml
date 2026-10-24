@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="confirm_location">Confirm location</string>
+    <string name="shortlist_title">Your places (%1$d)</string>
+    <string name="cd_remove_place">Remove %1$s</string>
+    <string name="pick_hint">Search for a place in Guimaras to add it to your list.</string>
+    <string name="category_countries">Countries</string>
+    <string name="category_cities">Cities</string>
+    <string name="category_provinces">Provinces</string>
+    <string name="search_hint">Search places in Guimaras…</string>
+    <string name="cd_search">Search</string>
+    <string name="cd_locate_me">Locate me</string>
+    <string name="location_permission_rationale">Location access lets the map show and center on where you are.</string>
+    <string name="location_permission_denied">Location permission denied. Enable it in Settings to use \"locate me\".</string>
+    <string name="search_no_results">No results found for \"%1$s\".</string>
+    <string name="search_error">Search failed. Check your connection and try again.</string>
+</resources>

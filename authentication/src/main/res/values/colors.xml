@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="authentication_primary">#0E8A7D</color>
+    <color name="authentication_on_primary">#FFFFFF</color>
+    <color name="authentication_background">#FEFEFE</color>
+    <color name="authentication_on_background">#12332F</color>
+    <!-- Login form -->
+    <color name="authentication_muted">#5F7572</color>
+    <color name="authentication_field_background">#F2F9F8</color>
+    <color name="authentication_field_border">#D5E9E6</color>
+    <color name="authentication_progress_inactive">#E8E8E8</color>
+    <!-- Per account type accents -->
+    <color name="authentication_accent_personal">#0E8A7D</color>
+    <color name="authentication_accent_business">#1F5FBF</color>
+    <color name="authentication_accent_organization">#7B3FA0</color>
+</resources>
