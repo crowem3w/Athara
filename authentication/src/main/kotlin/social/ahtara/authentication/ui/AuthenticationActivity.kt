@@ -62,6 +62,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import social.ahtara.authentication.Authentication
+import social.ahtara.authentication.AuthEntry
 import social.ahtara.authentication.R
 import social.ahtara.authentication.domain.AccountType
 import social.ahtara.authentication.domain.Country
@@ -83,9 +85,10 @@ class AuthenticationActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // Presented as a modal: slides up over Home.
-        @Suppress("DEPRECATION")
-        overridePendingTransition(R.anim.authentication_modal_in, R.anim.authentication_modal_hold)
+        // The account type was chosen before Home, so "Sign up" goes straight to registration.
+        if (savedInstanceState == null &&
+            intent.getStringExtra(EXTRA_ENTRY) == AuthEntry.SIGN_UP.name
+        ) startSignUp()
         setContent {
             AuthenticationTheme {
                 val state by viewModel.state.collectAsState()
@@ -98,7 +101,7 @@ class AuthenticationActivity : ComponentActivity() {
                 
                 
                 BackHandler(enabled = state.mode != AuthMode.SIGN_IN) {
-                    viewModel.setMode(if (state.mode == AuthMode.SIGN_UP) AuthMode.SELECT_ACCOUNT else AuthMode.SIGN_IN, null)
+                    viewModel.setMode(AuthMode.SIGN_IN, null)
                 }
                 Box(Modifier.fillMaxSize()) {
                 when (state.mode) {
@@ -109,17 +112,14 @@ class AuthenticationActivity : ComponentActivity() {
                         onLoginId = viewModel::onLoginId,
                         onForgotPassword = { viewModel.setMode(AuthMode.FORGOT_PASSWORD, null) },
                         onSocial = viewModel::signInWithSocial,
-                        onSignUp = { viewModel.setMode(AuthMode.SELECT_ACCOUNT, null) },
+                        onSignUp = { startSignUp() },
                         social = viewModel.loginSocialActions,
                     )
                     
                     AuthMode.SELECT_ACCOUNT, AuthMode.SIGN_UP -> SignUpFlowScreen(
                         state = state,
                         onBack = {
-                            viewModel.setMode(
-                                if (state.mode == AuthMode.SIGN_UP) AuthMode.SELECT_ACCOUNT else AuthMode.SIGN_IN,
-                                null,
-                            )
+                            viewModel.setMode(AuthMode.SIGN_IN, null)
                         },
                         onSelectType = viewModel::selectAccountType,
                         onSignIn = { viewModel.setMode(AuthMode.SIGN_IN, null) },
@@ -134,7 +134,7 @@ class AuthenticationActivity : ComponentActivity() {
                         onConfirm = viewModel::onConfirm,
                         onSubmit = viewModel::submit,
                         onSocial = viewModel::signInWithSocial,
-                        onToSignUp = { viewModel.setMode(AuthMode.SELECT_ACCOUNT, null) },
+                        onToSignUp = { startSignUp() },
                         onToSignIn = { viewModel.setMode(AuthMode.SIGN_IN, null) },
                         onIndustry = viewModel::onIndustry,
                         onPhone = viewModel::onPhone,
@@ -153,7 +153,7 @@ class AuthenticationActivity : ComponentActivity() {
                         onConfirm = viewModel::onConfirm,
                         onSubmit = viewModel::submit,
                         onSocial = viewModel::signInWithSocial,
-                        onToSignUp = { viewModel.setMode(AuthMode.SELECT_ACCOUNT, null) },
+                        onToSignUp = { startSignUp() },
                         onToSignIn = { viewModel.setMode(AuthMode.SIGN_IN, null) },
                     )
                 }
@@ -174,10 +174,11 @@ class AuthenticationActivity : ComponentActivity() {
         }
     }
 
-    override fun finish() {
-        super.finish()
-        @Suppress("DEPRECATION")
-        overridePendingTransition(R.anim.authentication_modal_hold, R.anim.authentication_modal_out)
+    private fun startSignUp() =
+        viewModel.selectAccountType(Authentication.selectedAccountType(this) ?: AccountType.PERSONAL)
+
+    companion object {
+        const val EXTRA_ENTRY = "social.ahtara.authentication.ENTRY"
     }
 }
 

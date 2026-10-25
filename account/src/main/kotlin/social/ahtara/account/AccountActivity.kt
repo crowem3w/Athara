@@ -6,12 +6,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import social.ahtara.authentication.AuthEntry
 import social.ahtara.authentication.Authentication
+import social.ahtara.authentication.AuthenticationContract
 import social.ahtara.authentication.ui.theme.AuthenticationTheme
 
 
@@ -23,16 +24,17 @@ import social.ahtara.authentication.ui.theme.AuthenticationTheme
 
 class AccountActivity : ComponentActivity() {
 
+    private val authLauncher = registerForActivityResult(AuthenticationContract()) { signedIn ->
+        // New registration: Home continues into account setup, so go back to it.
+        if (signedIn && Authentication.isSetupPending(this)) finish()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             val user by Authentication.repository(this@AccountActivity).currentUser.collectAsState()
             val current = user
-            
-            LaunchedEffect(current == null) {
-                if (current == null) finish()
-            }
             if (current != null) {
                 AuthenticationTheme(current.accountType) {
                     AccountScreen(
@@ -44,6 +46,15 @@ class AccountActivity : ComponentActivity() {
                                 finish()
                             }
                         },
+                    )
+                }
+            } else {
+                // Guest: the Account settings screen offers Log in / Sign up (not a dialog).
+                AuthenticationTheme {
+                    GuestAccountScreen(
+                        onBack = { finish() },
+                        onLogIn = { authLauncher.launch(AuthEntry.SIGN_IN) },
+                        onSignUp = { authLauncher.launch(AuthEntry.SIGN_UP) },
                     )
                 }
             }

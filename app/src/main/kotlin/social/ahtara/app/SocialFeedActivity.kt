@@ -13,7 +13,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +33,9 @@ import social.ahtara.app.ui.screens.PlacesScreen
 import social.ahtara.app.ui.screens.feedKey
 import social.ahtara.app.ui.theme.Theme
 import social.ahtara.authentication.Authentication
+import social.ahtara.app.ui.components.AccountDialog
+import social.ahtara.app.ui.components.LocalRequireAccount
+import social.ahtara.authentication.AuthEntry
 import social.ahtara.authentication.AuthenticationContract
 import social.ahtara.authentication.domain.AccountType
 import social.ahtara.authentication.domain.ServiceArea
@@ -50,12 +53,14 @@ import social.ahtara.travel.model.PlaceCategory
 
 /**
  * Home screen. Works for guests (signed out, Guimaras default) and signed-in users.
- * Login / Registration opens as a modal from here, via the profile button or any gated action.
+ * A guest tapping Create, like, comment or share gets the "Account" dialog (Log in / Sign up, stacked vertically).
+ * The profile button opens the Account settings screen (not a dialog), for guests too.
  */
 class SocialFeedActivity : ComponentActivity() {
     private var setupInProgress = false
 
-    // Login / Registration modal. A new account's setup is started by the observer below.
+    // Login / Sign-up screens, opened from the "Account" dialog. A new account's setup is
+    // started by the observer below.
     private val authLauncher = registerForActivityResult(AuthenticationContract()) { }
 
     private val setupLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -89,7 +94,7 @@ class SocialFeedActivity : ComponentActivity() {
             Theme {
                 val user by Authentication.repository(this@SocialFeedActivity).currentUser.collectAsState()
                 val current = user
-                val requireLogin: () -> Unit = { authLauncher.launch(Unit) }
+                var showAccountDialog by rememberSaveable { mutableStateOf(false) }
 
                 val pickPlaces = rememberLauncherForActivityResult(
                     PickLocationContract(current?.accountType ?: AccountType.PERSONAL),
@@ -100,8 +105,7 @@ class SocialFeedActivity : ComponentActivity() {
                 }
 
                 var showPlaces by rememberSaveable { mutableStateOf(false) }
-                LaunchedEffect(current == null) { if (current == null) showPlaces = false }
-                var categoryNames by rememberSaveable { mutableStateOf(emptySet<String>()) }
+                                var categoryNames by rememberSaveable { mutableStateOf(emptySet<String>()) }
                 var activeKeys by rememberSaveable { mutableStateOf(emptySet<String>()) }
                 val categories = remember(categoryNames) { categoryNames.mapNotNull { PlaceCategory.fromName(it) }.toSet() }
 
@@ -125,6 +129,11 @@ class SocialFeedActivity : ComponentActivity() {
                     activeKeys = if (next.isEmpty() || next == all) emptySet() else next
                 }
 
+                // Gate shared with the feed's like / comment / share buttons.
+                val requireAccount: () -> Boolean = {
+                    if (current != null) true else { showAccountDialog = true; false }
+                }
+                CompositionLocalProvider(LocalRequireAccount provides requireAccount) {
                 Box(Modifier.fillMaxSize()) {
                     HomeScreen(
                         places = activePlaces,
@@ -132,36 +141,43 @@ class SocialFeedActivity : ComponentActivity() {
                         onToggleCategory = toggleCategory,
                         onClearCategories = clearCategories,
                         userInitial = current?.displayName?.trim()?.firstOrNull()?.uppercase() ?: "G",
-                        // Gated: saved places, profile and create need an account.
-                        onPlacesClick = { if (current != null) showPlaces = true else requireLogin() },
-                        onProfileClick = {
-                            if (current != null) startActivity(AccountActivity.intent(this@SocialFeedActivity))
-                            else requireLogin()
-                        },
-                        onCreateClick = { if (current == null) requireLogin() },
+                        onPlacesClick = { showPlaces = true },
+                        // Account settings is a full screen; guests see Log in / Sign up there.
+                        onProfileClick = { startActivity(AccountActivity.intent(this@SocialFeedActivity)) },
+                        // Only Create needs an account: guests get the "Account" dialog.
+                        onCreateClick = { requireAccount() },
                         // Open to everyone.
                         onReelsClick = {
                             startActivity(Intent(this@SocialFeedActivity, ReelsActivity::class.java))
                         },
                     )
-                    if (showPlaces && current != null) {
+                    if (showAccountDialog) {
+                        AccountDialog(
+                            onLogin = { showAccountDialog = false; authLauncher.launch(AuthEntry.SIGN_IN) },
+                            onSignUp = { showAccountDialog = false; authLauncher.launch(AuthEntry.SIGN_UP) },
+                            onDismiss = { showAccountDialog = false },
+                        )
+                    }
+                    if (showPlaces) {
                         BackHandler { showPlaces = false }
                         PlacesScreen(
-                            places = guimarasPlaces,
+                            places = if (current != null) guimarasPlaces else GuestPlaces.default,
                             activeKeys = activeKeys,
                             categories = categories,
                             onTogglePlace = togglePlace,
                             onRemovePlace = { place ->
-                                lifecycleScope.launch {
+                                // Guests have nothing saved; only signed-in users edit places.
+                                if (current != null) lifecycleScope.launch {
                                     Authentication.savePlaces(this@SocialFeedActivity, current.places - place)
                                 }
                             },
-                            onAddPlace = { pickPlaces.launch(guimarasPlaces) },
+                            onAddPlace = { if (current != null) pickPlaces.launch(guimarasPlaces) else showAccountDialog = true },
                             onToggleCategory = toggleCategory,
                             onClearCategories = clearCategories,
                             onBack = { showPlaces = false },
                         )
                     }
+                }
                 }
             }
         }

@@ -68,14 +68,16 @@ private val NonCardHeight = 120.dp
 @Composable
 internal fun AccountTypeScreen(
     onSelect: (AccountType) -> Unit,
-    onSignIn: () -> Unit,
+    onSignIn: (() -> Unit)?,
+    types: List<AccountType> = AccountType.available,
 ) {
-    var selectedName by rememberSaveable { mutableStateOf<String?>(null) }
+    // With a single offered type (personal only) it is preselected.
+    var selectedName by rememberSaveable { mutableStateOf<String?>(types.singleOrNull()?.name) }
     val selected = selectedName?.let { AccountType.fromName(it) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         BoxWithConstraints(modifier = Modifier.weight(1f).fillMaxWidth()) {
-            val cardHeight: Dp = ((maxHeight - NonCardHeight - 32.dp) / AccountType.entries.size)
+            val cardHeight: Dp = ((maxHeight - NonCardHeight - 32.dp) / types.size)
                 .coerceIn(CardMinHeight, CardMaxHeight)
 
             Column(
@@ -98,7 +100,7 @@ internal fun AccountTypeScreen(
                     )
                 }
 
-                AccountType.entries.forEach { type ->
+                types.forEach { type ->
                     AccountTypeCard(
                         type = type,
                         isSelected = selected == type,
@@ -130,11 +132,13 @@ internal fun AccountTypeScreen(
             )
         }
 
-        TextButton(
-            onClick = onSignIn,
-            modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 4.dp),
-        ) {
-            Text(stringResource(R.string.authentication_action_to_sign_in))
+        if (onSignIn != null) {
+            TextButton(
+                onClick = onSignIn,
+                modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 4.dp),
+            ) {
+                Text(stringResource(R.string.authentication_action_to_sign_in))
+            }
         }
     }
 }

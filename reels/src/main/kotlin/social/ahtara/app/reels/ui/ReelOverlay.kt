@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import social.ahtara.app.reels.R
 import social.ahtara.app.reels.Reel
+import social.ahtara.app.ui.components.LocalRequireAccount
 import social.ahtara.app.ui.theme.Heart
 import social.ahtara.app.ui.theme.Teal
 
@@ -47,6 +48,8 @@ import social.ahtara.app.ui.theme.Teal
 fun ReelOverlay(reel: Reel) {
     var liked by rememberSaveable(reel.id) { mutableStateOf(false) }
     var following by rememberSaveable(reel.id) { mutableStateOf(false) }
+    // Like / comment / share need an account: guests get the "Account" dialog instead.
+    val requireAccount = LocalRequireAccount.current
 
     Box(modifier = Modifier.fillMaxSize()) {
         
@@ -71,19 +74,19 @@ fun ReelOverlay(reel: Reel) {
                 tint = if (liked) Heart else Color.White,
                 label = formatCount(reel.likes + if (liked) 1 else 0),
                 description = "Like",
-                onClick = { liked = !liked },
+                onClick = { if (requireAccount()) liked = !liked },
             )
             RailAction(
                 painter = painterResource(R.drawable.ic_reels_comment),
                 label = formatCount(reel.comments),
                 description = "Comments",
-                onClick = {},
+                onClick = { requireAccount() },
             )
             RailAction(
                 painter = rememberVectorPainter(Icons.Outlined.Share),
                 label = null,
                 description = "Share",
-                onClick = {},
+                onClick = { requireAccount() },
             )
         }
 

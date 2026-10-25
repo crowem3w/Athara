@@ -1,3 +1,0 @@
-# Athara
-# Athara
-# Athara

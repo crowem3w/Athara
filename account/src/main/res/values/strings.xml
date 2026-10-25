@@ -22,4 +22,8 @@
     <string name="account_places_empty">No saved places yet. Add them from the location chips on the home feed.</string>
 
     <string name="account_action_sign_out">Sign out</string>
+    <string name="account_guest_title">You\'re browsing as a guest</string>
+    <string name="account_guest_message">Log in or sign up to post and manage your profile.</string>
+    <string name="account_action_log_in">Log in</string>
+    <string name="account_action_sign_up">Sign up</string>
 </resources>

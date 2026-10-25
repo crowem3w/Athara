@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="account_dialog_title">Account</string>
+    <string name="account_dialog_message">Log in or create an account to continue.</string>
+    <string name="account_dialog_login">Log in</string>
+    <string name="account_dialog_sign_up">Sign up</string>
+</resources>

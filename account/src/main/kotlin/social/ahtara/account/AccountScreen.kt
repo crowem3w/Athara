@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -154,6 +155,45 @@ private fun ProfileContent(user: AuthUser, onSignOut: () -> Unit) {
 
         OutlinedButton(onClick = onSignOut, modifier = Modifier.fillMaxWidth().height(52.dp)) {
             Text(stringResource(R.string.account_action_sign_out))
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun GuestAccountScreen(onBack: () -> Unit, onLogIn: () -> Unit, onSignUp: () -> Unit) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.account_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            painter = painterResource(AuthR.drawable.authentication_ic_back),
+                            contentDescription = stringResource(R.string.account_back),
+                        )
+                    }
+                },
+            )
+        },
+    ) { padding ->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(padding).padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = stringResource(R.string.account_guest_title),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(text = stringResource(R.string.account_guest_message), style = MaterialTheme.typography.bodyMedium)
+            Button(onClick = onLogIn, modifier = Modifier.fillMaxWidth().height(52.dp)) {
+                Text(stringResource(R.string.account_action_log_in))
+            }
+            OutlinedButton(onClick = onSignUp, modifier = Modifier.fillMaxWidth().height(52.dp)) {
+                Text(stringResource(R.string.account_action_sign_up))
+            }
         }
     }
 }

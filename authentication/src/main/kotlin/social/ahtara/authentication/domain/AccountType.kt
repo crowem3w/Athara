@@ -77,5 +77,11 @@ enum class AccountType(
     companion object {
         
         fun fromName(name: String?): AccountType = entries.firstOrNull { it.name == name } ?: PERSONAL
+
+        /**
+         * Account types offered to users right now. The app focuses on personal accounts only;
+         * add BUSINESS / ORGANIZATION back here to offer them again (their code is untouched).
+         */
+        val available: List<AccountType> = listOf(PERSONAL)
     }
 }

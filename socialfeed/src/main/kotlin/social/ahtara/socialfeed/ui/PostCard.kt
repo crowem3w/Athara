@@ -1,6 +1,7 @@
 package social.ahtara.socialfeed.ui
 
 import androidx.compose.foundation.clickable
+import social.ahtara.app.ui.components.LocalRequireAccount
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -133,6 +134,8 @@ fun PostCard(
 
 @Composable
 private fun EngagementBar(post: FeedPost, modifier: Modifier = Modifier) {
+    // Like / comment / share need an account: guests get the "Account" dialog instead.
+    val requireAccount = LocalRequireAccount.current
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -143,6 +146,7 @@ private fun EngagementBar(post: FeedPost, modifier: Modifier = Modifier) {
             imageVector = if (post.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
             contentDescription = "Like",
             tint = if (post.isLiked) Heart else TextSecondary,
+            modifier = Modifier.clickable { requireAccount() },
         )
         if (post.likeCount.isNotBlank()) Text(
             text = post.likeCount,
@@ -155,7 +159,7 @@ private fun EngagementBar(post: FeedPost, modifier: Modifier = Modifier) {
             imageVector = Icons.Outlined.ChatBubbleOutline,
             contentDescription = "Comments",
             tint = TextSecondary,
-            modifier = Modifier.padding(start = 20.dp),
+            modifier = Modifier.clickable { requireAccount() }.padding(start = 20.dp),
         )
         if (post.commentCount.isNotBlank()) Text(
             text = post.commentCount,
@@ -168,7 +172,7 @@ private fun EngagementBar(post: FeedPost, modifier: Modifier = Modifier) {
             painter = painterResource(R.drawable.ic_share),
             contentDescription = "Share",
             tint = TextSecondary,
-            modifier = Modifier.padding(start = 20.dp),
+            modifier = Modifier.clickable { requireAccount() }.padding(start = 20.dp),
         )
 
         Spacer(modifier = Modifier.weight(1f))
