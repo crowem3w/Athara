@@ -19,15 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.asAndroidPath
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.dp
 import social.ahtara.app.ui.theme.Background
@@ -131,7 +126,6 @@ private fun Path.dipRight(right: Float, cx: Float, halfWidth: Float, depth: Floa
 
 
 private fun Modifier.dippedBarSurface(): Modifier = drawWithCache {
-    
     val edgeDrop = EdgeDrop.toPx()
     val width = size.width
     val height = size.height - edgeDrop
@@ -141,7 +135,7 @@ private fun Modifier.dippedBarSurface(): Modifier = drawWithCache {
     val left = cx - halfWidth
     val right = cx + halfWidth
 
-    
+    // The bar: a flat surface with a rounded dip cut out for the Create button.
     val face = Path().apply {
         moveTo(0f, 0f)
         lineTo(left, 0f)
@@ -152,74 +146,42 @@ private fun Modifier.dippedBarSurface(): Modifier = drawWithCache {
         lineTo(0f, height)
         close()
     }
-    
-    val bowl = Path().apply {
-        moveTo(left, 0f)
-        dipLeft(left, cx, halfWidth, depth)
-        dipRight(right, cx, halfWidth, depth)
-        close()
-    }
-    
     val curve = Path().apply {
         moveTo(left, 0f)
         dipLeft(left, cx, halfWidth, depth)
         dipRight(right, cx, halfWidth, depth)
     }
+    val facePath = face.asAndroidPath()
+    val curvePath = curve.asAndroidPath()
+
+    // Soft ambient shadow: a blurred copy of the bar itself, so it fades out smoothly from the
+    // top edge and follows the curve of the dip. No flat fill behind the Create button.
+    val ambient = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
+        color = android.graphics.Color.argb(40, 0, 0, 0)
+        maskFilter = android.graphics.BlurMaskFilter(10.dp.toPx(), android.graphics.BlurMaskFilter.Blur.NORMAL)
+    }
+    // Tighter, fainter shadow hugging the curve, so the dip reads as a clean edge (no hard line).
+    val contact = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
+        style = android.graphics.Paint.Style.STROKE
+        strokeWidth = 2.dp.toPx()
+        strokeCap = android.graphics.Paint.Cap.ROUND
+        strokeJoin = android.graphics.Paint.Join.ROUND
+        color = android.graphics.Color.argb(26, 0, 0, 0)
+        maskFilter = android.graphics.BlurMaskFilter(3.dp.toPx(), android.graphics.BlurMaskFilter.Blur.NORMAL)
+    }
+    val lift = 1.dp.toPx() // light from below-front: shadow sits slightly above the edge
 
     onDrawBehind {
         translate(top = edgeDrop) {
-            drawPath(face, color = Background)
-
-            clipPath(bowl) {
-                
-                drawRect(
-                    brush = Brush.radialGradient(
-                        colors = listOf(Color.Black.copy(alpha = 0.10f), Color.Transparent),
-                        center = Offset(cx, depth * 0.5f),
-                        radius = halfWidth,
-                    ),
-                )
-
-                
-                
-                val contactCenter = Offset(cx, depth - 3.dp.toPx())
-                val contactRadius = FabSize.toPx() * 0.5f
-                scale(scaleX = 1f, scaleY = 0.28f, pivot = contactCenter) {
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(Color.Black.copy(alpha = 0.20f), Color.Transparent),
-                            center = contactCenter,
-                            radius = contactRadius,
-                        ),
-                        radius = contactRadius,
-                        center = contactCenter,
-                    )
-                }
-
-                
-                val bounceCenter = Offset(cx, depth - 1.5.dp.toPx())
-                val bounceRadius = halfWidth * 0.5f
-                scale(scaleX = 1f, scaleY = 0.3f, pivot = bounceCenter) {
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(Color.White.copy(alpha = 0.35f), Color.Transparent),
-                            center = bounceCenter,
-                            radius = bounceRadius,
-                        ),
-                        radius = bounceRadius,
-                        center = bounceCenter,
-                    )
-                }
-
-                
-                translate(top = -2.5.dp.toPx()) {
-                    drawPath(
-                        path = curve,
-                        color = Color.Black.copy(alpha = 0.16f),
-                        style = Stroke(width = 0.75.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round),
-                    )
-                }
+            drawIntoCanvas { canvas ->
+                val native = canvas.nativeCanvas
+                native.save()
+                native.translate(0f, -lift)
+                native.drawPath(facePath, ambient)
+                native.drawPath(curvePath, contact)
+                native.restore()
             }
+            drawPath(face, color = Background)
         }
     }
 }
