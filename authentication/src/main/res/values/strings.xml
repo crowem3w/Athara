@@ -96,6 +96,8 @@
     <string name="authentication_setup_continue">Continue</string>
     <string name="authentication_setup_skip">Skip for now</string>
     <string name="authentication_title_location">Choose your location</string>
+    <string name="authentication_title_location_business">Choose your business location</string>
+    <string name="authentication_title_location_organization">Choose your municipalities</string>
     <string name="authentication_title_setup_personal">Set up your personal account</string>
     <string name="authentication_title_setup_business">Set up your business account</string>
     <string name="authentication_title_setup_organization">Set up your organization account</string>

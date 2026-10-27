@@ -2,6 +2,10 @@
 <resources>
 
     <string name="confirm_location">Confirm location</string>
+    <string name="skip_location">Skip for now</string>
+    <string name="address_hint">Street / address (e.g. Purok, Barangay)</string>
+    <string name="pick_hint_municipalities">Tap the municipalities you serve, or search for a place in Guimaras.</string>
+    <string name="pick_hint_single">Search or tap a municipality to set your one location in Guimaras.</string>
     <string name="shortlist_title">Your places (%1$d)</string>
     <string name="cd_remove_place">Remove %1$s</string>
     <string name="pick_hint">Search for a place in Guimaras to add it to your list.</string>

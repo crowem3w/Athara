@@ -27,7 +27,8 @@ data class MapUiState(
     val categories: Set<PlaceCategory> = PlaceCategory.entries.toSet(),
     val results: List<SearchResult> = emptyList(),
     
-    val places: List<PlaceSelection> = emptyList()
+    val places: List<PlaceSelection> = emptyList(),
+    val address: String = "",
 )
 
 
@@ -51,6 +52,9 @@ class MapViewModel : ViewModel() {
 
     private var searchJob: Job? = null
     private var initialApplied = false
+
+    /** Business / Organization: picking a place replaces the previous one. */
+    var singleSelect = false
 
     
     fun onQueryChange(query: String) {
@@ -84,14 +88,21 @@ class MapViewModel : ViewModel() {
         searchJob?.cancel()
         val place = PlaceSelection(result.fullName, result.latLng.latitude, result.latLng.longitude)
         _state.update {
-            it.copy(query = "", results = emptyList(), places = it.places.addedOnce(place))
+            it.copy(query = "", results = emptyList(), places = withPlace(it.places, place))
         }
         _events.trySend(UiEvent.FlyTo(result.latLng, zoomFor(result.category)))
     }
 
     
+    private fun withPlace(current: List<PlaceSelection>, place: PlaceSelection): List<PlaceSelection> =
+        if (singleSelect) listOf(place) else current.addedOnce(place)
+
+    fun onAddressChange(address: String) {
+        _state.update { it.copy(address = address) }
+    }
+
     fun onQuickPick(place: PlaceSelection) {
-        _state.update { it.copy(places = it.places.addedOnce(place)) }
+        _state.update { it.copy(places = withPlace(it.places, place)) }
         val zoom = if (place == social.ahtara.authentication.domain.ServiceArea.default) 9.5 else 12.0
         _events.trySend(UiEvent.FlyTo(LatLng(place.latitude, place.longitude), zoom))
     }

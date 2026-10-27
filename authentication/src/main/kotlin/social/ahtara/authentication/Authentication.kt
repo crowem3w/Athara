@@ -90,6 +90,17 @@ object Authentication {
         AccountType.available.size > 1 && storedAccountType(context) == null
 
     private const val KEY_DEVICE_PLACES = "device_places"
+    private const val KEY_LOCATION_DONE = "location_step_done"
+    private const val KEY_DEVICE_ADDRESS = "device_address"
+
+    /** Street / address text typed by Business accounts on the Map/Location step. */
+    fun deviceAddress(context: Context): String =
+        context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE).getString(KEY_DEVICE_ADDRESS, "").orEmpty()
+
+    fun saveDeviceAddress(context: Context, address: String) {
+        context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE)
+            .edit().putString(KEY_DEVICE_ADDRESS, address.trim()).apply()
+    }
 
     /** Places picked on the pre-Home Map/Location step, stored on the device (works signed out). */
     fun devicePlaces(context: Context): List<PlaceSelection> =
@@ -98,7 +109,15 @@ object Authentication {
         ).filter { ServiceArea.contains(it) }
 
     /** True until a Guimaras place has been saved: the Map/Location step shows once, on first launch. */
-    fun needsLocationStep(context: Context): Boolean = devicePlaces(context).isEmpty()
+    fun needsLocationStep(context: Context): Boolean =
+        devicePlaces(context).isEmpty() &&
+            !context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE).getBoolean(KEY_LOCATION_DONE, false)
+
+    /** Personal accounts may skip the Map/Location step; remember it so it is not shown again. */
+    fun markLocationStepDone(context: Context) {
+        context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE)
+            .edit().putBoolean(KEY_LOCATION_DONE, true).apply()
+    }
 
     fun saveDevicePlaces(context: Context, places: List<PlaceSelection>) {
         context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE)

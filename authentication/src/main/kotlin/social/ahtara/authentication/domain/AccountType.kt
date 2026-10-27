@@ -79,9 +79,10 @@ enum class AccountType(
         fun fromName(name: String?): AccountType = entries.firstOrNull { it.name == name } ?: PERSONAL
 
         /**
-         * Account types offered to users right now. The app focuses on personal accounts only;
-         * add BUSINESS / ORGANIZATION back here to offer them again (their code is untouched).
+         * Account types offered to users right now: Personal, Business and Organization.
+         * With more than one offered, the pre-Home "Account type" step is shown (after the Terms,
+         * before Map/Location).
          */
-        val available: List<AccountType> = listOf(PERSONAL)
+        val available: List<AccountType> = listOf(PERSONAL, BUSINESS, ORGANIZATION)
     }
 }

@@ -37,6 +37,7 @@ import social.ahtara.authentication.R
 fun LocationStepScreen(
     onBack: () -> Unit,
     preHome: Boolean = false,
+    accountType: social.ahtara.authentication.domain.AccountType = social.ahtara.authentication.domain.AccountType.PERSONAL,
     map: @Composable BoxScope.(bottomInset: Dp) -> Unit,
     footer: @Composable ColumnScope.() -> Unit,
     content: @Composable ColumnScope.() -> Unit,
@@ -56,7 +57,11 @@ fun LocationStepScreen(
             )
 
             RegistrationPanel(
-                title = R.string.authentication_title_location,
+                title = when (accountType) {
+                    social.ahtara.authentication.domain.AccountType.PERSONAL -> R.string.authentication_title_location
+                    social.ahtara.authentication.domain.AccountType.BUSINESS -> R.string.authentication_title_location_business
+                    social.ahtara.authentication.domain.AccountType.ORGANIZATION -> R.string.authentication_title_location_organization
+                },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
@@ -89,6 +94,24 @@ fun LocationSearchField(
         modifier = modifier,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = { onSearch() }),
+    )
+}
+
+
+/** Free-text address line (Business accounts), shown under the map search. */
+@Composable
+fun LocationAddressField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+) {
+    CompactTextField(
+        value = value,
+        onValueChange = onValueChange,
+        placeholder = placeholder,
+        modifier = modifier,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
     )
 }
 

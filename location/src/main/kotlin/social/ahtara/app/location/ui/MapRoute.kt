@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import social.ahtara.authentication.domain.AccountType
 import social.ahtara.authentication.domain.PlaceSelection
 import social.ahtara.authentication.domain.ServiceArea
 import social.ahtara.authentication.ui.LocationStepScreen
@@ -54,8 +55,10 @@ import org.maplibre.android.maps.MapLibreMap
 fun MapRoute(
     initialPlaces: List<PlaceSelection>,
     preHome: Boolean = false,
+    accountType: AccountType = AccountType.PERSONAL,
+    onSkip: (() -> Unit)? = null,
     onBack: () -> Unit,
-    onConfirm: (List<PlaceSelection>) -> Unit,
+    onConfirm: (List<PlaceSelection>, String) -> Unit,
     viewModel: MapViewModel = viewModel(),
 ) {
     val context = LocalContext.current
@@ -108,6 +111,9 @@ fun MapRoute(
     }
 
     
+    // Business / Organization set exactly one location.
+    LaunchedEffect(accountType) { viewModel.singleSelect = accountType == AccountType.BUSINESS }
+
     LaunchedEffect(initialPlaces) { if (initialPlaces.isNotEmpty()) viewModel.preselect(initialPlaces) }
     
     var centeredOnInitial by rememberSaveable { mutableStateOf(false) }
@@ -155,6 +161,7 @@ fun MapRoute(
     LocationStepScreen(
         onBack = onBack,
         preHome = preHome,
+        accountType = accountType,
         map = { bottomInset ->
             
             val bottomPx = with(LocalDensity.current) { bottomInset.roundToPx() }
@@ -184,8 +191,10 @@ fun MapRoute(
         },
         footer = {
             LocationPanelFooter(
-                placeCount = state.places.size,
-                onConfirm = { if (state.places.isNotEmpty()) onConfirm(state.places) },
+                canConfirm = state.places.isNotEmpty() &&
+                    (accountType == AccountType.PERSONAL || state.address.isNotBlank()),
+                onConfirm = { onConfirm(state.places, state.address.trim()) },
+                onSkip = onSkip,
             )
         },
     ) {
@@ -200,6 +209,9 @@ fun MapRoute(
             onResultClick = viewModel::onResultSelected,
             onRemovePlace = viewModel::onRemovePlace,
             onQuickPick = viewModel::onQuickPick,
+            accountType = accountType,
+            address = state.address,
+            onAddressChange = viewModel::onAddressChange,
         )
     }
 }

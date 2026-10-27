@@ -3,16 +3,15 @@ package social.ahtara.personal
 import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import social.ahtara.authentication.Authentication
@@ -20,7 +19,6 @@ import social.ahtara.authentication.domain.AccountType
 import social.ahtara.authentication.domain.PersonalSetup
 import social.ahtara.authentication.ui.AccountSignUp
 import social.ahtara.authentication.ui.theme.AuthenticationTheme
-import social.ahtara.app.location.PickLocationContract
 
 
 
@@ -117,34 +115,17 @@ private fun PerSetupWithLocation(
     onSave: (PersonalSetup) -> Unit,
     onBack: () -> Unit,
 ) {
-    
-    var pending by rememberSaveable(stateSaver = PendingSetupSaver) { mutableStateOf<PersonalSetup?>(null) }
-
-    val picker = rememberLauncherForActivityResult(PickLocationContract(AccountType.PERSONAL)) { picked ->
-        val setup = pending
-        pending = null
-        if (picked != null && setup != null) {
-            
-            val main = picked.first()
-            onSave(setup.copy(location = main.name, latitude = main.latitude, longitude = main.longitude, places = picked))
-        }
+    // The location is picked earlier (Map/Location step before Home) and stored on the device.
+    val context = LocalContext.current
+    fun withDevicePlaces(setup: PersonalSetup): PersonalSetup {
+        val places = Authentication.devicePlaces(context)
+        val main = places.firstOrNull() ?: return setup
+        return setup.copy(location = main.name, latitude = main.latitude, longitude = main.longitude, places = places)
     }
 
     PerSetupAcc(
-        onContinue = { setup ->
-            pending = setup
-            picker.launch(emptyList())
-        },
-        onSkip = {
-            pending = PersonalSetup() 
-            picker.launch(emptyList())
-        },
+        onContinue = { setup -> onSave(withDevicePlaces(setup)) },
+        onSkip = { onSave(withDevicePlaces(PersonalSetup())) },
         onBack = onBack,
     )
 }
-
-
-private val PendingSetupSaver = listSaver<PersonalSetup?, Any?>(
-    save = { s -> if (s == null) emptyList() else listOf(s.photoUri, s.coverUri, s.about) },
-    restore = { l -> if (l.size == 3) PersonalSetup(photoUri = l[0] as String?, coverUri = l[1] as String?, about = l[2] as String) else null },
-)

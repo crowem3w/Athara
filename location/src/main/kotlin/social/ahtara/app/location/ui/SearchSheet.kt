@@ -55,6 +55,9 @@ fun ColumnScope.LocationPanelContent(
     onResultClick: (SearchResult) -> Unit,
     onRemovePlace: (PlaceSelection) -> Unit,
     onQuickPick: (PlaceSelection) -> Unit = {},
+    accountType: social.ahtara.authentication.domain.AccountType = social.ahtara.authentication.domain.AccountType.PERSONAL,
+    address: String = "",
+    onAddressChange: (String) -> Unit = {},
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -75,7 +78,10 @@ fun ColumnScope.LocationPanelContent(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.horizontalScroll(rememberScrollState()),
     ) {
-        ServiceArea.quickPicks.forEach { pick ->
+        // Organizations pick municipalities; Personal / Business can also pick the whole province.
+        val picks = if (accountType == social.ahtara.authentication.domain.AccountType.ORGANIZATION)
+            ServiceArea.municipalities else ServiceArea.quickPicks
+        picks.forEach { pick ->
             FilterChip(
                 selected = places.contains(pick),
                 onClick = { onQuickPick(pick) },
@@ -86,6 +92,14 @@ fun ColumnScope.LocationPanelContent(
                 ),
             )
         }
+    }
+
+    if (accountType != social.ahtara.authentication.domain.AccountType.PERSONAL) {
+        social.ahtara.authentication.ui.LocationAddressField(
+            value = address,
+            onValueChange = onAddressChange,
+            placeholder = stringResource(R.string.address_hint),
+        )
     }
 
     if (results.isNotEmpty()) {
@@ -102,7 +116,13 @@ fun ColumnScope.LocationPanelContent(
     if (places.isEmpty()) {
         if (results.isEmpty()) {
             Text(
-                text = stringResource(R.string.pick_hint),
+                text = stringResource(
+                    when (accountType) {
+                        social.ahtara.authentication.domain.AccountType.ORGANIZATION -> R.string.pick_hint_municipalities
+                        social.ahtara.authentication.domain.AccountType.BUSINESS -> R.string.pick_hint_single
+                        else -> R.string.pick_hint
+                    },
+                ),
                 color = Subtle,
                 fontSize = 13.sp,
                 modifier = Modifier.padding(horizontal = 4.dp),
@@ -155,14 +175,21 @@ private fun PlaceCategory.chipLabel(): Int = when (this) {
 
 @Composable
 fun ColumnScope.LocationPanelFooter(
-    placeCount: Int,
+    canConfirm: Boolean,
     onConfirm: () -> Unit,
+    onSkip: (() -> Unit)? = null,
 ) {
     StepPrimaryButton(
         text = stringResource(R.string.confirm_location),
         onClick = onConfirm,
-        enabled = placeCount > 0,
+        enabled = canConfirm,
     )
+    if (onSkip != null) {
+        androidx.compose.material3.TextButton(
+            onClick = onSkip,
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(stringResource(R.string.skip_location)) }
+    }
 }
 
 @Composable

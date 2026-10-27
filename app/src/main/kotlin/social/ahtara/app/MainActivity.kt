@@ -52,7 +52,8 @@ class MainActivity : ComponentActivity() {
     private val locationLauncher = registerForActivityResult(PickLocationContract(preHome = true)) { picked ->
         locationInProgress = false
         if (picked != null) {
-            Authentication.saveDevicePlaces(this, picked)
+            if (picked.isNotEmpty()) Authentication.saveDevicePlaces(this, picked)
+            Authentication.markLocationStepDone(this) // Personal "Skip" returns an empty list
             locationChosen = true
             openFeedIfReady()
         } else if (Authentication.needsAccountTypeStep(this) || AccountType.available.size > 1) {
