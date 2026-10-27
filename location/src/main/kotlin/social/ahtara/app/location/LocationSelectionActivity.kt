@@ -34,6 +34,7 @@ class LocationSelectionActivity : ComponentActivity() {
             AuthenticationTheme(accountType) {
                 MapRoute(
                     initialPlaces = initial,
+                    preHome = intent.getBooleanExtra(EXTRA_PRE_HOME, false),
                     onBack = { finish() },
                     onConfirm = { places ->
                         setResult(
@@ -51,6 +52,7 @@ class LocationSelectionActivity : ComponentActivity() {
         const val EXTRA_ACCOUNT_TYPE = "account_type"
         const val EXTRA_INITIAL_PLACES = "initial_places"
         const val EXTRA_RESULT_PLACES = "result_places"
+        const val EXTRA_PRE_HOME = "pre_home"
     }
 }
 
@@ -61,12 +63,15 @@ class LocationSelectionActivity : ComponentActivity() {
 
 class PickLocationContract(
     private val accountType: AccountType = AccountType.PERSONAL,
+    /** True for the first-launch step (Splash > Onboarding > Terms > Account type > Map/Location > Home). */
+    private val preHome: Boolean = false,
 ) : ActivityResultContract<List<PlaceSelection>, List<PlaceSelection>?>() {
 
     override fun createIntent(context: Context, input: List<PlaceSelection>): Intent =
         Intent(context, LocationSelectionActivity::class.java)
             .putExtra(LocationSelectionActivity.EXTRA_ACCOUNT_TYPE, accountType.name)
             .putExtra(LocationSelectionActivity.EXTRA_INITIAL_PLACES, input.toJsonString())
+            .putExtra(LocationSelectionActivity.EXTRA_PRE_HOME, preHome)
 
     override fun parseResult(resultCode: Int, intent: Intent?): List<PlaceSelection>? {
         if (resultCode != Activity.RESULT_OK) return null

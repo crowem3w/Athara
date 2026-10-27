@@ -16,7 +16,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import social.ahtara.app.location.PickLocationContract
 import social.ahtara.app.ui.theme.Theme
+import social.ahtara.authentication.domain.AccountType
 import social.ahtara.authentication.Authentication
 import social.ahtara.authentication.ui.AccountTypeStep
 import social.ahtara.onboarding.Onboarding
@@ -28,6 +30,7 @@ import social.ahtara.onboarding.ui.TermsDialog
  *
  *   Splash -> Onboarding (first launch only) -> Terms & Conditions (modal, until accepted)
  *   -> Account type (one step of the sign-up progress bar; skipped while only Personal is offered)
+ *   -> Map/Location (first launch only; Guimaras and its municipalities; saved on the device)
  *   -> Home.
  *   Login / Registration is NOT forced: a small "Account" dialog opens from Home only when a
  *   guest taps Create / like / comment / share; the profile button opens the Account settings screen.
@@ -37,6 +40,8 @@ class MainActivity : ComponentActivity() {
     private var onboardingDone by mutableStateOf(false)
     private var termsAccepted by mutableStateOf(false)
     private var accountTypeChosen by mutableStateOf(false)
+    private var locationChosen by mutableStateOf(false)
+    private var locationInProgress = false
 
     private val feedLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         // Home was closed (back press): leave the app.
@@ -44,10 +49,24 @@ class MainActivity : ComponentActivity() {
         finish()
     }
 
+    private val locationLauncher = registerForActivityResult(PickLocationContract(preHome = true)) { picked ->
+        locationInProgress = false
+        if (picked != null) {
+            Authentication.saveDevicePlaces(this, picked)
+            locationChosen = true
+            openFeedIfReady()
+        } else if (Authentication.needsAccountTypeStep(this) || AccountType.available.size > 1) {
+            accountTypeChosen = false // back arrow: return to the Account type step
+        } else {
+            finish()
+        }
+    }
+
     private val onboardingLauncher = registerForActivityResult(OnboardingContract()) { completed ->
         if (completed) {
             onboardingDone = true
-            openFeedIfReady() // no-op until the Terms are accepted and the account type chosen
+            openLocationIfReady()
+            openFeedIfReady() // no-op until the Terms, account type and location are done
         } else {
             finish()
         }
@@ -64,11 +83,14 @@ class MainActivity : ComponentActivity() {
         onboardingDone = Onboarding.isCompleted(this)
         termsAccepted = Onboarding.isTermsAccepted(this)
         accountTypeChosen = !Authentication.needsAccountTypeStep(this)
+        locationChosen = !Authentication.needsLocationStep(this)
+        locationInProgress = savedInstanceState?.getBoolean(STATE_LOCATION_IN_PROGRESS) ?: false
 
         // 1. Onboarding, only on the very first launch.
         if (savedInstanceState == null && !onboardingDone) {
             onboardingLauncher.launch(Unit)
         } else {
+            openLocationIfReady()
             openFeedIfReady()
         }
 
@@ -81,6 +103,7 @@ class MainActivity : ComponentActivity() {
                         onSelected = { type ->
                             Authentication.selectAccountType(this@MainActivity, type)
                             accountTypeChosen = true
+                            openLocationIfReady()
                             openFeedIfReady()
                         },
                         onBack = { finish() },
@@ -92,7 +115,8 @@ class MainActivity : ComponentActivity() {
                         onAccept = {
                             Onboarding.acceptTerms(this@MainActivity)
                             termsAccepted = true
-                            openFeedIfReady() // no-op until the account type is chosen
+                            openLocationIfReady() // no-op until the account type is chosen
+                            openFeedIfReady()
                         },
                         onDecline = { finish() },
                     )
@@ -104,16 +128,26 @@ class MainActivity : ComponentActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean(STATE_FEED_IN_PROGRESS, feedInProgress)
+        outState.putBoolean(STATE_LOCATION_IN_PROGRESS, locationInProgress)
     }
 
-    /** 4. Home, once onboarding, the Terms and the account type are done. Works signed out (guest) or signed in. */
+    /** 4. Map/Location (Guimaras), once the account type is chosen; first launch only. */
+    private fun openLocationIfReady() {
+        if (locationInProgress || feedInProgress || locationChosen) return
+        if (!onboardingDone || !termsAccepted || !accountTypeChosen) return
+        locationInProgress = true
+        locationLauncher.launch(emptyList())
+    }
+
+    /** 5. Home, once onboarding, the Terms, the account type and the location are done. Works signed out (guest) or signed in. */
     private fun openFeedIfReady() {
-        if (feedInProgress || !onboardingDone || !termsAccepted || !accountTypeChosen) return
+        if (feedInProgress || !onboardingDone || !termsAccepted || !accountTypeChosen || !locationChosen) return
         feedInProgress = true
         feedLauncher.launch(SocialFeedActivity.intent(this))
     }
 
     private companion object {
         const val STATE_FEED_IN_PROGRESS = "feedInProgress"
+        const val STATE_LOCATION_IN_PROGRESS = "locationInProgress"
     }
 }

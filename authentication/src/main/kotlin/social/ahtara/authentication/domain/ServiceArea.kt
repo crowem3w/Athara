@@ -22,6 +22,21 @@ object ServiceArea {
     /** Default place for guests and for anyone with no saved Guimaras place. */
     val default = PlaceSelection(NAME, CENTER_LAT, CENTER_LNG)
 
+    /**
+     * The five municipalities of Guimaras (approximate town-centre coordinates).
+     * Shown as quick picks on the Map/Location step, together with the whole province.
+     */
+    val municipalities: List<PlaceSelection> = listOf(
+        PlaceSelection("Buenavista, Guimaras", 10.6903, 122.6275),
+        PlaceSelection("Jordan, Guimaras", 10.6558, 122.5997),
+        PlaceSelection("Nueva Valencia, Guimaras", 10.5333, 122.5833),
+        PlaceSelection("San Lorenzo, Guimaras", 10.5981, 122.7172),
+        PlaceSelection("Sibunag, Guimaras", 10.5139, 122.5392),
+    )
+
+    /** Whole province first, then each municipality. */
+    val quickPicks: List<PlaceSelection> = listOf(default) + municipalities
+
     fun contains(latitude: Double, longitude: Double): Boolean =
         latitude in SOUTH..NORTH && longitude in WEST..EAST
 

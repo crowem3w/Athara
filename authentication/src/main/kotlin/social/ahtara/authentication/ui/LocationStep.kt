@@ -36,6 +36,7 @@ import social.ahtara.authentication.R
 @Composable
 fun LocationStepScreen(
     onBack: () -> Unit,
+    preHome: Boolean = false,
     map: @Composable BoxScope.(bottomInset: Dp) -> Unit,
     footer: @Composable ColumnScope.() -> Unit,
     content: @Composable ColumnScope.() -> Unit,
@@ -46,7 +47,7 @@ fun LocationStepScreen(
             Box(modifier = Modifier.fillMaxSize()) { map(panelHeight) }
 
             SignUpStepHeader(
-                currentStep = STEP_LOCATION,
+                currentStep = if (preHome) STEP_LOCATION else STEP_SETUP,
                 onBack = onBack,
                 modifier = Modifier
                     .align(Alignment.TopCenter)

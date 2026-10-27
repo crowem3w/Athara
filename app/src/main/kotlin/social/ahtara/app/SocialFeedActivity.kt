@@ -113,7 +113,7 @@ class SocialFeedActivity : ComponentActivity() {
                 val guimarasPlaces = remember(current?.places) {
                     current?.places.orEmpty().filter { ServiceArea.contains(it) }
                 }
-                val basePlaces = guimarasPlaces.ifEmpty { GuestPlaces.default }
+                val basePlaces = guimarasPlaces.ifEmpty { GuestPlaces.forDevice(this@SocialFeedActivity) }
                 val activePlaces = remember(basePlaces, activeKeys) {
                     if (activeKeys.isEmpty()) basePlaces
                     else basePlaces.filter { it.feedKey() in activeKeys }.ifEmpty { basePlaces }
@@ -161,7 +161,7 @@ class SocialFeedActivity : ComponentActivity() {
                     if (showPlaces) {
                         BackHandler { showPlaces = false }
                         PlacesScreen(
-                            places = if (current != null) guimarasPlaces else GuestPlaces.default,
+                            places = if (current != null) guimarasPlaces else GuestPlaces.forDevice(this@SocialFeedActivity),
                             activeKeys = activeKeys,
                             categories = categories,
                             onTogglePlace = togglePlace,

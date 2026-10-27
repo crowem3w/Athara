@@ -32,6 +32,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import social.ahtara.authentication.domain.PlaceSelection
+import social.ahtara.authentication.domain.ServiceArea
 import social.ahtara.authentication.ui.LocationStepScreen
 import social.ahtara.app.location.MapViewModel
 import social.ahtara.app.location.R
@@ -52,6 +53,7 @@ import org.maplibre.android.maps.MapLibreMap
 @Composable
 fun MapRoute(
     initialPlaces: List<PlaceSelection>,
+    preHome: Boolean = false,
     onBack: () -> Unit,
     onConfirm: (List<PlaceSelection>) -> Unit,
     viewModel: MapViewModel = viewModel(),
@@ -138,8 +140,21 @@ fun MapRoute(
         }
     }
 
+    // No saved place yet: open on the whole island of Guimaras.
+    LaunchedEffect(map) {
+        val m = map ?: return@LaunchedEffect
+        if (initialPlaces.isEmpty()) {
+            m.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(ServiceArea.CENTER_LAT, ServiceArea.CENTER_LNG), 9.5,
+                ),
+            )
+        }
+    }
+
     LocationStepScreen(
         onBack = onBack,
+        preHome = preHome,
         map = { bottomInset ->
             
             val bottomPx = with(LocalDensity.current) { bottomInset.roundToPx() }
@@ -184,6 +199,7 @@ fun MapRoute(
             onToggleCategory = viewModel::onToggleCategory,
             onResultClick = viewModel::onResultSelected,
             onRemovePlace = viewModel::onRemovePlace,
+            onQuickPick = viewModel::onQuickPick,
         )
     }
 }

@@ -90,6 +90,12 @@ class MapViewModel : ViewModel() {
     }
 
     
+    fun onQuickPick(place: PlaceSelection) {
+        _state.update { it.copy(places = it.places.addedOnce(place)) }
+        val zoom = if (place == social.ahtara.authentication.domain.ServiceArea.default) 9.5 else 12.0
+        _events.trySend(UiEvent.FlyTo(LatLng(place.latitude, place.longitude), zoom))
+    }
+
     fun onRemovePlace(place: PlaceSelection) {
         _state.update { it.copy(places = it.places - place) }
     }

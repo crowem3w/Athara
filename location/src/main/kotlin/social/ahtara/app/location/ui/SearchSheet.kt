@@ -2,6 +2,8 @@ package social.ahtara.app.location.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import social.ahtara.authentication.domain.PlaceSelection
+import social.ahtara.authentication.domain.ServiceArea
 import social.ahtara.authentication.ui.LocationSearchField
 import social.ahtara.authentication.ui.StepPrimaryButton
 import social.ahtara.app.location.R
@@ -51,6 +54,7 @@ fun ColumnScope.LocationPanelContent(
     onToggleCategory: (PlaceCategory) -> Unit,
     onResultClick: (SearchResult) -> Unit,
     onRemovePlace: (PlaceSelection) -> Unit,
+    onQuickPick: (PlaceSelection) -> Unit = {},
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -65,6 +69,24 @@ fun ColumnScope.LocationPanelContent(
     )
 
     CategoryChips(selected = categories, onToggle = onToggleCategory)
+
+    // Guimaras and its five municipalities, one tap each.
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
+    ) {
+        ServiceArea.quickPicks.forEach { pick ->
+            FilterChip(
+                selected = places.contains(pick),
+                onClick = { onQuickPick(pick) },
+                label = { Text(pick.name.substringBefore(",")) },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.14f),
+                    selectedLabelColor = MaterialTheme.colorScheme.primary,
+                ),
+            )
+        }
+    }
 
     if (results.isNotEmpty()) {
         Column {

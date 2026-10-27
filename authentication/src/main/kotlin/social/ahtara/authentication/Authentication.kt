@@ -10,6 +10,9 @@ import social.ahtara.authentication.domain.AuthRepository
 import social.ahtara.authentication.domain.NoVerification
 import social.ahtara.authentication.domain.PersonalSetup
 import social.ahtara.authentication.domain.PlaceSelection
+import social.ahtara.authentication.domain.ServiceArea
+import social.ahtara.authentication.domain.placesFromJson
+import social.ahtara.authentication.domain.toJsonString
 import social.ahtara.authentication.domain.PhoneVerifier
 import social.ahtara.authentication.ui.AuthenticationActivity
 
@@ -85,6 +88,22 @@ object Authentication {
      */
     fun needsAccountTypeStep(context: Context): Boolean =
         AccountType.available.size > 1 && storedAccountType(context) == null
+
+    private const val KEY_DEVICE_PLACES = "device_places"
+
+    /** Places picked on the pre-Home Map/Location step, stored on the device (works signed out). */
+    fun devicePlaces(context: Context): List<PlaceSelection> =
+        placesFromJson(
+            context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE).getString(KEY_DEVICE_PLACES, null),
+        ).filter { ServiceArea.contains(it) }
+
+    /** True until a Guimaras place has been saved: the Map/Location step shows once, on first launch. */
+    fun needsLocationStep(context: Context): Boolean = devicePlaces(context).isEmpty()
+
+    fun saveDevicePlaces(context: Context, places: List<PlaceSelection>) {
+        context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE)
+            .edit().putString(KEY_DEVICE_PLACES, places.toJsonString()).apply()
+    }
 
     fun selectAccountType(context: Context, type: AccountType) {
         context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE)

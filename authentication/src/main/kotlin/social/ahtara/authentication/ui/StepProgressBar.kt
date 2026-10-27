@@ -32,13 +32,13 @@ internal const val SIGN_UP_TOTAL_STEPS = 5
 internal const val STEP_ACCOUNT_TYPE = 2
 
 
-internal const val STEP_REGISTRATION = 3
+internal const val STEP_REGISTRATION = 4
 
 
-internal const val STEP_SETUP = 4
+internal const val STEP_SETUP = 5
 
 
-internal const val STEP_LOCATION = 5
+internal const val STEP_LOCATION = 3
 
 private val BarWidth = 28.dp
 private val BarHeight = 6.dp
