@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <application>
+        <!-- Opened from the sign-up flow (PersonalRegistrationActivity) and from the feed's "Add location" chip (MainActivity); never exported. -->
+        <activity
+            android:name=".LocationSelectionActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Location"
+            android:windowSoftInputMode="adjustResize" />
+    </application>
+
+</manifest>

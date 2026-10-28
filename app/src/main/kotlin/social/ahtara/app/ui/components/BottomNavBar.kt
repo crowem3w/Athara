@@ -26,9 +26,9 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.dp
-import social.ahtara.app.ui.theme.Background
-import social.ahtara.app.ui.theme.NavInactive
-import social.ahtara.app.ui.theme.Teal
+import social.ahtara.core.ui.theme.Background
+import social.ahtara.core.ui.theme.NavInactive
+import social.ahtara.core.ui.theme.Teal
 
 
 private val FabSize = 64.dp

@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "social.ahtara.app.core"
+    namespace = "social.ahtara.core"
     compileSdk = 37
 
     defaultConfig {

@@ -16,9 +16,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import social.ahtara.app.ui.theme.SurfaceMuted
-import social.ahtara.app.ui.theme.Teal
-import social.ahtara.app.ui.theme.TextPrimary
+import social.ahtara.core.ui.theme.SurfaceMuted
+import social.ahtara.core.ui.theme.Teal
+import social.ahtara.core.ui.theme.TextPrimary
 import social.ahtara.travel.model.PlaceCategory
 
 

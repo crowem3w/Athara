@@ -16,8 +16,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import social.ahtara.app.location.PickLocationContract
-import social.ahtara.app.ui.theme.Theme
+import social.ahtara.location.PickLocationContract
+import social.ahtara.core.ui.theme.Theme
 import social.ahtara.authentication.domain.AccountType
 import social.ahtara.authentication.Authentication
 import social.ahtara.authentication.ui.AccountTypeStep
