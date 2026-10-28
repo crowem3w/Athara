@@ -16,16 +16,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -36,20 +30,11 @@ import social.ahtara.authentication.domain.AccountType
 import social.ahtara.authentication.domain.AuthUser
 import social.ahtara.authentication.ui.AccountTypeBadge
 import social.ahtara.authentication.ui.ProfileHeader
-import social.ahtara.business.BusinessDashboard
-import social.ahtara.organization.OrganizationDashboard
 import social.ahtara.authentication.R as AuthR
-
-private const val TabProfile = 0
-private const val TabDashboard = 1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AccountScreen(user: AuthUser, onBack: () -> Unit, onSignOut: () -> Unit) {
-    
-    val hasDashboard = user.accountType != AccountType.PERSONAL
-    var tab by rememberSaveable { mutableIntStateOf(TabProfile) }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -66,27 +51,7 @@ internal fun AccountScreen(user: AuthUser, onBack: () -> Unit, onSignOut: () -> 
         },
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
-            if (hasDashboard) {
-                PrimaryTabRow(selectedTabIndex = tab) {
-                    Tab(
-                        selected = tab == TabProfile,
-                        onClick = { tab = TabProfile },
-                        text = { Text(stringResource(R.string.account_tab_profile)) },
-                    )
-                    Tab(
-                        selected = tab == TabDashboard,
-                        onClick = { tab = TabDashboard },
-                        text = { Text(stringResource(R.string.account_tab_dashboard)) },
-                    )
-                }
-            }
-            if (!hasDashboard || tab == TabProfile) {
-                ProfileContent(user = user, onSignOut = onSignOut)
-            } else when (user.accountType) {
-                AccountType.BUSINESS -> BusinessDashboard(ownerId = user.id)
-                AccountType.ORGANIZATION -> OrganizationDashboard(ownerId = user.id)
-                AccountType.PERSONAL -> Unit
-            }
+            ProfileContent(user = user, onSignOut = onSignOut)
         }
     }
 }

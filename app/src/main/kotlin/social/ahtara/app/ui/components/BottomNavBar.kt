@@ -61,7 +61,7 @@ private val DipHalfWidth = 66.dp
 @Composable
 fun BottomNavBar(
     modifier: Modifier = Modifier,
-    onReelsClick: () -> Unit = {},
+    onTransportClick: () -> Unit = {},
     onCreateClick: () -> Unit = {},
     onPlacesClick: () -> Unit = {},
     
@@ -87,7 +87,7 @@ fun BottomNavBar(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 HomeTab(selected = true, modifier = Modifier.weight(1f))
-                ReelsTab(selected = false, modifier = Modifier.weight(1f), onClick = onReelsClick)
+                TransportTab(selected = false, modifier = Modifier.weight(1f), onClick = onTransportClick)
                 
                 Spacer(Modifier.width(FabSize + 8.dp))
                 MessageTab(selected = false, modifier = Modifier.weight(1f))

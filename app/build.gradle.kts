@@ -54,7 +54,6 @@ dependencies {
     implementation(project(":organization"))
     implementation(project(":account"))
     implementation(project(":core"))
-    implementation(project(":reels"))
     implementation(project(":socialfeed"))
     implementation(project(":travel")) 
     implementation(libs.androidx.core.ktx)

@@ -63,7 +63,6 @@ fun HomeScreen(
     userInitial: String = "M",
     onPlacesClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
-    onReelsClick: () -> Unit = {},
     onCreateClick: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
@@ -143,7 +142,6 @@ fun HomeScreen(
                     .graphicsLayer { translationY = bottomBarHeight * headerState.fraction },
             ) {
                 BottomNavBar(
-                    onReelsClick = onReelsClick,
                     onCreateClick = onCreateClick,
                     onPlacesClick = onPlacesClick,
                     

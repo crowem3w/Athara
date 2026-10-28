@@ -37,8 +37,6 @@ kotlin {
 
 dependencies {
     implementation(project(":authentication"))
-    implementation(project(":business"))
-    implementation(project(":organization"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

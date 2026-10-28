@@ -3,9 +3,6 @@
     <string name="account_title">Account</string>
     <string name="account_back">Back</string>
 
-    <string name="account_tab_profile">Profile</string>
-    <string name="account_tab_dashboard">Dashboard</string>
-
     <string name="account_section_profile">Profile</string>
     <string name="account_login">Login: %1$s</string>
     <string name="account_username">Username: @%1$s</string>

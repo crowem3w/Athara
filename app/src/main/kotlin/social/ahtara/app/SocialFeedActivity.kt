@@ -27,7 +27,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import social.ahtara.account.AccountActivity
 import social.ahtara.app.location.PickLocationContract
-import social.ahtara.app.reels.ReelsActivity
+import social.ahtara.app.ui.screens.BlankHomeScreen
 import social.ahtara.app.ui.screens.HomeScreen
 import social.ahtara.app.ui.screens.PlacesScreen
 import social.ahtara.app.ui.screens.feedKey
@@ -135,7 +135,14 @@ class SocialFeedActivity : ComponentActivity() {
                 }
                 CompositionLocalProvider(LocalRequireAccount provides requireAccount) {
                 Box(Modifier.fillMaxSize()) {
-                    HomeScreen(
+                    // Business and Organization accounts: blank home (top bar + bottom nav) for now.
+                    // Personal accounts and guests get the social feed.
+                    if (current != null && current.accountType != AccountType.PERSONAL) {
+                        BlankHomeScreen(
+                            userInitial = current.displayName.trim().firstOrNull()?.uppercase() ?: "G",
+                            onProfileClick = { startActivity(AccountActivity.intent(this@SocialFeedActivity)) },
+                        )
+                    } else HomeScreen(
                         places = activePlaces,
                         categories = categories,
                         onToggleCategory = toggleCategory,
@@ -146,10 +153,6 @@ class SocialFeedActivity : ComponentActivity() {
                         onProfileClick = { startActivity(AccountActivity.intent(this@SocialFeedActivity)) },
                         // Only Create needs an account: guests get the "Account" dialog.
                         onCreateClick = { requireAccount() },
-                        // Open to everyone.
-                        onReelsClick = {
-                            startActivity(Intent(this@SocialFeedActivity, ReelsActivity::class.java))
-                        },
                     )
                     if (showAccountDialog) {
                         AccountDialog(
@@ -158,7 +161,7 @@ class SocialFeedActivity : ComponentActivity() {
                             onDismiss = { showAccountDialog = false },
                         )
                     }
-                    if (showPlaces) {
+                    if (showPlaces && (current == null || current.accountType == AccountType.PERSONAL)) {
                         BackHandler { showPlaces = false }
                         PlacesScreen(
                             places = if (current != null) guimarasPlaces else GuestPlaces.forDevice(this@SocialFeedActivity),
