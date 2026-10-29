@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="business_setup_back_title">Go back to sign-up?</string>
+    <string name="business_setup_back_message">Your new account will be deleted. You can sign up again any time.</string>
+    <string name="business_setup_back_confirm">Delete and go back</string>
+    <string name="business_setup_back_stay">Stay</string>
+</resources>

@@ -5,12 +5,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import social.ahtara.authentication.data.business.BusinessDatabase
 import social.ahtara.authentication.data.personal.PersonalDatabase
 import social.ahtara.authentication.domain.AccountType
 
 /**
- * Routes an [AccountType] to its own Room database. Only PERSONAL has a database for now; BUSINESS
- * and ORGANIZATION are stubs (see the TODOs below) and each will live in its own database file.
+ * Routes an [AccountType] to its own Room database. PERSONAL and BUSINESS each live in their own database
+ * file; ORGANIZATION is still a stub (see the TODO below).
  *
  * - [of] is the only way to reach one account type's data. Everything that happens after a user
  *   is located (profile updates, password changes, deletion) goes through it.
@@ -21,7 +22,7 @@ import social.ahtara.authentication.domain.AccountType
 internal class AccountStores(private val context: Context) {
 
     private val personal by lazy { PersonalDatabase.create(context).userDao() }
-    // TODO(business): add data/business/BusinessDatabase.kt and expose its DAO here.
+    private val business by lazy { BusinessDatabase.create(context).userDao() }
     // TODO(organization): add data/organization/OrganizationDatabase.kt and expose its DAO here.
 
     private val ids = UserIdGenerator(context)
@@ -48,7 +49,7 @@ internal class AccountStores(private val context: Context) {
 
     private fun daoOf(type: AccountType): UserDao = when (type) {
         AccountType.PERSONAL -> personal
-        AccountType.BUSINESS -> TODO("Business database not implemented yet")
+        AccountType.BUSINESS -> business
         AccountType.ORGANIZATION -> TODO("Organization database not implemented yet")
     }
 

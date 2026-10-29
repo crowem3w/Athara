@@ -16,12 +16,13 @@ dependencyResolutionManagement {
 rootProject.name = "ahtara"
 
 // Gradle paths stay flat (":location"); only the folders are grouped.
-// Everything for the Personal account type lives under personal/.
-// business/ and organization/ are intentionally empty for now. When you add them, register
-// their modules here (e.g. ":business" to "business") and in app/build.gradle.kts.
+// Everything for the Personal account type lives under personal/, Business under business/.
+// organization/ is intentionally empty for now: when you add it, register its module here
+// (":organization" to "organization/registration") and in app/build.gradle.kts.
 val modules = mapOf(
     ":app" to "app",
     ":personal" to "personal/registration",
+    ":business" to "business/registration",
     ":authentication" to "personal/features/authentication",
     ":account" to "personal/features/account",
     ":location" to "personal/features/location",

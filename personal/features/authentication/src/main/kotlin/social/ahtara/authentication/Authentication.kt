@@ -9,6 +9,7 @@ import social.ahtara.authentication.data.LocalAuthRepository
 import social.ahtara.authentication.domain.AccountType
 import social.ahtara.authentication.domain.AuthRepository
 import social.ahtara.authentication.domain.NoVerification
+import social.ahtara.authentication.domain.BusinessSetup
 import social.ahtara.authentication.domain.PersonalSetup
 import social.ahtara.authentication.domain.PlaceSelection
 import social.ahtara.authentication.domain.PhoneVerifier
@@ -56,6 +57,9 @@ object Authentication {
     
     suspend fun savePersonalSetup(context: Context, setup: PersonalSetup): Boolean =
         repository(context).savePersonalSetup(setup)
+
+    suspend fun saveBusinessSetup(context: Context, setup: BusinessSetup): Boolean =
+        repository(context).saveBusinessSetup(setup)
 
     
     suspend fun savePlaces(context: Context, places: List<PlaceSelection>): Boolean =

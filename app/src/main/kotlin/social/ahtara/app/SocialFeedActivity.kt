@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import social.ahtara.account.AccountActivity
 import social.ahtara.location.PickLocationContract
 import social.ahtara.app.ui.screens.BlankHomeScreen
+import social.ahtara.app.ui.screens.BusinessHomeScreen
 import social.ahtara.app.ui.screens.HomeScreen
 import social.ahtara.app.ui.screens.PlacesScreen
 import social.ahtara.app.ui.screens.feedKey
@@ -135,9 +136,14 @@ class SocialFeedActivity : ComponentActivity() {
                 }
                 CompositionLocalProvider(LocalRequireAccount provides requireAccount) {
                 Box(Modifier.fillMaxSize()) {
-                    // Business and Organization accounts: blank home (top bar + bottom nav) for now.
+                    // Business: Personal's home without the feed. Organization: blank home for now.
                     // Personal accounts and guests get the social feed.
-                    if (current != null && current.accountType != AccountType.PERSONAL) {
+                    if (current != null && current.accountType == AccountType.BUSINESS) {
+                        BusinessHomeScreen(
+                            userInitial = current.displayName.trim().firstOrNull()?.uppercase() ?: "B",
+                            onProfileClick = { startActivity(AccountActivity.intent(this@SocialFeedActivity)) },
+                        )
+                    } else if (current != null && current.accountType != AccountType.PERSONAL) {
                         BlankHomeScreen(
                             userInitial = current.displayName.trim().firstOrNull()?.uppercase() ?: "G",
                             onProfileClick = { startActivity(AccountActivity.intent(this@SocialFeedActivity)) },

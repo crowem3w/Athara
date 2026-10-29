@@ -49,7 +49,8 @@ dependencies {
     implementation(project(":authentication"))
     implementation(project(":personal"))
     implementation(project(":location"))
-    // TODO: add implementation(project(":business")) / (":organization") once those modules exist.
+    implementation(project(":business"))
+    // TODO: add implementation(project(":organization")) once that module exists.
     implementation(project(":account"))
     implementation(project(":socialfeed"))
     implementation(project(":travel"))

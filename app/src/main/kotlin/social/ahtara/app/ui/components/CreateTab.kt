@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,9 @@ fun CreateTab(
     onClick: () -> Unit = {},
     
     visibility: () -> Float = { 1f },
+    // The centre button is "Create" (+) by default; Business uses it as a QR scanner.
+    icon: ImageVector = Icons.Filled.Add,
+    contentDescription: String = "Create",
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
@@ -66,8 +70,8 @@ fun CreateTab(
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            imageVector = Icons.Filled.Add,
-            contentDescription = "Create",
+            imageVector = icon,
+            contentDescription = contentDescription,
             tint = Color.White,
             modifier = Modifier.size(28.dp),
         )

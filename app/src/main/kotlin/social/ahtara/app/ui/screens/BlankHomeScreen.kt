@@ -13,8 +13,8 @@ import social.ahtara.app.ui.components.BottomNavBar
 import social.ahtara.app.ui.components.TopBar
 
 /**
- * Placeholder home for Business and Organization accounts: the top bar and bottom nav
- * with an empty body. The social feed is only shown to Personal accounts and guests.
+ * Placeholder home for Organization accounts (Business has [BusinessHomeScreen]): the top bar and bottom nav
+ * with an empty body. 
  */
 @Composable
 fun BlankHomeScreen(

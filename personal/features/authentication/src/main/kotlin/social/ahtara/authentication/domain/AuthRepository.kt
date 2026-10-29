@@ -50,6 +50,9 @@ interface AuthRepository {
     
     suspend fun savePersonalSetup(setup: PersonalSetup): Boolean = false
 
+    /** Same as [savePersonalSetup] for BUSINESS accounts; may diverge (business-only fields) later. */
+    suspend fun saveBusinessSetup(setup: BusinessSetup): Boolean = false
+
     
 
 

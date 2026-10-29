@@ -12,16 +12,21 @@ personal/               Everything for the Personal account type
   features/
     authentication/     Auth domain, sessions, per-account-type data layer, shared auth UI
     account/  location/  socialfeed/  travel/
-business/               Empty: to be implemented
+business/
+  registration/         Business sign-up + setup flow (Gradle path :business), copied from Personal for now
 organization/           Empty: to be implemented
 ```
 
 Gradle paths are flat (`:personal`, `:location`, ...); `settings.gradle.kts` maps them to folders.
 Package roots are `social.ahtara.<module>` (e.g. `social.ahtara.location`, `social.ahtara.app.ui`).
 
-**Business / Organization are stubs.** `AccountType` keeps the `BUSINESS` and `ORGANIZATION` entries
-(strings, colors, icons, illustrations), but `AccountType.available` only offers `PERSONAL`,
-`AccountStores.daoOf` throws `TODO` for them, and no registration module or database exists yet.
+**Business** has its own module (`business/registration`) and database (`BusinessDatabase`); its setup UI
+(`BusinessSetupFields`), data (`BusinessSetup`, `Authentication.saveBusinessSetup`) and home (`BusinessHomeScreen`) are based on Personal's.
+The Business home drops the travel-feed parts (feed, destination search, category filters, Transport and
+Places tabs), has placeholder `BusinessTabs` to be replaced, and swaps the Create button for a QR scanner
+button (`BottomNavBar(centerIcon = ...)`); the scan action itself is not implemented yet. **Organization is still a stub**: `AccountType` keeps the
+`ORGANIZATION` entry, but `available` does not offer it, `AccountStores.daoOf` throws `TODO` for it, and
+no registration module or database exists yet.
 
 The account type picker (`AccountTypeScreen`, `AccountTypeShape`, `AccountTypeBadge`) stays in
 `:authentication`: the sign-up flow and `:account` also use it, and they cannot depend on `:app`.
@@ -42,7 +47,7 @@ cannot touch the others:
 | BUSINESS     | `BusinessDatabase`     | `authentication_business.db`       |
 | ORGANIZATION | `OrganizationDatabase` | `authentication_organization.db`   |
 
-Code: `personal/features/authentication/.../data/{personal}/` (business / organization: not yet created).
+Code: `personal/features/authentication/.../data/{personal,business}/` (organization: not yet created).
 
 - `AccountStores` is the single router from `AccountType` to its DAO (`of(type)`). Nothing else
   picks a database, and there is no "all DAOs" accessor.
@@ -70,9 +75,9 @@ Code: `personal/features/authentication/.../data/{personal}/` (business / organi
 
 ## Adding an account type
 
-1. Enum entry already exists for BUSINESS / ORGANIZATION; add it to `AccountType.available`.
-2. Add `<Type>Database` in `data/<type>/` and replace the `TODO` branch in `AccountStores.daoOf`.
-3. Create the `business/` or `organization/` module with its registration activity (class name must
+1. Enum entry already exists for ORGANIZATION; add it to `AccountType.available`.
+2. Add `<Type>Database` in `data/<type>/` (copy `BusinessDatabase`) and replace the `TODO` branch in `AccountStores.daoOf`.
+3. Create the `organization/` module (copy `business/registration`) with its registration activity (class name must
    match `AccountType.activityClassName`) and register it in `settings.gradle.kts` and
    `app/build.gradle.kts`. Also revisit `BlankHomeScreen` in `app/`, the placeholder home these types get.
 

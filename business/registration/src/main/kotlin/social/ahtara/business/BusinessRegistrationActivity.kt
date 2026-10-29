@@ -1,0 +1,106 @@
+package social.ahtara.business
+
+import android.app.Activity
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import social.ahtara.authentication.Authentication
+import social.ahtara.authentication.domain.AccountType
+import social.ahtara.authentication.domain.BusinessSetup
+import social.ahtara.authentication.ui.AccountSignUp
+import social.ahtara.authentication.ui.theme.AuthenticationTheme
+
+
+
+
+
+
+
+
+class BusinessRegistrationActivity : ComponentActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        val user = Authentication.repository(this).currentUser.value
+        // A signed-in user with setup still pending (app closed mid-setup) resumes at the setup screen.
+        val setupPendingAtStart = user != null && Authentication.isSetupPending(this)
+        setContent {
+            var setupPending by rememberSaveable { mutableStateOf(setupPendingAtStart) }
+            var setupStep by rememberSaveable { mutableStateOf(false) }
+            AuthenticationTheme(AccountType.BUSINESS) {
+                when {
+                    // Resumed setup: back discards the half-created account and leaves.
+                    user != null && setupPending -> SetupScreen(onDiscarded = { finish() })
+                    // Already signed in and set up: nothing to do here.
+                    user != null -> LaunchedEffect(Unit) { finishWithOk() }
+                    // Just signed up: back discards the new account and returns to the form.
+                    setupStep -> SetupScreen(onDiscarded = { setupStep = false })
+                    else -> AccountSignUp(
+                        accountType = AccountType.BUSINESS,
+                        onSignedUp = { setupStep = true },
+                        onSignIn = {
+                            setResult(Activity.RESULT_FIRST_USER)
+                            finish()
+                        },
+                        onBack = { finish() },
+                    )
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun SetupScreen(onDiscarded: () -> Unit) {
+        BusinessSetupWithLocation(
+            onSave = { setup ->
+                lifecycleScope.launch {
+                    Authentication.saveBusinessSetup(this@BusinessRegistrationActivity, setup)
+                    Authentication.completeSetup(this@BusinessRegistrationActivity)
+                    finishWithOk()
+                }
+            },
+            onBack = {
+                lifecycleScope.launch {
+                    Authentication.discardNewAccount(this@BusinessRegistrationActivity)
+                    onDiscarded()
+                }
+            },
+        )
+    }
+
+    private fun finishWithOk() {
+        setResult(Activity.RESULT_OK)
+        finish()
+    }
+}
+
+@Composable
+private fun BusinessSetupWithLocation(
+    onSave: (BusinessSetup) -> Unit,
+    onBack: () -> Unit,
+) {
+    // The location is picked earlier (Map/Location step before Home) and stored on the device.
+    val context = LocalContext.current
+    fun withDevicePlaces(setup: BusinessSetup): BusinessSetup {
+        val places = Authentication.devicePlaces(context)
+        val main = places.firstOrNull() ?: return setup
+        return setup.copy(location = main.name, latitude = main.latitude, longitude = main.longitude, places = places)
+    }
+
+    BusinessSetupScreen(
+        onContinue = { setup -> onSave(withDevicePlaces(setup)) },
+        onSkip = { onSave(withDevicePlaces(BusinessSetup())) },
+        onBack = onBack,
+    )
+}

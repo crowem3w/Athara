@@ -20,6 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.nativeCanvas
@@ -64,6 +67,12 @@ fun BottomNavBar(
     onTransportClick: () -> Unit = {},
     onCreateClick: () -> Unit = {},
     onPlacesClick: () -> Unit = {},
+    // Travel-feed tabs; account types without a travel feed (Business) hide them.
+    showTransport: Boolean = true,
+    showPlaces: Boolean = true,
+    // Centre button: "Create" (+) by default, Business swaps in a QR scanner.
+    centerIcon: ImageVector = Icons.Filled.Add,
+    centerLabel: String = "Create",
     
     createVisibility: () -> Float = { 1f },
 ) {
@@ -87,16 +96,18 @@ fun BottomNavBar(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 HomeTab(selected = true, modifier = Modifier.weight(1f))
-                TransportTab(selected = false, modifier = Modifier.weight(1f), onClick = onTransportClick)
+                if (showTransport) TransportTab(selected = false, modifier = Modifier.weight(1f), onClick = onTransportClick)
                 
                 Spacer(Modifier.width(FabSize + 8.dp))
                 MessageTab(selected = false, modifier = Modifier.weight(1f))
-                PlacesTab(selected = false, modifier = Modifier.weight(1f), onClick = onPlacesClick)
+                if (showPlaces) PlacesTab(selected = false, modifier = Modifier.weight(1f), onClick = onPlacesClick)
             }
         }
         CreateTab(
             onClick = onCreateClick,
             visibility = createVisibility,
+            icon = centerIcon,
+            contentDescription = centerLabel,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .size(FabSize),

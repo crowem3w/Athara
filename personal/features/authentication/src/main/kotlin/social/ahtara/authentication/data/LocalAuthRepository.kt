@@ -13,6 +13,7 @@ import social.ahtara.authentication.domain.AuthError
 import social.ahtara.authentication.domain.AuthRepository
 import social.ahtara.authentication.domain.AuthResult
 import social.ahtara.authentication.domain.AuthUser
+import social.ahtara.authentication.domain.BusinessSetup
 import social.ahtara.authentication.domain.PersonalSetup
 import social.ahtara.authentication.domain.PlaceSelection
 import social.ahtara.authentication.domain.SocialAccount
@@ -158,16 +159,36 @@ internal class LocalAuthRepository(
 
     // region Profile
 
-    override suspend fun savePersonalSetup(setup: PersonalSetup): Boolean {
+    override suspend fun savePersonalSetup(setup: PersonalSetup): Boolean = saveProfileSetup(
+        aboutInput = setup.about, locationInput = setup.location,
+        latitudeInput = setup.latitude, longitudeInput = setup.longitude,
+        places = setup.places, photoUri = setup.photoUri, coverUri = setup.coverUri,
+    )
+
+    override suspend fun saveBusinessSetup(setup: BusinessSetup): Boolean = saveProfileSetup(
+        aboutInput = setup.about, locationInput = setup.location,
+        latitudeInput = setup.latitude, longitudeInput = setup.longitude,
+        places = setup.places, photoUri = setup.photoUri, coverUri = setup.coverUri,
+    )
+
+    /** Shared by the per-type setup saves above; each type's public method can diverge from it later. */
+    private suspend fun saveProfileSetup(
+        aboutInput: String,
+        locationInput: String,
+        latitudeInput: Double?,
+        longitudeInput: Double?,
+        places: List<PlaceSelection>,
+        photoUri: String?,
+        coverUri: String?,
+    ): Boolean {
         val user = _currentUser.value ?: return false
         val id = user.id.toLongOrNull() ?: return false
-        val about = setup.about.trim().ifBlank { null }
+        val about = aboutInput.trim().ifBlank { null }
 
-        val main = setup.places.firstOrNull()
-        val location = main?.name ?: setup.location.trim().ifBlank { null }
-        val latitude = if (location != null) main?.latitude ?: setup.latitude else null
-        val longitude = if (location != null) main?.longitude ?: setup.longitude else null
-        val places = setup.places
+        val main = places.firstOrNull()
+        val location = main?.name ?: locationInput.trim().ifBlank { null }
+        val latitude = if (location != null) main?.latitude ?: latitudeInput else null
+        val longitude = if (location != null) main?.longitude ?: longitudeInput else null
         val placesJson = places.takeIf { it.isNotEmpty() }?.toJsonString()
 
         val (photoPath, coverPath) = withContext(Dispatchers.IO) {
@@ -178,8 +199,8 @@ internal class LocalAuthRepository(
                 } else {
                     photos.save(user.id, uri, kind) ?: old
                 }
-            store(setup.photoUri, ProfilePhotoStore.Kind.PROFILE, user.photoPath) to
-                store(setup.coverUri, ProfilePhotoStore.Kind.COVER, user.coverPath)
+            store(photoUri, ProfilePhotoStore.Kind.PROFILE, user.photoPath) to
+                store(coverUri, ProfilePhotoStore.Kind.COVER, user.coverPath)
         }
         stores.of(user.accountType)
             .updateProfile(id, about, location, latitude, longitude, placesJson, photoPath, coverPath)
