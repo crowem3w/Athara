@@ -1,6 +1,6 @@
 package social.ahtara.authentication.data
 
-import android.content.Context
+import android.content.SharedPreferences
 import androidx.core.content.edit
 import social.ahtara.authentication.domain.AccountDetails
 import social.ahtara.authentication.domain.AccountType
@@ -9,9 +9,11 @@ import social.ahtara.authentication.domain.placesFromJson
 import social.ahtara.authentication.domain.toJsonString
 
 
-internal class SessionStore(context: Context) {
-    private val prefs = context.applicationContext
-        .getSharedPreferences("authentication_session", Context.MODE_PRIVATE)
+/**
+ * The signed-in user's cached profile and setup-pending marker for ONE account type, backed by its
+ * own preferences file. [SessionManager] owns one of these per type.
+ */
+internal class SessionStore(private val prefs: SharedPreferences) {
 
     fun read(): AuthUser? {
         val id = prefs.getString(KEY_ID, null) ?: return null
@@ -63,7 +65,9 @@ internal class SessionStore(context: Context) {
     
     fun markSetupPending(userId: String) = prefs.edit { putString(KEY_SETUP_PENDING, userId) }
 
-    fun isSetupPending(userId: String): Boolean = prefs.getString(KEY_SETUP_PENDING, null) == userId
+    fun isSetupPending(userId: String): Boolean = pendingSetupId() == userId
+
+    fun pendingSetupId(): String? = prefs.getString(KEY_SETUP_PENDING, null)
 
     fun completeSetup() = prefs.edit { remove(KEY_SETUP_PENDING) }
 

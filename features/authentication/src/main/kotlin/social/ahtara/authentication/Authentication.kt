@@ -4,15 +4,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
+import social.ahtara.authentication.data.DeviceFlowStore
 import social.ahtara.authentication.data.LocalAuthRepository
 import social.ahtara.authentication.domain.AccountType
 import social.ahtara.authentication.domain.AuthRepository
 import social.ahtara.authentication.domain.NoVerification
 import social.ahtara.authentication.domain.PersonalSetup
 import social.ahtara.authentication.domain.PlaceSelection
-import social.ahtara.authentication.domain.ServiceArea
-import social.ahtara.authentication.domain.placesFromJson
-import social.ahtara.authentication.domain.toJsonString
 import social.ahtara.authentication.domain.PhoneVerifier
 import social.ahtara.authentication.ui.AuthenticationActivity
 
@@ -69,65 +67,42 @@ object Authentication {
     
     suspend fun signOut(context: Context) = repository(context).signOut()
 
-    private const val FLOW_PREFS = "authentication_flow"
-    private const val KEY_ACCOUNT_TYPE = "selected_account_type"
+    // region Pre-Home flow (device-level: works signed out, survives sign-out)
 
-    private fun storedAccountType(context: Context): AccountType? =
-        context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE)
-            .getString(KEY_ACCOUNT_TYPE, null)
-            ?.let { name -> AccountType.available.firstOrNull { it.name == name } }
+    private fun flow(context: Context) = DeviceFlowStore(context.applicationContext)
 
     /** Account type used for sign-up: the one picked on the pre-Home step, or the only one offered. */
     fun selectedAccountType(context: Context): AccountType? =
-        storedAccountType(context) ?: AccountType.available.singleOrNull()
+        flow(context).selectedType() ?: AccountType.available.singleOrNull()
+
+    fun selectAccountType(context: Context, type: AccountType) = flow(context).selectType(type)
 
     /**
      * True when the pre-Home "Account type" step must be shown: more than one type is offered and
-     * none was picked yet. While only Personal is offered the step is skipped (nothing is stored,
+     * none was picked yet. While only one type is offered the step is skipped (nothing is stored,
      * so it still shows once, to everyone, if more types are offered later).
      */
     fun needsAccountTypeStep(context: Context): Boolean =
-        AccountType.available.size > 1 && storedAccountType(context) == null
-
-    private const val KEY_DEVICE_PLACES = "device_places"
-    private const val KEY_LOCATION_DONE = "location_step_done"
-    private const val KEY_DEVICE_ADDRESS = "device_address"
-
-    /** Street / address text typed by Business accounts on the Map/Location step. */
-    fun deviceAddress(context: Context): String =
-        context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE).getString(KEY_DEVICE_ADDRESS, "").orEmpty()
-
-    fun saveDeviceAddress(context: Context, address: String) {
-        context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE)
-            .edit().putString(KEY_DEVICE_ADDRESS, address.trim()).apply()
-    }
+        AccountType.available.size > 1 && flow(context).selectedType() == null
 
     /** Places picked on the pre-Home Map/Location step, stored on the device (works signed out). */
-    fun devicePlaces(context: Context): List<PlaceSelection> =
-        placesFromJson(
-            context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE).getString(KEY_DEVICE_PLACES, null),
-        ).filter { ServiceArea.contains(it) }
+    fun devicePlaces(context: Context): List<PlaceSelection> = flow(context).places()
+
+    fun saveDevicePlaces(context: Context, places: List<PlaceSelection>) = flow(context).savePlaces(places)
 
     /** True until a Guimaras place has been saved: the Map/Location step shows once, on first launch. */
     fun needsLocationStep(context: Context): Boolean =
-        devicePlaces(context).isEmpty() &&
-            !context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE).getBoolean(KEY_LOCATION_DONE, false)
+        flow(context).let { it.places().isEmpty() && !it.isLocationStepDone() }
 
     /** Personal accounts may skip the Map/Location step; remember it so it is not shown again. */
-    fun markLocationStepDone(context: Context) {
-        context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE)
-            .edit().putBoolean(KEY_LOCATION_DONE, true).apply()
-    }
+    fun markLocationStepDone(context: Context) = flow(context).markLocationStepDone()
 
-    fun saveDevicePlaces(context: Context, places: List<PlaceSelection>) {
-        context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE)
-            .edit().putString(KEY_DEVICE_PLACES, places.toJsonString()).apply()
-    }
+    /** Street / address text typed by Business accounts on the Map/Location step. Cleared on sign-out. */
+    fun deviceAddress(context: Context): String = flow(context).address()
 
-    fun selectAccountType(context: Context, type: AccountType) {
-        context.getSharedPreferences(FLOW_PREFS, Context.MODE_PRIVATE)
-            .edit().putString(KEY_ACCOUNT_TYPE, type.name).apply()
-    }
+    fun saveDeviceAddress(context: Context, address: String) = flow(context).saveAddress(address)
+
+    // endregion
 }
 
 /** Which screen of the Login / Registration flow to open first. */

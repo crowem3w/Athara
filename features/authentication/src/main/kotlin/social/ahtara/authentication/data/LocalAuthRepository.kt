@@ -15,20 +15,30 @@ import social.ahtara.authentication.domain.AuthResult
 import social.ahtara.authentication.domain.AuthUser
 import social.ahtara.authentication.domain.PersonalSetup
 import social.ahtara.authentication.domain.PlaceSelection
-import social.ahtara.authentication.domain.toJsonString
 import social.ahtara.authentication.domain.SocialAccount
 import social.ahtara.authentication.domain.SocialProvider
+import social.ahtara.authentication.domain.toJsonString
 
-
+/**
+ * Local (on-device) implementation of [AuthRepository].
+ *
+ * Isolation rules this class follows:
+ *  - Cross-type reads go through [AccountDirectory] only (sign-in, uniqueness checks).
+ *  - Every write goes through [AccountStores.of] with the user's own type.
+ *  - The session is held by [SessionManager]: one account at a time, one file per type.
+ */
 internal class LocalAuthRepository(
     private val stores: AccountStores,
-    private val session: SessionStore,
+    private val session: SessionManager,
     private val photos: ProfilePhotoStore,
+    private val flow: DeviceFlowStore,
     private val hasher: PasswordHasher = PasswordHasher(),
 ) : AuthRepository {
 
     private val _currentUser = MutableStateFlow(session.read())
     override val currentUser: StateFlow<AuthUser?> = _currentUser.asStateFlow()
+
+    // region Sign-up / sign-in
 
     override suspend fun signUp(
         name: String,
@@ -59,27 +69,21 @@ internal class LocalAuthRepository(
             email = mail,
             birthday = birthday?.trim()?.ifBlank { null },
         )
-        return try {
-            startSession(insert(entity), newAccount = true)
-        } catch (_: SQLiteConstraintException) {
-            findConflict(key, handle, mail) ?: AuthResult.Failure(AuthError.IDENTIFIER_TAKEN)
-        }
+        return register(entity) { findConflict(key, handle, mail) ?: AuthResult.Failure(AuthError.IDENTIFIER_TAKEN) }
     }
 
     override suspend fun signIn(identifier: String, password: String): AuthResult {
-        val user = findAnywhere { it.findByAnyId(normalize(identifier)) }
+        val user = stores.directory().byAnyId(normalize(identifier))
         val stored = user?.passwordHash
-        
         if (user == null || stored == null) return AuthResult.Failure(AuthError.INVALID_CREDENTIALS)
         val ok = withContext(Dispatchers.Default) { hasher.verify(password, stored) }
         return if (ok) startSession(user) else AuthResult.Failure(AuthError.INVALID_CREDENTIALS)
     }
 
-    
+    /** Demo social sign-in (no real provider): one stable user per provider. */
     override suspend fun signInWithSocial(provider: SocialProvider): AuthResult {
         val key = "demo.${provider.name.lowercase()}"
-        val existing = findAnywhere { it.findByIdentifier(key) }
-        if (existing != null) return startSession(existing)
+        stores.directory().byIdentifier(key)?.let { return startSession(it) }
         val entity = UserEntity(
             identifier = key,
             displayName = "Demo ${provider.name.lowercase().replaceFirstChar { it.uppercase() }} User",
@@ -87,15 +91,13 @@ internal class LocalAuthRepository(
             provider = provider.name.lowercase(),
             createdAt = System.currentTimeMillis(),
         )
-        return try {
-            startSession(insert(entity), newAccount = true)
-        } catch (_: SQLiteConstraintException) {
-            findAnywhere { it.findByIdentifier(key) }?.let { startSession(it) } ?: AuthResult.Failure(AuthError.UNKNOWN)
+        return register(entity) {
+            stores.directory().byIdentifier(key)?.let { startSession(it) } ?: AuthResult.Failure(AuthError.UNKNOWN)
         }
     }
 
     override suspend fun continueWithSocial(account: SocialAccount): AuthResult {
-        val user = findAnywhere { it.findByProvider(account.provider.name.lowercase(), account.subject) }
+        val user = stores.directory().byProvider(account.provider.name.lowercase(), account.subject)
             ?: return AuthResult.Failure(AuthError.ACCOUNT_NOT_FOUND)
         return startSession(user)
     }
@@ -106,7 +108,7 @@ internal class LocalAuthRepository(
         accountType: AccountType,
     ): AuthResult {
         val key = normalize(identifier)
-        findAnywhere { it.findByIdentifier(key) }?.let { return identifierTaken(it) }
+        stores.directory().byIdentifier(key)?.let { return identifierTaken(it) }
         val entity = UserEntity(
             identifier = key,
             displayName = account.displayName.trim().ifBlank { account.email.orEmpty() },
@@ -116,109 +118,128 @@ internal class LocalAuthRepository(
             accountType = accountType.name,
             providerId = account.subject,
         )
-        return try {
-            startSession(insert(entity), newAccount = true)
-        } catch (_: SQLiteConstraintException) {
-            findAnywhere { it.findByIdentifier(key) }?.let { identifierTaken(it) } ?: AuthResult.Failure(AuthError.IDENTIFIER_TAKEN)
+        return register(entity) {
+            stores.directory().byIdentifier(key)?.let { identifierTaken(it) }
+                ?: AuthResult.Failure(AuthError.IDENTIFIER_TAKEN)
         }
     }
 
     override suspend fun resetPassword(identifier: String, newPassword: String): AuthResult {
-        val user = findAnywhere { it.findByAnyId(normalize(identifier)) }
+        val user = stores.directory().byAnyId(normalize(identifier))
             ?: return AuthResult.Failure(AuthError.ACCOUNT_NOT_FOUND)
         val hash = withContext(Dispatchers.Default) { hasher.hash(newPassword) }
         daoFor(user).updatePasswordHash(user.id, hash)
-        return AuthResult.Success(user.toAuthUser()) 
+        return AuthResult.Success(user.toAuthUser())
     }
 
-    override suspend fun signOut() {
-        session.clear()
-        _currentUser.value = null
-    }
+    // endregion
+
+    // region Session
+
+    override suspend fun signOut() = endSession()
 
     override fun isSetupPending(): Boolean =
         _currentUser.value?.let { session.isSetupPending(it.id) } == true
 
     override fun completeSetup() = session.completeSetup()
 
+    /** Removes a half-created account (setup abandoned) together with everything stored for it. */
     override suspend fun discardNewAccount(): Boolean {
         val user = _currentUser.value ?: return false
         val id = user.id.toLongOrNull() ?: return false
         if (!session.isSetupPending(user.id)) return false
         withContext(Dispatchers.IO) { photos.delete(user.id) }
         stores.of(user.accountType).deleteById(id)
-        session.clear()
-        _currentUser.value = null
+        endSession()
         return true
     }
+
+    // endregion
+
+    // region Profile
 
     override suspend fun savePersonalSetup(setup: PersonalSetup): Boolean {
         val user = _currentUser.value ?: return false
         val id = user.id.toLongOrNull() ?: return false
         val about = setup.about.trim().ifBlank { null }
-        
+
         val main = setup.places.firstOrNull()
         val location = main?.name ?: setup.location.trim().ifBlank { null }
-        
         val latitude = if (location != null) main?.latitude ?: setup.latitude else null
         val longitude = if (location != null) main?.longitude ?: setup.longitude else null
         val places = setup.places
         val placesJson = places.takeIf { it.isNotEmpty() }?.toJsonString()
+
         val (photoPath, coverPath) = withContext(Dispatchers.IO) {
             fun store(uri: String?, kind: ProfilePhotoStore.Kind, old: String?): String? =
                 if (uri == null) {
                     photos.delete(user.id, kind)
                     null
                 } else {
-                    photos.save(user.id, uri, kind) ?: old 
+                    photos.save(user.id, uri, kind) ?: old
                 }
             store(setup.photoUri, ProfilePhotoStore.Kind.PROFILE, user.photoPath) to
                 store(setup.coverUri, ProfilePhotoStore.Kind.COVER, user.coverPath)
         }
-        stores.of(user.accountType).updateProfile(id, about, location, latitude, longitude, placesJson, photoPath, coverPath)
-        val updated = user.copy(
-            about = about, location = location, latitude = latitude, longitude = longitude, places = places,
-            photoPath = photoPath, coverPath = coverPath,
+        stores.of(user.accountType)
+            .updateProfile(id, about, location, latitude, longitude, placesJson, photoPath, coverPath)
+        publish(
+            user.copy(
+                about = about, location = location, latitude = latitude, longitude = longitude, places = places,
+                photoPath = photoPath, coverPath = coverPath,
+            )
         )
-        session.save(updated)
-        _currentUser.value = updated
         return true
     }
 
     override suspend fun savePlaces(places: List<PlaceSelection>): Boolean {
         val user = _currentUser.value ?: return false
         val id = user.id.toLongOrNull() ?: return false
-        
         val main = places.firstOrNull()
         val placesJson = places.takeIf { it.isNotEmpty() }?.toJsonString()
         stores.of(user.accountType).updatePlaces(id, main?.name, main?.latitude, main?.longitude, placesJson)
-        val updated = user.copy(location = main?.name, latitude = main?.latitude, longitude = main?.longitude, places = places)
-        session.save(updated)
-        _currentUser.value = updated
+        publish(user.copy(location = main?.name, latitude = main?.latitude, longitude = main?.longitude, places = places))
         return true
     }
 
-    
+    // endregion
+
+    // region Helpers
+
+    /** Inserts [entity] into its type's store and starts a session; [onConflict] handles a lost unique-index race. */
+    private suspend fun register(entity: UserEntity, onConflict: suspend () -> AuthResult): AuthResult =
+        try {
+            startSession(insert(entity), newAccount = true)
+        } catch (_: SQLiteConstraintException) {
+            onConflict()
+        }
+
     private fun startSession(entity: UserEntity, newAccount: Boolean = false): AuthResult {
         val user = entity.toAuthUser()
         session.save(user)
-        
         if (newAccount) session.markSetupPending(user.id)
         _currentUser.value = user
         return AuthResult.Success(user)
     }
 
-    
-    private suspend fun findConflict(identifier: String?, username: String?, email: String?): AuthResult.Failure? {
-        identifier?.let { key -> findAnywhere { it.findByIdentifier(key) } }?.let { return identifierTaken(it) }
-        username?.let { name -> findAnywhere { it.findByUsername(name) } }?.let { return AuthResult.Failure(AuthError.USERNAME_TAKEN) }
-        email?.let { mail -> findAnywhere { it.findByEmail(mail) } }?.let { return AuthResult.Failure(AuthError.EMAIL_TAKEN) }
-        return null
+    /** Ends the session and drops everything cached on behalf of the account. */
+    private fun endSession() {
+        session.clear()
+        flow.clearAccountScoped()
+        _currentUser.value = null
     }
 
-    /** Identifiers, usernames and emails stay unique across ALL account types, so lookups span every store. */
-    private suspend fun findAnywhere(query: suspend (UserDao) -> UserEntity?): UserEntity? {
-        for (dao in stores.all()) query(dao)?.let { return it }
+    /** Updates the cached session user and notifies observers. */
+    private fun publish(updated: AuthUser) {
+        session.save(updated)
+        _currentUser.value = updated
+    }
+
+    private suspend fun findConflict(identifier: String?, username: String?, email: String?): AuthResult.Failure? {
+        val directory = stores.directory()
+        identifier?.let { directory.byIdentifier(it) }?.let { return identifierTaken(it) }
+        username?.let { directory.byUsername(it) }?.let { return AuthResult.Failure(AuthError.USERNAME_TAKEN) }
+        email?.let { directory.byEmail(it) }?.let { return AuthResult.Failure(AuthError.EMAIL_TAKEN) }
         return null
     }
 
@@ -236,13 +257,16 @@ internal class LocalAuthRepository(
 
     private fun normalize(identifier: String) = identifier.trim().lowercase()
 
+    // endregion
+
     companion object {
         const val PROVIDER_PASSWORD = "password"
 
         fun create(context: Context): LocalAuthRepository = LocalAuthRepository(
             stores = AccountStores(context),
-            session = SessionStore(context),
+            session = SessionManager(context),
             photos = ProfilePhotoStore(context),
+            flow = DeviceFlowStore(context),
         )
     }
 }

@@ -33,82 +33,57 @@ class PersonalRegistrationActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val user = Authentication.repository(this).currentUser.value
-        
+        // A signed-in user with setup still pending (app closed mid-setup) resumes at the setup screen.
         val setupPendingAtStart = user != null && Authentication.isSetupPending(this)
         setContent {
             var setupPending by rememberSaveable { mutableStateOf(setupPendingAtStart) }
             var setupStep by rememberSaveable { mutableStateOf(false) }
             AuthenticationTheme(AccountType.PERSONAL) {
-                if (user != null && setupPending) {
-                    PerSetupWithLocation(
-                        onSave = { setup ->
-                            lifecycleScope.launch {
-                                Authentication.savePersonalSetup(this@PersonalRegistrationActivity, setup)
-                                finishSetup()
-                                
-                                setResult(Activity.RESULT_OK)
-                                finish()
-                            }
-                        },
-                        
-                        
-                        onBack = {
-                            lifecycleScope.launch {
-                                Authentication.discardNewAccount(this@PersonalRegistrationActivity)
-                                finish()
-                            }
-                        },
-                    )
-                } else if (user != null) {
-                    
-                    
-                    LaunchedEffect(Unit) {
-                        setResult(Activity.RESULT_OK)
-                        finish()
-                    }
-                } else if (setupStep) {
-                    PerSetupWithLocation(
-                        onSave = { setup ->
-                            lifecycleScope.launch {
-                                Authentication.savePersonalSetup(this@PersonalRegistrationActivity, setup)
-                                finishSetup()
-                                setResult(Activity.RESULT_OK)
-                                finish()
-                            }
-                        },
-                        
-                        onBack = {
-                            lifecycleScope.launch {
-                                Authentication.discardNewAccount(this@PersonalRegistrationActivity)
-                                setupStep = false
-                            }
-                        },
-                    )
-                } else {
-                    AccountSignUp(
+                when {
+                    // Resumed setup: back discards the half-created account and leaves.
+                    user != null && setupPending -> SetupScreen(onDiscarded = { finish() })
+                    // Already signed in and set up: nothing to do here.
+                    user != null -> LaunchedEffect(Unit) { finishWithOk() }
+                    // Just signed up: back discards the new account and returns to the form.
+                    setupStep -> SetupScreen(onDiscarded = { setupStep = false })
+                    else -> AccountSignUp(
                         accountType = AccountType.PERSONAL,
-                        onSignedUp = { setupStep = true }, 
+                        onSignedUp = { setupStep = true },
                         onSignIn = {
                             setResult(Activity.RESULT_FIRST_USER)
                             finish()
                         },
-                        onBack = { finish() }, 
+                        onBack = { finish() },
                     )
                 }
             }
         }
     }
 
-    private fun finishSetup() = Authentication.completeSetup(this)
+    @Composable
+    private fun SetupScreen(onDiscarded: () -> Unit) {
+        PerSetupWithLocation(
+            onSave = { setup ->
+                lifecycleScope.launch {
+                    Authentication.savePersonalSetup(this@PersonalRegistrationActivity, setup)
+                    Authentication.completeSetup(this@PersonalRegistrationActivity)
+                    finishWithOk()
+                }
+            },
+            onBack = {
+                lifecycleScope.launch {
+                    Authentication.discardNewAccount(this@PersonalRegistrationActivity)
+                    onDiscarded()
+                }
+            },
+        )
+    }
+
+    private fun finishWithOk() {
+        setResult(Activity.RESULT_OK)
+        finish()
+    }
 }
-
-
-
-
-
-
-
-
 
 @Composable
 private fun PerSetupWithLocation(
