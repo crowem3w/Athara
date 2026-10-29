@@ -22,7 +22,11 @@ internal class LegacyAuthImporter(
         var maxId = 0L
         try {
             legacy.userDao().all().forEach { row ->
-                val dao = daoOf(AccountType.fromName(row.accountType))
+                val type = AccountType.fromName(row.accountType)
+                // Business / Organization have no database yet: skip them (the backup file below keeps
+                // the rows). Remove this check once their databases exist.
+                if (type !in AccountType.available) return@forEach
+                val dao = daoOf(type)
                 // Idempotent: a previous run may have been interrupted half-way.
                 if (dao.findById(row.id) == null) dao.insert(row)
                 if (row.id > maxId) maxId = row.id

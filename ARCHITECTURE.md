@@ -4,18 +4,22 @@
 
 ```
 app/                    Shell: activities, navigation, home UI. Only module that sees every other module.
-core/                   Shared UI kit (theme, placeholders, account dialog). No business logic.
-accounts/
-  personal/             Personal sign-up + setup flow
-  business/             Business sign-up + setup flow
-  organization/         Organization sign-up + setup flow
-features/
-  authentication/       Auth domain, sessions, per-account-type data layer, shared auth UI
-  onboarding/  account/  location/  socialfeed/  travel/  websites/
+personal/               Everything for the Personal account type
+  core/                 Shared UI kit (theme, placeholders, account dialog). No business logic.
+  registration/         Personal sign-up + setup flow (Gradle path :personal)
+  features/
+    authentication/     Auth domain, sessions, per-account-type data layer, shared auth UI
+    onboarding/  account/  location/  socialfeed/  travel/  websites/
+business/               Empty: to be implemented
+organization/           Empty: to be implemented
 ```
 
 Gradle paths are flat (`:personal`, `:location`, ...); `settings.gradle.kts` maps them to folders.
 Package roots are `social.ahtara.<module>` (e.g. `social.ahtara.location`, `social.ahtara.core.ui`).
+
+**Business / Organization are stubs.** `AccountType` keeps the `BUSINESS` and `ORGANIZATION` entries
+(strings, colors, icons, illustrations), but `AccountType.available` only offers `PERSONAL`,
+`AccountStores.daoOf` throws `TODO` for them, and no registration module or database exists yet.
 
 ## Account types and their data
 
@@ -28,7 +32,7 @@ cannot touch the others:
 | BUSINESS     | `BusinessDatabase`     | `authentication_business.db`       |
 | ORGANIZATION | `OrganizationDatabase` | `authentication_organization.db`   |
 
-Code: `features/authentication/.../data/{personal,business,organization}/`.
+Code: `personal/features/authentication/.../data/{personal}/` (business / organization: not yet created).
 
 - `AccountStores` is the single router from `AccountType` to its DAO (`of(type)`). Nothing else
   picks a database, and there is no "all DAOs" accessor.
@@ -56,11 +60,11 @@ Code: `features/authentication/.../data/{personal,business,organization}/`.
 
 ## Adding an account type
 
-1. Add the enum entry in `AccountType` (activity class name, strings, icon).
-2. Add `<Type>Database` in `data/<type>/` and a branch in `AccountStores.daoOf` (the `when` is
-   exhaustive, so the compiler flags a missed branch).
-3. Add `accounts/<type>/` with its registration activity and register it in `settings.gradle.kts`
-   and `app/build.gradle.kts`.
+1. Enum entry already exists for BUSINESS / ORGANIZATION; add it to `AccountType.available`.
+2. Add `<Type>Database` in `data/<type>/` and replace the `TODO` branch in `AccountStores.daoOf`.
+3. Create the `business/` or `organization/` module with its registration activity (class name must
+   match `AccountType.activityClassName`) and register it in `settings.gradle.kts` and
+   `app/build.gradle.kts`. Also revisit `BlankHomeScreen` in `app/`, the placeholder home these types get.
 
 ## Where to look when something breaks
 
@@ -68,7 +72,7 @@ Code: `features/authentication/.../data/{personal,business,organization}/`.
 |--------------------------------------|---------------------------------------------------------|
 | Sign-in/sign-up result wrong         | `LocalAuthRepository` -> `AuthError` mapping            |
 | Wrong/missing user after upgrade     | `LegacyAuthImporter`                                    |
-| Setup screen flow for one type       | `accounts/<type>/...RegistrationActivity`               |
+| Setup screen flow for one type       | `<type>/...RegistrationActivity`               |
 | Session / "stuck on setup"           | `SessionManager` / `SessionStore` (setup-pending id)    |
 | Map/place search                     | `features/location` (`SearchPipeline`, `NominatimClient`) |
 | Feed content                         | `features/socialfeed`, `features/travel/source/*`       |

@@ -1,8 +1,3 @@
-
-
-
-
-
 pluginManagement {
     repositories {
         google()
@@ -20,22 +15,21 @@ dependencyResolutionManagement {
 
 rootProject.name = "ahtara"
 
-// Gradle paths stay flat (":personal"); only the folders are grouped.
+// Gradle paths stay flat (":location"); only the folders are grouped.
+// Everything for the Personal account type lives under personal/.
+// business/ and organization/ are intentionally empty for now. When you add them, register
+// their modules here (e.g. ":business" to "business") and in app/build.gradle.kts.
 val modules = mapOf(
     ":app" to "app",
-    ":core" to "core",
-    // Account types: one module (and one data layer) each.
-    ":personal" to "accounts/personal",
-    ":business" to "accounts/business",
-    ":organization" to "accounts/organization",
-    // Features.
-    ":authentication" to "features/authentication",
-    ":onboarding" to "features/onboarding",
-    ":account" to "features/account",
-    ":location" to "features/location",
-    ":socialfeed" to "features/socialfeed",
-    ":travel" to "features/travel",
-    ":websites" to "features/websites",
+    ":core" to "personal/core",
+    ":personal" to "personal/registration",
+    ":authentication" to "personal/features/authentication",
+    ":onboarding" to "personal/features/onboarding",
+    ":account" to "personal/features/account",
+    ":location" to "personal/features/location",
+    ":socialfeed" to "personal/features/socialfeed",
+    ":travel" to "personal/features/travel",
+    ":websites" to "personal/features/websites",
 )
 modules.forEach { (path, dir) ->
     include(path)
