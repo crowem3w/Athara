@@ -25,7 +25,7 @@ private val HeaderHeight = 48.dp
 
 
 @Composable
-internal fun SignUpStepHeader(
+fun SignUpStepHeader(
     currentStep: Int,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,

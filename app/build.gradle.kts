@@ -46,13 +46,11 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":onboarding"))
     implementation(project(":authentication"))
     implementation(project(":personal"))
     implementation(project(":location"))
     // TODO: add implementation(project(":business")) / (":organization") once those modules exist.
     implementation(project(":account"))
-    implementation(project(":core"))
     implementation(project(":socialfeed"))
     implementation(project(":travel"))
     implementation(libs.androidx.core.ktx)

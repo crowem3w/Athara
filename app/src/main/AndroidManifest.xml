@@ -23,6 +23,12 @@
             android:name=".SocialFeedActivity"
             android:exported="false" />
 
+        <!-- Welcome screen + Terms: shared by all account types, launched by MainActivity. -->
+        <activity
+            android:name=".onboarding.OnboardingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Onboarding" />
+
     </application>
 
 </manifest>

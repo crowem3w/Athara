@@ -1,4 +1,4 @@
-package social.ahtara.authentication.ui
+package social.ahtara.app.accounttype
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import social.ahtara.authentication.domain.AccountType
+import social.ahtara.authentication.ui.AccountTypeScreen
+import social.ahtara.authentication.ui.STEP_ACCOUNT_TYPE
+import social.ahtara.authentication.ui.SignUpStepHeader
 import social.ahtara.authentication.ui.theme.AuthenticationTheme
 
 /**

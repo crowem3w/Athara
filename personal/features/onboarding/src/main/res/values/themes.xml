@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Covers the brief window before Compose takes over. Light only for now. -->
-    <style name="Theme.Onboarding" parent="android:Theme.DeviceDefault.Light.NoActionBar">
-        <item name="android:windowBackground">@color/onboarding_background</item>
-    </style>
-</resources>

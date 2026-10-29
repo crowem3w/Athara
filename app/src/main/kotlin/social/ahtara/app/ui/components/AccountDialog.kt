@@ -1,4 +1,4 @@
-package social.ahtara.core.ui.components
+package social.ahtara.app.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import social.ahtara.core.R
+import social.ahtara.app.R
 
 /** Modal "Account" dialog: Log in and Sign up buttons, stacked vertically. Tap outside to close. */
 @Composable

@@ -21,15 +21,12 @@ rootProject.name = "ahtara"
 // their modules here (e.g. ":business" to "business") and in app/build.gradle.kts.
 val modules = mapOf(
     ":app" to "app",
-    ":core" to "personal/core",
     ":personal" to "personal/registration",
     ":authentication" to "personal/features/authentication",
-    ":onboarding" to "personal/features/onboarding",
     ":account" to "personal/features/account",
     ":location" to "personal/features/location",
     ":socialfeed" to "personal/features/socialfeed",
     ":travel" to "personal/features/travel",
-    ":websites" to "personal/features/websites",
 )
 modules.forEach { (path, dir) ->
     include(path)

@@ -1,7 +1,6 @@
 package social.ahtara.socialfeed.ui
 
 import androidx.compose.foundation.clickable
-import social.ahtara.core.ui.components.LocalRequireAccount
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,14 +27,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import social.ahtara.core.ui.components.PlaceholderAvatar
-import social.ahtara.core.ui.components.PlaceholderImageBlock
 import social.ahtara.socialfeed.R
 import social.ahtara.socialfeed.model.FeedPost
-import social.ahtara.core.ui.theme.Divider
-import social.ahtara.core.ui.theme.Heart
-import social.ahtara.core.ui.theme.TextPrimary
-import social.ahtara.core.ui.theme.TextSecondary
 
 
 
@@ -45,6 +38,8 @@ import social.ahtara.core.ui.theme.TextSecondary
 @Composable
 fun PostCard(
     post: FeedPost,
+    colors: FeedColors,
+    onRequireAccount: () -> Boolean,
     modifier: Modifier = Modifier,
     
     onReadMore: (FeedPost) -> Unit = {},
@@ -69,23 +64,23 @@ fun PostCard(
                 Text(
                     text = post.authorName,
                     style = MaterialTheme.typography.titleMedium,
-                    color = TextPrimary,
+                    color = colors.textPrimary,
                 )
                 if (post.isPromoted) Text(
                     text = "Promoted",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TextSecondary,
+                    color = colors.textSecondary,
                 )
                 Row {
                     Text(
                         text = post.timeAgo,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary,
+                        color = colors.textSecondary,
                     )
                     Text(
                         text = "  •  ${post.location}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary,
+                        color = colors.textSecondary,
                     )
                 }
             }
@@ -93,7 +88,7 @@ fun PostCard(
                 Icon(
                     imageVector = Icons.Outlined.MoreVert,
                     contentDescription = "More options",
-                    tint = TextSecondary,
+                    tint = colors.textSecondary,
                 )
             }
         }
@@ -101,7 +96,7 @@ fun PostCard(
         Text(
             text = post.caption,
             style = MaterialTheme.typography.bodyLarge,
-            color = TextPrimary,
+            color = colors.textPrimary,
             modifier = Modifier.padding(horizontal = 20.dp),
         )
 
@@ -124,18 +119,21 @@ fun PostCard(
             )
         }
 
-        if (post.sourceLabel != null) SourceLine(post, onReadMore)
+        if (post.sourceLabel != null) SourceLine(post, colors, onReadMore)
 
-        EngagementBar(post = post)
+        EngagementBar(post = post, colors = colors, requireAccount = onRequireAccount)
 
-        HorizontalDivider(color = Divider, thickness = 1.dp)
+        HorizontalDivider(color = colors.divider, thickness = 1.dp)
     }
 }
 
 @Composable
-private fun EngagementBar(post: FeedPost, modifier: Modifier = Modifier) {
-    // Like / comment / share need an account: guests get the "Account" dialog instead.
-    val requireAccount = LocalRequireAccount.current
+private fun EngagementBar(
+    post: FeedPost,
+    colors: FeedColors,
+    requireAccount: () -> Boolean, // like / comment / share need an account; the host shows its dialog for guests
+    modifier: Modifier = Modifier,
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -145,33 +143,33 @@ private fun EngagementBar(post: FeedPost, modifier: Modifier = Modifier) {
         Icon(
             imageVector = if (post.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
             contentDescription = "Like",
-            tint = if (post.isLiked) Heart else TextSecondary,
+            tint = if (post.isLiked) colors.heart else colors.textSecondary,
             modifier = Modifier.clickable { requireAccount() },
         )
         if (post.likeCount.isNotBlank()) Text(
             text = post.likeCount,
             style = MaterialTheme.typography.bodyMedium,
-            color = TextSecondary,
+            color = colors.textSecondary,
             modifier = Modifier.padding(start = 6.dp),
         )
 
         Icon(
             imageVector = Icons.Outlined.ChatBubbleOutline,
             contentDescription = "Comments",
-            tint = TextSecondary,
+            tint = colors.textSecondary,
             modifier = Modifier.clickable { requireAccount() }.padding(start = 20.dp),
         )
         if (post.commentCount.isNotBlank()) Text(
             text = post.commentCount,
             style = MaterialTheme.typography.bodyMedium,
-            color = TextSecondary,
+            color = colors.textSecondary,
             modifier = Modifier.padding(start = 6.dp),
         )
 
         Icon(
             painter = painterResource(R.drawable.ic_share),
             contentDescription = "Share",
-            tint = TextSecondary,
+            tint = colors.textSecondary,
             modifier = Modifier.clickable { requireAccount() }.padding(start = 20.dp),
         )
 
@@ -180,14 +178,14 @@ private fun EngagementBar(post: FeedPost, modifier: Modifier = Modifier) {
         Icon(
             imageVector = Icons.Outlined.Bookmark,
             contentDescription = "Save",
-            tint = if (post.isSaved) TextPrimary else TextSecondary,
+            tint = if (post.isSaved) colors.textPrimary else colors.textSecondary,
         )
     }
 }
 
 
 @Composable
-private fun SourceLine(post: FeedPost, onReadMore: (FeedPost) -> Unit, modifier: Modifier = Modifier) {
+private fun SourceLine(post: FeedPost, colors: FeedColors, onReadMore: (FeedPost) -> Unit, modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current
     val url = post.sourceUrl
     val action: (() -> Unit)? = when {
@@ -198,7 +196,7 @@ private fun SourceLine(post: FeedPost, onReadMore: (FeedPost) -> Unit, modifier:
     Text(
         text = post.sourceLabel.orEmpty() + if (action != null) "  \u2022  Read more" else "",
         style = MaterialTheme.typography.bodySmall,
-        color = TextSecondary,
+        color = colors.textSecondary,
         modifier = modifier
             .padding(horizontal = 20.dp, vertical = 8.dp)
             .then(if (action != null) Modifier.clickable { action() } else Modifier),

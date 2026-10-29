@@ -1,4 +1,4 @@
-package social.ahtara.core.ui.components
+package social.ahtara.socialfeed.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -53,7 +53,7 @@ fun PlaceholderAvatar(
 
 
 @Composable
-fun PlaceholderImageBlock(
+internal fun PlaceholderImageBlock(
     color: Color,
     modifier: Modifier = Modifier,
     aspectRatio: Float = 16f / 11f,

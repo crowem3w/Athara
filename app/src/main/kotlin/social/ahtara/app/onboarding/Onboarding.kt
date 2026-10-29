@@ -1,4 +1,4 @@
-package social.ahtara.onboarding
+package social.ahtara.app.onboarding
 
 import android.content.Context
 import android.content.Intent

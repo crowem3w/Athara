@@ -1,4 +1,4 @@
-package social.ahtara.onboarding.ui
+package social.ahtara.app.onboarding.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import social.ahtara.onboarding.R
+import social.ahtara.app.R
 
 /**
  * Modal Terms & Conditions dialog, shown once after onboarding.

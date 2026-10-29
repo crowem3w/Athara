@@ -46,10 +46,24 @@ import social.ahtara.app.ui.components.TopBar
 import social.ahtara.app.ui.components.FilterTabs
 import social.ahtara.socialfeed.feed.rememberSocialFeedState
 import social.ahtara.travel.model.PlaceCategory
+import social.ahtara.socialfeed.ui.FeedColors
 import social.ahtara.socialfeed.ui.socialFeedItems
+import social.ahtara.app.ui.components.LocalRequireAccount
+import social.ahtara.app.ui.theme.Divider
+import social.ahtara.app.ui.theme.Heart
+import social.ahtara.app.ui.theme.TextPrimary
+import social.ahtara.app.ui.theme.TextSecondary
 
 
 private const val CreateButtonHideEnd = 0.5f
+
+/** What the feed module needs from the app theme. */
+private val AppFeedColors = FeedColors(
+    divider = Divider,
+    heart = Heart,
+    textPrimary = TextPrimary,
+    textSecondary = TextSecondary,
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,6 +79,7 @@ fun HomeScreen(
     onProfileClick: () -> Unit = {},
     onCreateClick: () -> Unit = {},
 ) {
+    val requireAccount = LocalRequireAccount.current
     val listState = rememberLazyListState()
     val pullState = rememberPullToRefreshState()
     val scope = rememberCoroutineScope()
@@ -229,6 +244,8 @@ fun HomeScreen(
                         state = feed,
                         isLoading = isRefreshing,
                         hasPlaces = places.isNotEmpty(),
+                        colors = AppFeedColors,
+                        onRequireAccount = requireAccount,
                         categories = categories,
                     )
                 }

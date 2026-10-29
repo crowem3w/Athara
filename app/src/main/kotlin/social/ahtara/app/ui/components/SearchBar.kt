@@ -14,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import social.ahtara.core.ui.theme.SurfaceMuted
-import social.ahtara.core.ui.theme.TextTertiary
+import social.ahtara.app.ui.theme.SurfaceMuted
+import social.ahtara.app.ui.theme.TextTertiary
 
 
 

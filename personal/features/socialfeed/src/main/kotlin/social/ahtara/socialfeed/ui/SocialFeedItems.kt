@@ -22,6 +22,8 @@ fun LazyListScope.socialFeedItems(
     state: SocialFeedState,
     isLoading: Boolean,
     hasPlaces: Boolean,
+    colors: FeedColors,
+    onRequireAccount: () -> Boolean,
     categories: Set<PlaceCategory> = emptySet(),
 ) {
     val allPosts = state.posts
@@ -37,7 +39,7 @@ fun LazyListScope.socialFeedItems(
         }
     }
     if (allPosts.isEmpty() && isLoading) {
-        items(3) { PostCardSkeleton() }
+        items(3) { PostCardSkeleton(colors) }
     }
     if (posts.isEmpty() && !isLoading) {
         item(key = "feed-empty") {
@@ -53,6 +55,6 @@ fun LazyListScope.socialFeedItems(
         }
     }
     items(posts, key = { it.id }) { post ->
-        PostCard(post = post)
+        PostCard(post = post, colors = colors, onRequireAccount = onRequireAccount)
     }
 }

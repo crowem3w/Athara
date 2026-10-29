@@ -29,7 +29,7 @@ import kotlin.math.sin
 internal const val SIGN_UP_TOTAL_STEPS = 5
 
 
-internal const val STEP_ACCOUNT_TYPE = 2
+const val STEP_ACCOUNT_TYPE = 2
 
 
 internal const val STEP_REGISTRATION = 4

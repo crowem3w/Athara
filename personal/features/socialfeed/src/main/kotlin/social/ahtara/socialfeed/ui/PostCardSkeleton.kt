@@ -25,11 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import social.ahtara.core.ui.theme.Divider
 
 
 @Composable
-fun PostCardSkeleton(modifier: Modifier = Modifier) {
+fun PostCardSkeleton(colors: FeedColors, modifier: Modifier = Modifier) {
     val pulse by rememberInfiniteTransition(label = "skeleton").animateFloat(
         initialValue = 0.45f,
         targetValue = 1f,
@@ -43,7 +42,7 @@ fun PostCardSkeleton(modifier: Modifier = Modifier) {
             .fillMaxWidth(widthFraction)
             .height(height.dp)
             .clip(RoundedCornerShape(6.dp))
-            .background(Divider),
+            .background(colors.divider),
     )
 
     Column(
@@ -57,7 +56,7 @@ fun PostCardSkeleton(modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Box(Modifier.size(40.dp).clip(CircleShape).background(Divider))
+            Box(Modifier.size(40.dp).clip(CircleShape).background(colors.divider))
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Bar(0.35f, 14)
                 Bar(0.2f)
@@ -70,7 +69,7 @@ fun PostCardSkeleton(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .aspectRatio(16f / 11f)
                 .clip(RoundedCornerShape(16.dp))
-                .background(Divider),
+                .background(colors.divider),
         )
         Spacer(Modifier.height(12.dp))
         Column(

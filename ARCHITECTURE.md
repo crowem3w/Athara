@@ -3,23 +3,33 @@
 ## Layout
 
 ```
-app/                    Shell: activities, navigation, home UI. Only module that sees every other module.
+app/                    Shell, shared by ALL account types: splash, onboarding + Terms (social.ahtara.app.onboarding),
+                        account type step (social.ahtara.app.accounttype), app theme + account dialog
+                        (social.ahtara.app.ui.theme / .ui.components), navigation, home UI.
+                        Only module that sees every other module.
 personal/               Everything for the Personal account type
-  core/                 Shared UI kit (theme, placeholders, account dialog). No business logic.
   registration/         Personal sign-up + setup flow (Gradle path :personal)
   features/
     authentication/     Auth domain, sessions, per-account-type data layer, shared auth UI
-    onboarding/  account/  location/  socialfeed/  travel/  websites/
+    account/  location/  socialfeed/  travel/
 business/               Empty: to be implemented
 organization/           Empty: to be implemented
 ```
 
 Gradle paths are flat (`:personal`, `:location`, ...); `settings.gradle.kts` maps them to folders.
-Package roots are `social.ahtara.<module>` (e.g. `social.ahtara.location`, `social.ahtara.core.ui`).
+Package roots are `social.ahtara.<module>` (e.g. `social.ahtara.location`, `social.ahtara.app.ui`).
 
 **Business / Organization are stubs.** `AccountType` keeps the `BUSINESS` and `ORGANIZATION` entries
 (strings, colors, icons, illustrations), but `AccountType.available` only offers `PERSONAL`,
 `AccountStores.daoOf` throws `TODO` for them, and no registration module or database exists yet.
+
+The account type picker (`AccountTypeScreen`, `AccountTypeShape`, `AccountTypeBadge`) stays in
+`:authentication`: the sign-up flow and `:account` also use it, and they cannot depend on `:app`.
+Only the pre-Home step wrapper (`AccountTypeStep`) lives in `app/`.
+
+The feed (`:socialfeed`) has no theme of its own: `app` passes it `FeedColors` and an `onRequireAccount`
+callback (see `HomeScreen`). Feature modules must never depend on `app`, so anything a feature needs
+from the shell comes in as a parameter.
 
 ## Account types and their data
 
@@ -81,10 +91,8 @@ Code: `personal/features/authentication/.../data/{personal}/` (business / organi
 
 - `AccountType` still carries UI resources and activity class-name strings; move to a UI-side mapper.
 - Failures are swallowed in places (`runCatching{}.getOrNull()`, Boolean returns, `AuthError.UNKNOWN`);
-  add a shared error type + logging in `core`.
+  add a shared error type + logging in `app`.
 - `Authentication` is still a singleton service locator (now only a facade); consider DI.
 - Profile photos still live in one shared `profile_photos` folder; moving them per type needs a file + DB path migration.
 - The session caches the full profile; storing only (type, id) and reloading from the DB would shrink it.
-- Websites (`websites.db`) are isolated by `ownerId` only.
-- `:websites` is not a dependency of any module yet.
 - No tests exist; `AccountStores` / `LocalAuthRepository` are the first candidates.

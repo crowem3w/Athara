@@ -31,10 +31,10 @@ import social.ahtara.app.ui.screens.BlankHomeScreen
 import social.ahtara.app.ui.screens.HomeScreen
 import social.ahtara.app.ui.screens.PlacesScreen
 import social.ahtara.app.ui.screens.feedKey
-import social.ahtara.core.ui.theme.Theme
+import social.ahtara.app.ui.theme.Theme
 import social.ahtara.authentication.Authentication
-import social.ahtara.core.ui.components.AccountDialog
-import social.ahtara.core.ui.components.LocalRequireAccount
+import social.ahtara.app.ui.components.AccountDialog
+import social.ahtara.app.ui.components.LocalRequireAccount
 import social.ahtara.authentication.AuthEntry
 import social.ahtara.authentication.AuthenticationContract
 import social.ahtara.authentication.domain.AccountType

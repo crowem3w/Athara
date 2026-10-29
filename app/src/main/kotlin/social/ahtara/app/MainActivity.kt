@@ -17,13 +17,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import social.ahtara.location.PickLocationContract
-import social.ahtara.core.ui.theme.Theme
+import social.ahtara.app.ui.theme.Theme
 import social.ahtara.authentication.domain.AccountType
 import social.ahtara.authentication.Authentication
-import social.ahtara.authentication.ui.AccountTypeStep
-import social.ahtara.onboarding.Onboarding
-import social.ahtara.onboarding.OnboardingContract
-import social.ahtara.onboarding.ui.TermsDialog
+import social.ahtara.app.accounttype.AccountTypeStep
+import social.ahtara.app.onboarding.Onboarding
+import social.ahtara.app.onboarding.OnboardingContract
+import social.ahtara.app.onboarding.ui.TermsDialog
 
 /**
  * App entry point. Startup sequence:

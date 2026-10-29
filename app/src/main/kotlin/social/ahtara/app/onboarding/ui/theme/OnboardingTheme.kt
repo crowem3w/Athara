@@ -1,10 +1,10 @@
-package social.ahtara.onboarding.ui.theme
+package social.ahtara.app.onboarding.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.colorResource
-import social.ahtara.onboarding.R
+import social.ahtara.app.R
 
 
 

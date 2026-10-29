@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="onboarding_primary">#0E8A7D</color>
-    <color name="onboarding_on_primary">#FFFFFF</color>
-    <!-- Matches the near-white background of onboarding_background.webp -->
-    <color name="onboarding_background">#FEFEFE</color>
-    <color name="onboarding_on_background">#12332F</color>
-</resources>

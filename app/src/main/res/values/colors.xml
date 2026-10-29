@@ -2,4 +2,11 @@
 <resources>
     <color name="ic_launcher_background">#FFFFFF</color>
     <color name="splash_background">#FFFFFF</color>
+
+    <!-- Onboarding / Terms (moved from the former :onboarding module) -->
+    <color name="onboarding_primary">#0E8A7D</color>
+    <color name="onboarding_on_primary">#FFFFFF</color>
+    <!-- Matches the near-white background of onboarding_background.webp -->
+    <color name="onboarding_background">#FEFEFE</color>
+    <color name="onboarding_on_background">#12332F</color>
 </resources>

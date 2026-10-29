@@ -8,7 +8,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import social.ahtara.core.ui.theme.TextPrimary
+import social.ahtara.app.ui.theme.TextPrimary
 
 
 

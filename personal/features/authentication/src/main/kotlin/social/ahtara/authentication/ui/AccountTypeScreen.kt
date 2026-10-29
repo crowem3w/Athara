@@ -66,7 +66,7 @@ private val NonCardHeight = 120.dp
 
 
 @Composable
-internal fun AccountTypeScreen(
+fun AccountTypeScreen(
     onSelect: (AccountType) -> Unit,
     onSignIn: (() -> Unit)?,
     types: List<AccountType> = AccountType.available,

@@ -1,5 +1,6 @@
-package social.ahtara.onboarding
+package social.ahtara.app.onboarding
 
+import social.ahtara.app.R
 import android.app.Activity
 import android.graphics.Color as AndroidColor
 import android.os.Bundle
@@ -62,7 +63,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import social.ahtara.onboarding.ui.theme.OnboardingTheme
+import social.ahtara.app.onboarding.ui.theme.OnboardingTheme
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.floor

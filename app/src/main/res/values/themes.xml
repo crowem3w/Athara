@@ -12,4 +12,10 @@
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
         <item name="postSplashScreenTheme">@style/Theme.Test</item>
     </style>
+
+    <!-- Onboarding / Terms (moved from the former :onboarding module) -->
+    <!-- Covers the brief window before Compose takes over. Light only for now. -->
+    <style name="Theme.Onboarding" parent="android:Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:windowBackground">@color/onboarding_background</item>
+    </style>
 </resources>

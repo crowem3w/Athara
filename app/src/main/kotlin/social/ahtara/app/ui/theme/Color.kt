@@ -1,4 +1,4 @@
-package social.ahtara.core.ui.theme
+package social.ahtara.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

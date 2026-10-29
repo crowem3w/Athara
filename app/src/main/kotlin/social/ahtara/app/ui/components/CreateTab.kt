@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import social.ahtara.core.ui.theme.Teal
+import social.ahtara.app.ui.theme.Teal
 
 
 

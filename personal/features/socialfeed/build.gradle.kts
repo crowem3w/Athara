@@ -36,7 +36,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":core"))
     implementation(project(":authentication")) 
     implementation(project(":travel"))         
     implementation(libs.androidx.core.ktx)

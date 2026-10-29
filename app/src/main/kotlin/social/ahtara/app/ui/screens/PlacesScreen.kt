@@ -35,8 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import social.ahtara.core.ui.theme.Teal
-import social.ahtara.core.ui.theme.TextSecondary
+import social.ahtara.app.ui.theme.Teal
+import social.ahtara.app.ui.theme.TextSecondary
 import social.ahtara.authentication.domain.PlaceSelection
 import social.ahtara.travel.model.PlaceCategory
 
