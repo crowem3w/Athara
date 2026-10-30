@@ -55,6 +55,12 @@ fun LazyListScope.socialFeedItems(
         }
     }
     items(posts, key = { it.id }) { post ->
-        PostCard(post = post, colors = colors, onRequireAccount = onRequireAccount)
+        PostCard(
+            post = post,
+            colors = colors,
+            onRequireAccount = onRequireAccount,
+            onLike = { state.toggleLike(post, onRequireAccount) },
+            onSave = { state.toggleSave(post, onRequireAccount) },
+        )
     }
 }

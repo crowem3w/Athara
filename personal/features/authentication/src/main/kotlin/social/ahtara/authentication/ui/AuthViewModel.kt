@@ -42,6 +42,8 @@ internal data class AuthUiState(
     val birthYear: String = "",
     
     val loginId: String = "",
+    /** One-time code for password reset (FORGOT_PASSWORD only). */
+    val resetCode: String = "",
     val country: Country = Countries.DEFAULT,
     
     val mobile: String = "",
@@ -61,6 +63,7 @@ internal data class AuthUiState(
     @param:StringRes val confirmError: Int? = null,
     @param:StringRes val industryError: Int? = null,
     @param:StringRes val phoneError: Int? = null,
+    @param:StringRes val codeError: Int? = null,
     
     @param:StringRes val formError: Int? = null,
     
@@ -123,6 +126,27 @@ internal class AuthViewModel(
     fun onEmail(v: String) = _state.update {
         it.copy(email = v.filterNot { c -> c.isWhitespace() }, emailError = null, formError = null)
     }
+    fun onResetCode(v: String) = _state.update {
+        it.copy(resetCode = v.filter(Char::isLetterOrDigit).take(8), codeError = null, formError = null, info = null)
+    }
+
+    fun sendResetCode() {
+        val s = _state.value
+        if (s.isLoading) return
+        if (s.loginId.isBlank()) {
+            _state.update { it.copy(identifierError = R.string.authentication_error_login_required) }
+            return
+        }
+        _state.update { it.copy(isLoading = true, formError = null, info = null) }
+        viewModelScope.launch {
+            val ok = repository.requestPasswordReset(Validators.loginKey(s.country, s.loginId))
+            _state.update {
+                if (ok) it.copy(isLoading = false, info = R.string.authentication_message_code_sent)
+                else it.copy(isLoading = false, formError = R.string.authentication_error_unknown)
+            }
+        }
+    }
+
     fun onLoginId(v: String) = _state.update { it.copy(loginId = v, identifierError = null, formError = null, info = null) }
     fun onCountry(c: Country) = _state.update { it.copy(country = c, identifierError = null, formError = null, info = null) }
     fun onMobile(v: String) = _state.update {
@@ -180,7 +204,7 @@ internal class AuthViewModel(
                         s.displayName, s.identifier, s.password, s.accountType,
                         if (s.accountType.hasDetails) AccountDetails(s.industry, s.phone, s.registrationId) else AccountDetails(),
                     )
-                AuthMode.FORGOT_PASSWORD -> repository.resetPassword(Validators.loginKey(s.country, s.loginId), s.password)
+                AuthMode.FORGOT_PASSWORD -> repository.resetPassword(Validators.loginKey(s.country, s.loginId), s.resetCode, s.password)
                 AuthMode.SELECT_ACCOUNT -> return@launch
             }
             handle(result, s.mode)
@@ -346,6 +370,9 @@ internal class AuthViewModel(
         val confirmErr = if (s.mode != AuthMode.SIGN_IN && passErr == null && s.password != s.confirmPassword)
             R.string.authentication_error_password_mismatch else null
 
+        val codeErr = if (s.mode == AuthMode.FORGOT_PASSWORD && s.resetCode.length < 4)
+            R.string.authentication_error_code_required else null
+
         val details = s.mode == AuthMode.SIGN_UP && s.accountType.hasDetails
         val industryErr = if (details) Validators.required(s.industry)?.let { R.string.authentication_error_industry_required } else null
         val phoneErr = if (details) Validators.phone(s.phone)?.let {
@@ -357,11 +384,11 @@ internal class AuthViewModel(
             it.copy(
                 nameError = nameErr, usernameError = usernameErr, emailError = emailErr, birthdayError = birthdayErr,
                 identifierError = identifierErr, passwordError = passErr, confirmError = confirmErr,
-                industryError = industryErr, phoneError = phoneErr,
+                industryError = industryErr, phoneError = phoneErr, codeError = codeErr,
             )
         }
         return nameErr == null && usernameErr == null && birthdayErr == null && emailErr == null && identifierErr == null && passErr == null && confirmErr == null &&
-            industryErr == null && phoneErr == null
+            industryErr == null && phoneErr == null && codeErr == null
     }
 
     private fun AuthError.toMessage(): Int = when (this) {
@@ -371,6 +398,7 @@ internal class AuthViewModel(
         AuthError.EMAIL_TAKEN -> R.string.authentication_error_email_taken
         AuthError.ACCOUNT_NOT_FOUND -> R.string.authentication_error_account_not_found
         AuthError.NETWORK -> R.string.authentication_error_network
+        AuthError.INVALID_CODE -> R.string.authentication_error_code_invalid
         AuthError.UNKNOWN -> R.string.authentication_error_unknown
     }
 

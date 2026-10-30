@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
-import java.io.File
 import kotlin.math.max
 
 
@@ -46,37 +45,16 @@ internal object ImageDecoding {
 
 
 
-internal class ProfilePhotoStore(private val context: Context) {
-    private val dir get() = File(context.filesDir, "profile_photos")
-
-    enum class Kind(val suffix: String, val maxSide: Int) {
-        PROFILE("", 1024),
-        COVER("_cover", 1600),
+/** Downsizes a picked image and encodes it as JPEG for upload to `/media/images` (server re-encodes and strips EXIF). */
+internal object ImageUpload {
+    enum class Kind(val apiName: String, val maxSide: Int) {
+        PROFILE("profile", 1024),
+        COVER("cover", 1600),
     }
 
-    
-    fun save(userId: String, uri: String, kind: Kind = Kind.PROFILE): String? = runCatching {
-        val bitmap = ImageDecoding.decode(context.contentResolver, Uri.parse(uri), kind.maxSide) ?: return@runCatching null
-        dir.mkdirs()
-        val file = File(dir, "$userId${kind.suffix}.jpg")
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }
-        file.absolutePath
+    fun jpegBytes(context: Context, uri: String, kind: Kind): ByteArray? = runCatching {
+        val bitmap = ImageDecoding.decode(context.contentResolver, Uri.parse(uri), kind.maxSide)
+            ?: return@runCatching null
+        java.io.ByteArrayOutputStream().also { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }.toByteArray()
     }.getOrNull()
-
-    
-    /** Path of the cached photo, or null if there is none. */
-    fun pathOf(userId: String, kind: Kind = Kind.PROFILE): String? =
-        File(dir, "$userId${kind.suffix}.jpg").takeIf { it.exists() }?.absolutePath
-
-    /** Re-keys cached photos when an account gets its backend id. */
-    fun move(oldId: String, newId: String) {
-        Kind.values().forEach { k ->
-            val from = File(dir, "$oldId${k.suffix}.jpg")
-            if (from.exists()) from.renameTo(File(dir, "$newId${k.suffix}.jpg"))
-        }
-    }
-
-    fun delete(userId: String, kind: Kind? = null) {
-        (kind?.let { listOf(it) } ?: Kind.values().toList()).forEach { File(dir, "$userId${it.suffix}.jpg").delete() }
-    }
 }

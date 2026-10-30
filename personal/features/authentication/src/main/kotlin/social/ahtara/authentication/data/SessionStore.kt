@@ -36,8 +36,8 @@ internal class SessionStore(private val prefs: SharedPreferences) {
             latitude = prefs.getString(KEY_LATITUDE, null)?.toDoubleOrNull(),
             longitude = prefs.getString(KEY_LONGITUDE, null)?.toDoubleOrNull(),
             places = placesFromJson(prefs.getString(KEY_PLACES, null)),
-            photoPath = prefs.getString(KEY_PHOTO_PATH, null),
-            coverPath = prefs.getString(KEY_COVER_PATH, null),
+            photoUrl = prefs.getString(KEY_PHOTO_PATH, null),
+            coverUrl = prefs.getString(KEY_COVER_PATH, null),
         )
     }
 
@@ -58,8 +58,8 @@ internal class SessionStore(private val prefs: SharedPreferences) {
         putString(KEY_LATITUDE, user.latitude?.toString())
         putString(KEY_LONGITUDE, user.longitude?.toString())
         putString(KEY_PLACES, user.places.takeIf { it.isNotEmpty() }?.toJsonString())
-        putString(KEY_PHOTO_PATH, user.photoPath)
-        putString(KEY_COVER_PATH, user.coverPath)
+        putString(KEY_PHOTO_PATH, user.photoUrl)
+        putString(KEY_COVER_PATH, user.coverUrl)
     }
 
     

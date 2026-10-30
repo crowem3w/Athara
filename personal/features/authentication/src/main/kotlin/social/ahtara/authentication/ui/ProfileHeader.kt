@@ -1,6 +1,5 @@
 package social.ahtara.authentication.ui
 
-import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,24 +15,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import java.io.File
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import coil3.compose.AsyncImage
 import social.ahtara.authentication.R
-import social.ahtara.authentication.data.ImageDecoding
 
 private val HeaderAvatarSize = 112.dp
 private val HeaderAvatarInset = 16.dp
@@ -47,9 +38,7 @@ private val HeaderPlaceholder = Color(0xFFE4E6EB)
 
 
 @Composable
-fun ProfileHeader(coverPath: String?, photoPath: String?, modifier: Modifier = Modifier) {
-    val cover = rememberFileImage(coverPath, 1000)
-    val photo = rememberFileImage(photoPath, 400)
+fun ProfileHeader(coverUrl: String?, photoUrl: String?, modifier: Modifier = Modifier) {
     val panel = MaterialTheme.colorScheme.background
 
     Box(modifier = modifier.fillMaxWidth().padding(bottom = HeaderAvatarSize / 2)) {
@@ -60,9 +49,9 @@ fun ProfileHeader(coverPath: String?, photoPath: String?, modifier: Modifier = M
                 .clip(RoundedCornerShape(20.dp))
                 .background(HeaderGray),
         ) {
-            if (cover != null) {
-                Image(
-                    bitmap = cover,
+            if (coverUrl != null) {
+                AsyncImage(
+                    model = coverUrl,
                     contentDescription = stringResource(R.string.authentication_setup_cover),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize(),
@@ -79,9 +68,9 @@ fun ProfileHeader(coverPath: String?, photoPath: String?, modifier: Modifier = M
             border = BorderStroke(HeaderAvatarRing, panel),
         ) {
             Box(contentAlignment = Alignment.Center) {
-                if (photo != null) {
-                    Image(
-                        bitmap = photo,
+                if (photoUrl != null) {
+                    AsyncImage(
+                        model = photoUrl,
                         contentDescription = stringResource(R.string.authentication_setup_photo),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize().clip(CircleShape),
@@ -96,15 +85,4 @@ fun ProfileHeader(coverPath: String?, photoPath: String?, modifier: Modifier = M
             }
         }
     }
-}
-
-@Composable
-private fun rememberFileImage(path: String?, maxSide: Int): ImageBitmap? {
-    val resolver = LocalContext.current.contentResolver
-    val image by produceState<ImageBitmap?>(initialValue = null, path, maxSide) {
-        value = if (path == null) null else withContext(Dispatchers.IO) {
-            runCatching { ImageDecoding.decode(resolver, Uri.fromFile(File(path)), maxSide)?.asImageBitmap() }.getOrNull()
-        }
-    }
-    return image
 }

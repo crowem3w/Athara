@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -24,6 +23,22 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+    // Gateway root (incl. /api/v1). Override with -Pahtara.apiBaseUrl=... / -Pahtara.apiBaseUrlRelease=...
+    // or in ~/.gradle/gradle.properties. 10.0.2.2 is the host machine as seen from the Android emulator.
+    buildTypes {
+        fun url(key: String, default: String) = (project.findProperty(key) as String? ?: default).trim()
+        debug {
+            buildConfigField("String", "API_BASE_URL", "\"${url("ahtara.apiBaseUrl", "http://10.0.2.2:8080/api/v1")}\"")
+        }
+        release {
+            buildConfigField(
+                "String", "API_BASE_URL",
+                "\"${url("ahtara.apiBaseUrlRelease", "https://api.example.invalid/api/v1")}\"",
+            )
+        }
     }
 
     compileOptions {
@@ -39,18 +54,13 @@ kotlin {
 }
 
 
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-}
-
 dependencies {
-    implementation(project(":network"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)

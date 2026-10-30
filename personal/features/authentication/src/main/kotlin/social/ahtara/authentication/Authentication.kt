@@ -5,9 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import social.ahtara.authentication.data.DeviceFlowStore
-import social.ahtara.authentication.data.LocalAuthRepository
 import social.ahtara.authentication.data.RemoteAuthRepository
-import social.ahtara.network.ApiConfig
 import social.ahtara.authentication.domain.AccountType
 import social.ahtara.authentication.domain.AuthRepository
 import social.ahtara.authentication.domain.NoVerification
@@ -30,13 +28,10 @@ object Authentication {
 
     fun repository(context: Context): AuthRepository =
         repository ?: synchronized(this) {
-            repository ?: createDefault(context.applicationContext).also { repository = it }
+            repository ?: RemoteAuthRepository.create(context.applicationContext).also { repository = it }
         }
 
     
-    private fun createDefault(app: Context): AuthRepository =
-        if (ApiConfig.backendEnabled(app)) RemoteAuthRepository.create(app) else LocalAuthRepository.create(app)
-
     fun install(repository: AuthRepository) {
         this.repository = repository
     }

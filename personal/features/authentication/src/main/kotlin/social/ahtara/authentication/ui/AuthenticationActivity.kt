@@ -111,6 +111,8 @@ class AuthenticationActivity : ComponentActivity() {
                         onPassword = viewModel::onPassword,
                         onConfirm = viewModel::onConfirm,
                         onSubmit = viewModel::submit,
+                        onResetCode = viewModel::onResetCode,
+                        onSendCode = viewModel::sendResetCode,
                         onSocial = viewModel::signInWithSocial,
                         onToSignUp = { startSignUp() },
                         onToSignIn = { viewModel.setMode(AuthMode.SIGN_IN, null) },

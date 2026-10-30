@@ -28,7 +28,6 @@ val modules = mapOf(
     ":location" to "personal/features/location",
     ":socialfeed" to "personal/features/socialfeed",
     ":travel" to "personal/features/travel",
-    ":network" to "network",
 )
 modules.forEach { (path, dir) ->
     include(path)

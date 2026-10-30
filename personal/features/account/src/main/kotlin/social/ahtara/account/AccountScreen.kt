@@ -65,7 +65,7 @@ private fun ProfileContent(user: AuthUser, onSignOut: () -> Unit) {
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        ProfileHeader(coverPath = user.coverPath, photoPath = user.photoPath)
+        ProfileHeader(coverUrl = user.coverUrl, photoUrl = user.photoUrl)
 
         Row(
             verticalAlignment = Alignment.CenterVertically,

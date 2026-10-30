@@ -43,6 +43,8 @@ fun PostCard(
     modifier: Modifier = Modifier,
     
     onReadMore: (FeedPost) -> Unit = {},
+    onLike: () -> Unit = {},
+    onSave: () -> Unit = {},
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
@@ -103,7 +105,7 @@ fun PostCard(
         Spacer(modifier = Modifier.height(12.dp))
 
         if (post.imageUrl != null) {
-            WikimediaImage(
+            PostImage(
                 url = post.imageUrl,
                 contentDescription = post.location,
                 modifier = Modifier
@@ -121,7 +123,7 @@ fun PostCard(
 
         if (post.sourceLabel != null) SourceLine(post, colors, onReadMore)
 
-        EngagementBar(post = post, colors = colors, requireAccount = onRequireAccount)
+        EngagementBar(post = post, colors = colors, requireAccount = onRequireAccount, onLike = onLike, onSave = onSave)
 
         HorizontalDivider(color = colors.divider, thickness = 1.dp)
     }
@@ -131,7 +133,9 @@ fun PostCard(
 private fun EngagementBar(
     post: FeedPost,
     colors: FeedColors,
-    requireAccount: () -> Boolean, 
+    requireAccount: () -> Boolean,
+    onLike: () -> Unit,
+    onSave: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -144,7 +148,7 @@ private fun EngagementBar(
             imageVector = if (post.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
             contentDescription = "Like",
             tint = if (post.isLiked) colors.heart else colors.textSecondary,
-            modifier = Modifier.clickable { requireAccount() },
+            modifier = Modifier.clickable { onLike() },
         )
         if (post.likeCount.isNotBlank()) Text(
             text = post.likeCount,
@@ -179,6 +183,7 @@ private fun EngagementBar(
             imageVector = Icons.Outlined.Bookmark,
             contentDescription = "Save",
             tint = if (post.isSaved) colors.textPrimary else colors.textSecondary,
+            modifier = Modifier.clickable { onSave() },
         )
     }
 }

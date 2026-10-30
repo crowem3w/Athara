@@ -37,7 +37,6 @@ kotlin {
 
 dependencies {
     implementation(project(":authentication")) 
-    implementation(project(":network"))
     implementation(project(":travel"))         
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

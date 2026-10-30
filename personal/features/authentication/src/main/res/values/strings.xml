@@ -4,7 +4,7 @@
     <string name="authentication_title_sign_in">Welcome back</string>
     <string name="authentication_title_sign_up">Create your account</string>
     <string name="authentication_title_reset">Reset password</string>
-    <string name="authentication_subtitle_reset">Enter your username, email or mobile number and choose a new password.</string>
+    <string name="authentication_subtitle_reset">Enter your username, email or mobile number, tap Send code, then enter the code and choose a new password.</string>
 
     <string name="authentication_label_name">Name</string>
     <string name="authentication_label_first_name">First name</string>
@@ -26,6 +26,12 @@
     <string name="authentication_action_sign_in">Sign in</string>
     <string name="authentication_action_sign_up">Create account</string>
     <string name="authentication_action_reset">Reset password</string>
+    <string name="authentication_label_reset_code">Verification code</string>
+    <string name="authentication_action_send_code">Send code</string>
+    <string name="authentication_message_code_sent">If that account exists, we sent it a code.</string>
+    <string name="authentication_error_code_required">Enter the code we sent you.</string>
+    <string name="authentication_error_code_invalid">That code is wrong or expired.</string>
+    <string name="authentication_error_network">Can't reach the server. Check your connection and try again.</string>
     <string name="authentication_action_forgot">Forgot password?</string>
     <string name="authentication_action_to_sign_up">New here? Create an account</string>
     <string name="authentication_action_to_sign_in">Already have an account? Sign in</string>
@@ -56,7 +62,6 @@
     <string name="authentication_error_invalid_credentials">Incorrect username, email, mobile number or password</string>
     <string name="authentication_error_identifier_taken">An account with this mobile number already exists</string>
     <string name="authentication_error_account_not_found">No account found for these details</string>
-    <string name="authentication_error_network">Can't reach the server. Check your connection and try again.</string>
     <string name="authentication_error_unknown">Something went wrong. Please try again.</string>
     <string name="authentication_message_password_reset">Password updated. You can now sign in.</string>
 

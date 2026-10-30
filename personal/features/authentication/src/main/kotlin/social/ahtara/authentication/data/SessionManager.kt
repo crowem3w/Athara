@@ -22,10 +22,6 @@ internal class SessionManager(context: Context) {
         SessionStore(app.getSharedPreferences(sessionPrefsName(type), Context.MODE_PRIVATE))
     }
 
-    init {
-        migrateLegacySession()
-    }
-
     fun activeType(): AccountType? =
         pointer.getString(KEY_ACTIVE_TYPE, null)?.let { name -> AccountType.entries.firstOrNull { it.name == name } }
 
@@ -54,23 +50,9 @@ internal class SessionManager(context: Context) {
 
     private fun active(): SessionStore? = activeType()?.let { stores.getValue(it) }
 
-    private fun migrateLegacySession() {
-        val legacyPrefs = app.getSharedPreferences(LEGACY_PREFS, Context.MODE_PRIVATE)
-        if (legacyPrefs.all.isEmpty()) return
-        val legacy = SessionStore(legacyPrefs)
-        val user = legacy.read()
-        if (user != null && activeType() == null) {
-            val pending = legacy.pendingSetupId()
-            save(user)
-            if (pending == user.id) markSetupPending(user.id)
-        }
-        legacy.clear()
-    }
-
     private companion object {
         const val POINTER_PREFS = "authentication_active"
         const val KEY_ACTIVE_TYPE = "type"
-        const val LEGACY_PREFS = "authentication_session"
 
         fun sessionPrefsName(type: AccountType) = "authentication_session_${type.name.lowercase()}"
     }

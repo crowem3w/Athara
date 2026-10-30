@@ -55,6 +55,8 @@ internal fun ColumnScope.AuthenticationFormContent(
     onUsername: (String) -> Unit = {},
     onEmail: (String) -> Unit = {},
     onLoginId: (String) -> Unit = {},
+    onResetCode: (String) -> Unit = {},
+    onSendCode: () -> Unit = {},
     birthday: BirthdayActions = BirthdayActions.None,
     onMobile: (String) -> Unit = {},
     onCountry: (Country) -> Unit = {},
@@ -168,6 +170,18 @@ internal fun ColumnScope.AuthenticationFormContent(
                 keyboardType = KeyboardType.Text, imeAction = ImeAction.Next,
             )
         }
+    }
+    if (mode == AuthMode.FORGOT_PASSWORD) {
+        AuthField(
+            value = state.resetCode, onChange = onResetCode,
+            label = R.string.authentication_label_reset_code, error = state.codeError,
+            keyboardType = KeyboardType.Number, imeAction = ImeAction.Next,
+        )
+        TextButton(
+            onClick = onSendCode,
+            enabled = !state.isLoading,
+            modifier = Modifier.align(Alignment.End),
+        ) { Text(stringResource(R.string.authentication_action_send_code)) }
     }
     AuthField(
         value = state.password, onChange = onPassword,

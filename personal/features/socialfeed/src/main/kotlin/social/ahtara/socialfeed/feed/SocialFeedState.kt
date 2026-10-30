@@ -1,88 +1,122 @@
 package social.ahtara.socialfeed.feed
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import social.ahtara.authentication.domain.PlaceSelection
-import social.ahtara.network.ApiClient
-import social.ahtara.network.ApiException
+import social.ahtara.authentication.net.ApiException
 import social.ahtara.socialfeed.model.FeedPost
-import social.ahtara.travel.model.PlaceCategory
 
-/** Feed state backed by the backend. Failures keep the posts already on screen and set [notice]. */
+/** Feed shown on Home, loaded from the backend around the user's main place. */
 @Stable
-class SocialFeedState internal constructor(private val remote: FeedRemote) {
+class SocialFeedState internal constructor(
+    private val api: FeedApi,
+    private val scope: CoroutineScope,
+) {
     var posts by mutableStateOf<List<FeedPost>>(emptyList())
         private set
 
     var notice by mutableStateOf<String?>(null)
         private set
 
+    var isLoadingMore by mutableStateOf(false)
+        private set
+
     private var nextCursor: String? = null
+    private var area: PlaceSelection? = null
 
-    /** Loads the first page around the user's first saved place (all areas if there is none). */
-    suspend fun load(places: List<PlaceSelection>, force: Boolean, category: PlaceCategory? = null) {
-        if (!force && posts.isNotEmpty()) return
-        val area = places.firstOrNull()
+    val canLoadMore: Boolean get() = nextCursor != null && !isLoadingMore
+
+    /** Loads the first page for the first of [places]. [force] reloads even if the same place is already shown. */
+    suspend fun load(places: List<PlaceSelection>, force: Boolean) {
+        val place = places.firstOrNull()
+        if (place == null) {
+            posts = emptyList(); nextCursor = null; area = null; notice = null
+            return
+        }
+        if (!force && place == area && posts.isNotEmpty()) return
         try {
-            val (items, cursor) = remote.page(area?.latitude, area?.longitude, category = category)
-            posts = items
-            nextCursor = cursor
+            val page = api.page(place.latitude, place.longitude, RADIUS_METERS)
+            posts = page.posts
+            nextCursor = page.nextCursor
+            area = place
             notice = null
         } catch (e: ApiException) {
-            notice = message(e)
+            // Keep whatever is already on screen; just say why it didn't refresh.
+            notice = e.message
         }
     }
 
-    /** Appends the next page, if any. */
-    suspend fun loadMore(places: List<PlaceSelection>, category: PlaceCategory? = null) {
+    suspend fun loadMore() {
         val cursor = nextCursor ?: return
-        val area = places.firstOrNull()
+        val place = area ?: return
+        if (isLoadingMore) return
+        isLoadingMore = true
         try {
-            val (items, next) = remote.page(area?.latitude, area?.longitude, category = category, cursor = cursor)
-            posts = posts + items.filter { n -> posts.none { it.id == n.id } }
-            nextCursor = next
+            val page = api.page(place.latitude, place.longitude, RADIUS_METERS, cursor = cursor)
+            val seen = posts.mapTo(HashSet()) { it.id }
+            posts = posts + page.posts.filter { it.id !in seen }
+            nextCursor = page.nextCursor
         } catch (e: ApiException) {
-            notice = message(e)
+            notice = e.message
+        } finally {
+            isLoadingMore = false
         }
     }
 
-    suspend fun toggleLike(id: String) = optimistic(id, { it.copy(isLiked = !it.isLiked) }) { remote.setLiked(id, it.isLiked).second }
-    suspend fun toggleSave(id: String) = optimistic(id, { it.copy(isSaved = !it.isSaved) }) { remote.setSaved(id, it.isSaved).second }
-
-    /** Returns true if the post was created (it is shown at the top of the feed). */
-    suspend fun createPost(caption: String, place: PlaceSelection?, category: PlaceCategory?, imageMediaId: String? = null, promote: Boolean = false): Boolean =
-        try {
-            remote.create(caption, place?.name, place?.latitude, place?.longitude, category, imageMediaId, promote)
-                ?.let { posts = listOf(it) + posts }
-            notice = null
-            true
-        } catch (e: ApiException) {
-            notice = message(e)
-            false
-        }
-
-    private suspend fun optimistic(id: String, change: (FeedPost) -> FeedPost, call: suspend (FeedPost) -> Int?) {
-        val before = posts.firstOrNull { it.id == id } ?: return
-        val after = change(before)
-        posts = posts.map { if (it.id == id) after else it }
-        try {
-            call(after)?.let { count -> posts = posts.map { if (it.id == id) it.copy(likeCount = count.toString()) else it } }
-        } catch (e: ApiException) {
-            posts = posts.map { if (it.id == id) before else it }
-            notice = if (e.status == 401) "Sign in to do that" else message(e)
+    /** Optimistic like toggle; [requireAccount] must return true (signed in) or the toggle is skipped. */
+    fun toggleLike(post: FeedPost, requireAccount: () -> Boolean) {
+        if (!requireAccount()) return
+        val want = !post.isLiked
+        update(post.id) { it.copy(isLiked = want, likeCount = FeedApi.count(countOf(it) + if (want) 1 else -1)) }
+        scope.launch {
+            try {
+                val (active, likes) = api.setLiked(post.id, want)
+                update(post.id) { it.copy(isLiked = active, likeCount = likes?.let(FeedApi::count) ?: it.likeCount) }
+            } catch (e: ApiException) {
+                update(post.id) { it.copy(isLiked = post.isLiked, likeCount = post.likeCount) }
+                notice = e.message
+            }
         }
     }
 
-    private fun message(e: ApiException) = if (e.isNetwork) "Can't reach the server" else e.message.orEmpty()
+    fun toggleSave(post: FeedPost, requireAccount: () -> Boolean) {
+        if (!requireAccount()) return
+        val want = !post.isSaved
+        update(post.id) { it.copy(isSaved = want) }
+        scope.launch {
+            try {
+                update(post.id) { it.copy(isSaved = api.setSaved(post.id, want).first) }
+            } catch (e: ApiException) {
+                update(post.id) { it.copy(isSaved = post.isSaved) }
+                notice = e.message
+            }
+        }
+    }
+
+    private fun countOf(p: FeedPost) = p.likeCount.toIntOrNull() ?: 0
+
+    private fun update(id: String, change: (FeedPost) -> FeedPost) {
+        posts = posts.map { if (it.id == id) change(it) else it }
+    }
+
+    private companion object {
+        /** Guimaras is small; 50 km covers the whole island from any place on it. */
+        const val RADIUS_METERS = 50_000
+    }
 }
 
 @Composable
 fun rememberSocialFeedState(): SocialFeedState {
-    val app = LocalContext.current.applicationContext
-    return remember { SocialFeedState(FeedRemote(ApiClient.get(app))) }
+    val context: Context = LocalContext.current.applicationContext
+    val scope = rememberCoroutineScope()
+    return remember { SocialFeedState(FeedApi(context), scope) }
 }
