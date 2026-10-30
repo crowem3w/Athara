@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import social.ahtara.authentication.data.UserDao
 import social.ahtara.authentication.data.UserEntity
 
-/** Pre-split single database. Only read once to copy users into the per-type databases, then retired. */
+
 @Database(entities = [UserEntity::class], version = 11, exportSchema = true)
 internal abstract class LegacyAuthDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao

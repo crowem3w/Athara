@@ -38,7 +38,7 @@ fun CreateTab(
     onClick: () -> Unit = {},
     
     visibility: () -> Float = { 1f },
-    // The centre button is "Create" (+) by default; Business uses it as a QR scanner.
+    
     icon: ImageVector = Icons.Filled.Add,
     contentDescription: String = "Create",
 ) {

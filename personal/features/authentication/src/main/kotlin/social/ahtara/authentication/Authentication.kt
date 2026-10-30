@@ -6,6 +6,8 @@ import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import social.ahtara.authentication.data.DeviceFlowStore
 import social.ahtara.authentication.data.LocalAuthRepository
+import social.ahtara.authentication.data.RemoteAuthRepository
+import social.ahtara.network.ApiConfig
 import social.ahtara.authentication.domain.AccountType
 import social.ahtara.authentication.domain.AuthRepository
 import social.ahtara.authentication.domain.NoVerification
@@ -28,10 +30,13 @@ object Authentication {
 
     fun repository(context: Context): AuthRepository =
         repository ?: synchronized(this) {
-            repository ?: LocalAuthRepository.create(context.applicationContext).also { repository = it }
+            repository ?: createDefault(context.applicationContext).also { repository = it }
         }
 
     
+    private fun createDefault(app: Context): AuthRepository =
+        if (ApiConfig.backendEnabled(app)) RemoteAuthRepository.create(app) else LocalAuthRepository.create(app)
+
     fun install(repository: AuthRepository) {
         this.repository = repository
     }
@@ -71,45 +76,45 @@ object Authentication {
     
     suspend fun signOut(context: Context) = repository(context).signOut()
 
-    // region Pre-Home flow (device-level: works signed out, survives sign-out)
+    
 
     private fun flow(context: Context) = DeviceFlowStore(context.applicationContext)
 
-    /** Account type used for sign-up: the one picked on the pre-Home step, or the only one offered. */
+    
     fun selectedAccountType(context: Context): AccountType? =
         flow(context).selectedType() ?: AccountType.available.singleOrNull()
 
     fun selectAccountType(context: Context, type: AccountType) = flow(context).selectType(type)
 
-    /**
-     * True when the pre-Home "Account type" step must be shown: more than one type is offered and
-     * none was picked yet. While only one type is offered the step is skipped (nothing is stored,
-     * so it still shows once, to everyone, if more types are offered later).
-     */
+    
+
+
+
+
     fun needsAccountTypeStep(context: Context): Boolean =
         AccountType.available.size > 1 && flow(context).selectedType() == null
 
-    /** Places picked on the pre-Home Map/Location step, stored on the device (works signed out). */
+    
     fun devicePlaces(context: Context): List<PlaceSelection> = flow(context).places()
 
     fun saveDevicePlaces(context: Context, places: List<PlaceSelection>) = flow(context).savePlaces(places)
 
-    /** True until a Guimaras place has been saved: the Map/Location step shows once, on first launch. */
+    
     fun needsLocationStep(context: Context): Boolean =
         flow(context).let { it.places().isEmpty() && !it.isLocationStepDone() }
 
-    /** Personal accounts may skip the Map/Location step; remember it so it is not shown again. */
+    
     fun markLocationStepDone(context: Context) = flow(context).markLocationStepDone()
 
-    /** Street / address text typed by Business accounts on the Map/Location step. Cleared on sign-out. */
+    
     fun deviceAddress(context: Context): String = flow(context).address()
 
     fun saveDeviceAddress(context: Context, address: String) = flow(context).saveAddress(address)
 
-    // endregion
+    
 }
 
-/** Which screen of the Login / Registration flow to open first. */
+
 enum class AuthEntry { SIGN_IN, SIGN_UP }
 
 

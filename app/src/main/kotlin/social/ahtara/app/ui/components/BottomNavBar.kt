@@ -67,10 +67,10 @@ fun BottomNavBar(
     onTransportClick: () -> Unit = {},
     onCreateClick: () -> Unit = {},
     onPlacesClick: () -> Unit = {},
-    // Travel-feed tabs; account types without a travel feed (Business) hide them.
+    
     showTransport: Boolean = true,
     showPlaces: Boolean = true,
-    // Centre button: "Create" (+) by default, Business swaps in a QR scanner.
+    
     centerIcon: ImageVector = Icons.Filled.Add,
     centerLabel: String = "Create",
     
@@ -147,7 +147,7 @@ private fun Modifier.dippedBarSurface(): Modifier = drawWithCache {
     val left = cx - halfWidth
     val right = cx + halfWidth
 
-    // The bar: a flat surface with a rounded dip cut out for the Create button.
+    
     val face = Path().apply {
         moveTo(0f, 0f)
         lineTo(left, 0f)
@@ -166,13 +166,13 @@ private fun Modifier.dippedBarSurface(): Modifier = drawWithCache {
     val facePath = face.asAndroidPath()
     val curvePath = curve.asAndroidPath()
 
-    // Soft ambient shadow: a blurred copy of the bar itself, so it fades out smoothly from the
-    // top edge and follows the curve of the dip. No flat fill behind the Create button.
+    
+    
     val ambient = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
         color = android.graphics.Color.argb(40, 0, 0, 0)
         maskFilter = android.graphics.BlurMaskFilter(10.dp.toPx(), android.graphics.BlurMaskFilter.Blur.NORMAL)
     }
-    // Tighter, fainter shadow hugging the curve, so the dip reads as a clean edge (no hard line).
+    
     val contact = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
         style = android.graphics.Paint.Style.STROKE
         strokeWidth = 2.dp.toPx()
@@ -181,7 +181,7 @@ private fun Modifier.dippedBarSurface(): Modifier = drawWithCache {
         color = android.graphics.Color.argb(26, 0, 0, 0)
         maskFilter = android.graphics.BlurMaskFilter(3.dp.toPx(), android.graphics.BlurMaskFilter.Blur.NORMAL)
     }
-    val lift = 1.dp.toPx() // light from below-front: shadow sits slightly above the edge
+    val lift = 1.dp.toPx() 
 
     onDrawBehind {
         translate(top = edgeDrop) {

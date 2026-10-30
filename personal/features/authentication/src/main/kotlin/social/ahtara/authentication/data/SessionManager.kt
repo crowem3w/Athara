@@ -5,16 +5,16 @@ import androidx.core.content.edit
 import social.ahtara.authentication.domain.AccountType
 import social.ahtara.authentication.domain.AuthUser
 
-/**
- * Session handling with one rule: at most ONE account is signed in, and its session lives in a
- * preferences file of its own type (`authentication_session_personal`, ...).
- *
- * - A small pointer file records which type is active.
- * - [save] wipes the other types' sessions, so two accounts can never be "signed in" at once.
- * - [clear] wipes the active type's file completely (profile cache and setup-pending marker).
- * - The first run after an upgrade moves the old single `authentication_session` file into the
- *   per-type layout, so existing users stay signed in.
- */
+
+
+
+
+
+
+
+
+
+
 internal class SessionManager(context: Context) {
     private val app = context.applicationContext
     private val pointer = app.getSharedPreferences(POINTER_PREFS, Context.MODE_PRIVATE)

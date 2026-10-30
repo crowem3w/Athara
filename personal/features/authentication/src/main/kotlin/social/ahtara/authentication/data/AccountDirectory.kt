@@ -1,10 +1,10 @@
 package social.ahtara.authentication.data
 
-/**
- * Read-only lookups that must span account types, because identifiers, usernames and emails are
- * unique across ALL types. Callers get the entity (and its type) back and then switch to
- * [AccountStores.of] for anything else, so cross-type access stays confined to this class.
- */
+
+
+
+
+
 internal class AccountDirectory(private val daos: List<UserDao>) {
 
     suspend fun byAnyId(key: String): UserEntity? = first { it.findByAnyId(key) }

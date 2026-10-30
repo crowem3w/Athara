@@ -98,7 +98,7 @@ fun LocationSearchField(
 }
 
 
-/** Free-text address line (Business accounts), shown under the map search. */
+
 @Composable
 fun LocationAddressField(
     value: String,

@@ -64,6 +64,18 @@ internal class ProfilePhotoStore(private val context: Context) {
     }.getOrNull()
 
     
+    /** Path of the cached photo, or null if there is none. */
+    fun pathOf(userId: String, kind: Kind = Kind.PROFILE): String? =
+        File(dir, "$userId${kind.suffix}.jpg").takeIf { it.exists() }?.absolutePath
+
+    /** Re-keys cached photos when an account gets its backend id. */
+    fun move(oldId: String, newId: String) {
+        Kind.values().forEach { k ->
+            val from = File(dir, "$oldId${k.suffix}.jpg")
+            if (from.exists()) from.renameTo(File(dir, "$newId${k.suffix}.jpg"))
+        }
+    }
+
     fun delete(userId: String, kind: Kind? = null) {
         (kind?.let { listOf(it) } ?: Kind.values().toList()).forEach { File(dir, "$userId${it.suffix}.jpg").delete() }
     }

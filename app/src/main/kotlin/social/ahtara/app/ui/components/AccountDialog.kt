@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import social.ahtara.app.R
 
-/** Modal "Account" dialog: Log in and Sign up buttons, stacked vertically. Tap outside to close. */
+
 @Composable
 fun AccountDialog(onLogin: () -> Unit, onSignUp: () -> Unit, onDismiss: () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
@@ -50,9 +50,9 @@ fun AccountDialog(onLogin: () -> Unit, onSignUp: () -> Unit, onDismiss: () -> Un
     }
 }
 
-/**
- * Gate for actions that need an account (Create, like, comment, share).
- * Calling it returns true when the action may go ahead; for a guest it returns false and the
- * host screen shows the [AccountDialog]. Defaults to "always allowed".
- */
+
+
+
+
+
 val LocalRequireAccount = androidx.compose.runtime.staticCompositionLocalOf<() -> Boolean> { { true } }

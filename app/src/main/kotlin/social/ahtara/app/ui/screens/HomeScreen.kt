@@ -57,7 +57,7 @@ import social.ahtara.app.ui.theme.TextSecondary
 
 private const val CreateButtonHideEnd = 0.5f
 
-/** What the feed module needs from the app theme. */
+
 private val AppFeedColors = FeedColors(
     divider = Divider,
     heart = Heart,

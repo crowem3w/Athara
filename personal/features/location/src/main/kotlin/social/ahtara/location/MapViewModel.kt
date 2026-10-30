@@ -53,7 +53,7 @@ class MapViewModel : ViewModel() {
     private var searchJob: Job? = null
     private var initialApplied = false
 
-    /** Business / Organization: picking a place replaces the previous one. */
+    
     var singleSelect = false
 
     

@@ -31,5 +31,6 @@ kotlin {
 }
 
 dependencies {
+    api(project(":network"))
     implementation(libs.kotlinx.coroutines.android)
 }

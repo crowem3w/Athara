@@ -44,7 +44,7 @@ class AuthenticationActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // The account type was chosen before Home, so "Sign up" goes straight to registration.
+        
         if (savedInstanceState == null &&
             intent.getStringExtra(EXTRA_ENTRY) == AuthEntry.SIGN_UP.name
         ) startSignUp()
@@ -116,7 +116,7 @@ class AuthenticationActivity : ComponentActivity() {
                         onToSignIn = { viewModel.setMode(AuthMode.SIGN_IN, null) },
                     )
                 }
-                // Dismiss the modal and go back to Home as a guest. Other steps use their own back arrow.
+                
                 if (state.mode == AuthMode.SIGN_IN) {
                     IconButton(
                         onClick = { finish() },

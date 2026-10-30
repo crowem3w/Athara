@@ -73,12 +73,12 @@ fun ColumnScope.LocationPanelContent(
 
     CategoryChips(selected = categories, onToggle = onToggleCategory)
 
-    // Guimaras and its five municipalities, one tap each.
+    
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.horizontalScroll(rememberScrollState()),
     ) {
-        // Organizations pick municipalities; Personal / Business can also pick the whole province.
+        
         val picks = if (accountType == social.ahtara.authentication.domain.AccountType.ORGANIZATION)
             ServiceArea.municipalities else ServiceArea.quickPicks
         picks.forEach { pick ->

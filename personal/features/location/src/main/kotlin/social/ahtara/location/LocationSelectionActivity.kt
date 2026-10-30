@@ -74,25 +74,25 @@ class LocationSelectionActivity : ComponentActivity() {
 
 class PickLocationContract(
     private val accountType: AccountType = AccountType.PERSONAL,
-    /** True for the first-launch step (Splash > Onboarding > Terms > Account type > Map/Location > Home). */
+    
     private val preHome: Boolean = false,
 ) : ActivityResultContract<List<PlaceSelection>, List<PlaceSelection>?>() {
 
     override fun createIntent(context: Context, input: List<PlaceSelection>): Intent {
-        // First-launch step: use the type picked on the Account type screen.
+        
         val type = if (preHome) {
             social.ahtara.authentication.Authentication.selectedAccountType(context) ?: accountType
         } else accountType
         return Intent(context, LocationSelectionActivity::class.java)
             .putExtra(LocationSelectionActivity.EXTRA_ACCOUNT_TYPE, type.name)
-            // Only Personal accounts may skip; Business / Organization must set one location.
+            
             .putExtra(LocationSelectionActivity.EXTRA_ALLOW_SKIP, preHome && type == AccountType.PERSONAL)
             .putExtra(LocationSelectionActivity.EXTRA_INITIAL_PLACES, input.toJsonString())
             .putExtra(LocationSelectionActivity.EXTRA_PRE_HOME, preHome)
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): List<PlaceSelection>? {
-        if (resultCode == Activity.RESULT_FIRST_USER) return emptyList() // skipped
+        if (resultCode == Activity.RESULT_FIRST_USER) return emptyList() 
         if (resultCode != Activity.RESULT_OK) return null
         return placesFromJson(intent?.getStringExtra(LocationSelectionActivity.EXTRA_RESULT_PLACES))
             .takeIf { it.isNotEmpty() }

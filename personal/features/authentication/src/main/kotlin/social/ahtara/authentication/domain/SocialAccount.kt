@@ -10,4 +10,6 @@ data class SocialAccount(
     val subject: String,
     val email: String?,
     val displayName: String,
+    /** Google ID token; the backend verifies it. Null for demo accounts. */
+    val idToken: String? = null,
 )

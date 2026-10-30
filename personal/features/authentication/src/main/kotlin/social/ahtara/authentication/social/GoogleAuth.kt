@@ -56,6 +56,7 @@ internal object GoogleAuth {
                         subject = subjectOf(google.idToken) ?: google.id,
                         email = google.id,
                         displayName = google.displayName.orEmpty(),
+                        idToken = google.idToken,
                     )
                 )
             } else {

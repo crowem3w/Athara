@@ -16,10 +16,10 @@ import social.ahtara.authentication.ui.STEP_ACCOUNT_TYPE
 import social.ahtara.authentication.ui.SignUpStepHeader
 import social.ahtara.authentication.ui.theme.AuthenticationTheme
 
-/**
- * Pre-Home "Account type" page (shown once, after the Terms & Conditions).
- * It is one step of the existing sign-up progress bar (STEP_ACCOUNT_TYPE), same header and roller.
- */
+
+
+
+
 @Composable
 fun AccountTypeStep(onSelected: (AccountType) -> Unit, onBack: () -> Unit) {
     AuthenticationTheme {

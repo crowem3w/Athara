@@ -52,21 +52,21 @@ import social.ahtara.travel.model.PlaceCategory
 
 
 
-/**
- * Home screen. Works for guests (signed out, Guimaras default) and signed-in users.
- * A guest tapping Create, like, comment or share gets the "Account" dialog (Log in / Sign up, stacked vertically).
- * The profile button opens the Account settings screen (not a dialog), for guests too.
- */
+
+
+
+
+
 class SocialFeedActivity : ComponentActivity() {
     private var setupInProgress = false
 
-    // Login / Sign-up screens, opened from the "Account" dialog. A new account's setup is
-    // started by the observer below.
+    
+    
     private val authLauncher = registerForActivityResult(AuthenticationContract()) { }
 
     private val setupLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         setupInProgress = false
-        // Setup abandoned: drop the half-created account and carry on as a guest.
+        
         if (Authentication.isSignedIn(this) && Authentication.isSetupPending(this)) {
             lifecycleScope.launch { Authentication.discardNewAccount(this@SocialFeedActivity) }
         }
@@ -82,8 +82,8 @@ class SocialFeedActivity : ComponentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 Authentication.repository(this@SocialFeedActivity).currentUser.collect { user ->
-                    // Signed in with account setup still pending (fresh registration, or the app
-                    // was closed mid-setup): continue into that account type's setup screens.
+                    
+                    
                     if (user != null && Authentication.isSetupPending(this@SocialFeedActivity) && !setupInProgress) {
                         setupInProgress = true
                         setupLauncher.launch(user.accountType.intent(this@SocialFeedActivity))
@@ -110,7 +110,7 @@ class SocialFeedActivity : ComponentActivity() {
                 var activeKeys by rememberSaveable { mutableStateOf(emptySet<String>()) }
                 val categories = remember(categoryNames) { categoryNames.mapNotNull { PlaceCategory.fromName(it) }.toSet() }
 
-                // Only Guimaras is shown. Guests (and users with no Guimaras place saved) get the default.
+                
                 val guimarasPlaces = remember(current?.places) {
                     current?.places.orEmpty().filter { ServiceArea.contains(it) }
                 }
@@ -130,14 +130,14 @@ class SocialFeedActivity : ComponentActivity() {
                     activeKeys = if (next.isEmpty() || next == all) emptySet() else next
                 }
 
-                // Gate shared with the feed's like / comment / share buttons.
+                
                 val requireAccount: () -> Boolean = {
                     if (current != null) true else { showAccountDialog = true; false }
                 }
                 CompositionLocalProvider(LocalRequireAccount provides requireAccount) {
                 Box(Modifier.fillMaxSize()) {
-                    // Business: Personal's home without the feed. Organization: blank home for now.
-                    // Personal accounts and guests get the social feed.
+                    
+                    
                     if (current != null && current.accountType == AccountType.BUSINESS) {
                         BusinessHomeScreen(
                             userInitial = current.displayName.trim().firstOrNull()?.uppercase() ?: "B",
@@ -155,9 +155,9 @@ class SocialFeedActivity : ComponentActivity() {
                         onClearCategories = clearCategories,
                         userInitial = current?.displayName?.trim()?.firstOrNull()?.uppercase() ?: "G",
                         onPlacesClick = { showPlaces = true },
-                        // Account settings is a full screen; guests see Log in / Sign up there.
+                        
                         onProfileClick = { startActivity(AccountActivity.intent(this@SocialFeedActivity)) },
-                        // Only Create needs an account: guests get the "Account" dialog.
+                        
                         onCreateClick = { requireAccount() },
                     )
                     if (showAccountDialog) {
@@ -175,7 +175,7 @@ class SocialFeedActivity : ComponentActivity() {
                             categories = categories,
                             onTogglePlace = togglePlace,
                             onRemovePlace = { place ->
-                                // Guests have nothing saved; only signed-in users edit places.
+                                
                                 if (current != null) lifecycleScope.launch {
                                     Authentication.savePlaces(this@SocialFeedActivity, current.places - place)
                                 }

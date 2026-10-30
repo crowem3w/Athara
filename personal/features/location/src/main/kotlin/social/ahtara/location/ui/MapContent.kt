@@ -76,7 +76,7 @@ fun MapContent(
             m.cameraPosition = savedCamera
                 ?: CameraPosition.Builder()
                     .target(LatLng(ServiceArea.CENTER_LAT, ServiceArea.CENTER_LNG)).zoom(9.5).build()
-            // Guimaras only: keep the map on the island and stop zooming out to the world view.
+            
             m.setLatLngBoundsForCameraTarget(
                 LatLngBounds.Builder()
                     .include(LatLng(ServiceArea.SOUTH, ServiceArea.WEST))

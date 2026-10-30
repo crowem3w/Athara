@@ -12,10 +12,10 @@ import androidx.compose.ui.Modifier
 import social.ahtara.app.ui.components.BottomNavBar
 import social.ahtara.app.ui.components.TopBar
 
-/**
- * Placeholder home for Organization accounts (Business has [BusinessHomeScreen]): the top bar and bottom nav
- * with an empty body. 
- */
+
+
+
+
 @Composable
 fun BlankHomeScreen(
     userInitial: String,

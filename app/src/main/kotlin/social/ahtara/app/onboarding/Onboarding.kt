@@ -18,7 +18,7 @@ object Onboarding {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .getBoolean(KEY_COMPLETED, false)
 
-    /** True once the user has accepted the Terms & Conditions (asked once, after onboarding). */
+    
     fun isTermsAccepted(context: Context): Boolean =
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .getBoolean(KEY_TERMS_ACCEPTED, false)

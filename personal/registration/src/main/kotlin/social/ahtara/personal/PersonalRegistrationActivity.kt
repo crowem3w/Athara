@@ -33,18 +33,18 @@ class PersonalRegistrationActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val user = Authentication.repository(this).currentUser.value
-        // A signed-in user with setup still pending (app closed mid-setup) resumes at the setup screen.
+        
         val setupPendingAtStart = user != null && Authentication.isSetupPending(this)
         setContent {
             var setupPending by rememberSaveable { mutableStateOf(setupPendingAtStart) }
             var setupStep by rememberSaveable { mutableStateOf(false) }
             AuthenticationTheme(AccountType.PERSONAL) {
                 when {
-                    // Resumed setup: back discards the half-created account and leaves.
+                    
                     user != null && setupPending -> SetupScreen(onDiscarded = { finish() })
-                    // Already signed in and set up: nothing to do here.
+                    
                     user != null -> LaunchedEffect(Unit) { finishWithOk() }
-                    // Just signed up: back discards the new account and returns to the form.
+                    
                     setupStep -> SetupScreen(onDiscarded = { setupStep = false })
                     else -> AccountSignUp(
                         accountType = AccountType.PERSONAL,
@@ -90,7 +90,7 @@ private fun PerSetupWithLocation(
     onSave: (PersonalSetup) -> Unit,
     onBack: () -> Unit,
 ) {
-    // The location is picked earlier (Map/Location step before Home) and stored on the device.
+    
     val context = LocalContext.current
     fun withDevicePlaces(setup: PersonalSetup): PersonalSetup {
         val places = Authentication.devicePlaces(context)

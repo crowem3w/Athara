@@ -18,10 +18,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import social.ahtara.app.R
 
-/**
- * Modal Terms & Conditions dialog, shown once after onboarding.
- * It cannot be dismissed by tapping outside or pressing back: the user must accept or decline.
- */
+
+
+
+
 @Composable
 fun TermsDialog(onAccept: () -> Unit, onDecline: () -> Unit) {
     AlertDialog(

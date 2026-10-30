@@ -111,7 +111,7 @@ fun MapRoute(
     }
 
     
-    // Business / Organization set exactly one location.
+    
     LaunchedEffect(accountType) { viewModel.singleSelect = accountType == AccountType.BUSINESS }
 
     LaunchedEffect(initialPlaces) { if (initialPlaces.isNotEmpty()) viewModel.preselect(initialPlaces) }
@@ -146,7 +146,7 @@ fun MapRoute(
         }
     }
 
-    // No saved place yet: open on the whole island of Guimaras.
+    
     LaunchedEffect(map) {
         val m = map ?: return@LaunchedEffect
         if (initialPlaces.isEmpty()) {

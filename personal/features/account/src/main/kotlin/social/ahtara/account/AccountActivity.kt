@@ -25,7 +25,7 @@ import social.ahtara.authentication.ui.theme.AuthenticationTheme
 class AccountActivity : ComponentActivity() {
 
     private val authLauncher = registerForActivityResult(AuthenticationContract()) { signedIn ->
-        // New registration: Home continues into account setup, so go back to it.
+        
         if (signedIn && Authentication.isSetupPending(this)) finish()
     }
 
@@ -49,7 +49,7 @@ class AccountActivity : ComponentActivity() {
                     )
                 }
             } else {
-                // Guest: the Account settings screen offers Log in / Sign up (not a dialog).
+                
                 AuthenticationTheme {
                     GuestAccountScreen(
                         onBack = { finish() },

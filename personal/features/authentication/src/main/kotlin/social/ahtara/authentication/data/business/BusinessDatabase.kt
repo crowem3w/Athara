@@ -7,10 +7,10 @@ import androidx.room.RoomDatabase
 import social.ahtara.authentication.data.UserDao
 import social.ahtara.authentication.data.UserEntity
 
-/**
- * Storage for BUSINESS accounts only. Its schema can evolve independently of the other account types
- * (add tables / migrations here without touching them).
- */
+
+
+
+
 @Database(entities = [UserEntity::class], version = 1, exportSchema = true)
 internal abstract class BusinessDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao

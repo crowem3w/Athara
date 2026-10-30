@@ -131,7 +131,7 @@ fun PostCard(
 private fun EngagementBar(
     post: FeedPost,
     colors: FeedColors,
-    requireAccount: () -> Boolean, // like / comment / share need an account; the host shows its dialog for guests
+    requireAccount: () -> Boolean, 
     modifier: Modifier = Modifier,
 ) {
     Row(

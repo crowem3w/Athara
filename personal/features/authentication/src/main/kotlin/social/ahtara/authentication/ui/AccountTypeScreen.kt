@@ -71,7 +71,7 @@ fun AccountTypeScreen(
     onSignIn: (() -> Unit)?,
     types: List<AccountType> = AccountType.available,
 ) {
-    // With a single offered type (personal only) it is preselected.
+    
     var selectedName by rememberSaveable { mutableStateOf<String?>(types.singleOrNull()?.name) }
     val selected = selectedName?.let { AccountType.fromName(it) }
 

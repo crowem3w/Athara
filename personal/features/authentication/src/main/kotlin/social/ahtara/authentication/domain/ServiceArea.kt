@@ -1,31 +1,31 @@
 package social.ahtara.authentication.domain
 
-/**
- * The only area the app covers: Guimaras, Philippines.
- * Single source of truth for the guest default place, map search limits and camera limits.
- * Coordinates are approximate; adjust here if the box needs tightening.
- */
+
+
+
+
+
 object ServiceArea {
     const val NAME = "Guimaras, Philippines"
     const val COUNTRY_CODE = "ph"
 
-    // Island centre.
+    
     const val CENTER_LAT = 10.59
     const val CENTER_LNG = 122.63
 
-    // Bounding box (slightly padded around the island).
+    
     const val NORTH = 10.80
     const val SOUTH = 10.40
     const val WEST = 122.45
     const val EAST = 122.85
 
-    /** Default place for guests and for anyone with no saved Guimaras place. */
+    
     val default = PlaceSelection(NAME, CENTER_LAT, CENTER_LNG)
 
-    /**
-     * The five municipalities of Guimaras (approximate town-centre coordinates).
-     * Shown as quick picks on the Map/Location step, together with the whole province.
-     */
+    
+
+
+
     val municipalities: List<PlaceSelection> = listOf(
         PlaceSelection("Buenavista, Guimaras", 10.6903, 122.6275),
         PlaceSelection("Jordan, Guimaras", 10.6558, 122.5997),
@@ -34,7 +34,7 @@ object ServiceArea {
         PlaceSelection("Sibunag, Guimaras", 10.5139, 122.5392),
     )
 
-    /** Whole province first, then each municipality. */
+    
     val quickPicks: List<PlaceSelection> = listOf(default) + municipalities
 
     fun contains(latitude: Double, longitude: Double): Boolean =

@@ -50,7 +50,7 @@ interface AuthRepository {
     
     suspend fun savePersonalSetup(setup: PersonalSetup): Boolean = false
 
-    /** Same as [savePersonalSetup] for BUSINESS accounts; may diverge (business-only fields) later. */
+    
     suspend fun saveBusinessSetup(setup: BusinessSetup): Boolean = false
 
     
@@ -96,7 +96,7 @@ data class AuthUser(
 
 enum class SocialProvider { GOOGLE, APPLE }
 
-enum class AuthError { INVALID_CREDENTIALS, IDENTIFIER_TAKEN, USERNAME_TAKEN, EMAIL_TAKEN, ACCOUNT_NOT_FOUND, UNKNOWN }
+enum class AuthError { INVALID_CREDENTIALS, IDENTIFIER_TAKEN, USERNAME_TAKEN, EMAIL_TAKEN, ACCOUNT_NOT_FOUND, NETWORK, UNKNOWN }
 
 sealed interface AuthResult {
     data class Success(val user: AuthUser) : AuthResult

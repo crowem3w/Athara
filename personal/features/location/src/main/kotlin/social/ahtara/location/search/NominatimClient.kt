@@ -25,7 +25,7 @@ object NominatimClient {
         val encoded = URLEncoder.encode(query, "UTF-8")
         val urlStr = "https://nominatim.openstreetmap.org/search?format=json&limit=$limit" +
             "&addressdetails=1&featureType=$featureType&q=$encoded" +
-            // Guimaras only: Philippines, hard-bounded to the island's box (viewbox = left,top,right,bottom).
+            
             "&countrycodes=${ServiceArea.COUNTRY_CODE}" +
             "&viewbox=${ServiceArea.WEST},${ServiceArea.NORTH},${ServiceArea.EAST},${ServiceArea.SOUTH}&bounded=1"
 
@@ -52,7 +52,7 @@ object NominatimClient {
             val obj = results.getJSONObject(i)
             val lat = obj.optString("lat").toDoubleOrNull() ?: continue
             val lon = obj.optString("lon").toDoubleOrNull() ?: continue
-            if (!ServiceArea.contains(lat, lon)) continue // safety net: never list places outside Guimaras
+            if (!ServiceArea.contains(lat, lon)) continue 
             val address = obj.optJSONObject("address")
             val displayName = obj.optString("display_name")
 

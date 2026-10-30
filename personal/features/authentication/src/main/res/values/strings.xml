@@ -56,6 +56,7 @@
     <string name="authentication_error_invalid_credentials">Incorrect username, email, mobile number or password</string>
     <string name="authentication_error_identifier_taken">An account with this mobile number already exists</string>
     <string name="authentication_error_account_not_found">No account found for these details</string>
+    <string name="authentication_error_network">Can't reach the server. Check your connection and try again.</string>
     <string name="authentication_error_unknown">Something went wrong. Please try again.</string>
     <string name="authentication_message_password_reset">Password updated. You can now sign in.</string>
 

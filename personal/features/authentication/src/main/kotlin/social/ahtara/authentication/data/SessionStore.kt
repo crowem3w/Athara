@@ -9,10 +9,10 @@ import social.ahtara.authentication.domain.placesFromJson
 import social.ahtara.authentication.domain.toJsonString
 
 
-/**
- * The signed-in user's cached profile and setup-pending marker for ONE account type, backed by its
- * own preferences file. [SessionManager] owns one of these per type.
- */
+
+
+
+
 internal class SessionStore(private val prefs: SharedPreferences) {
 
     fun read(): AuthUser? {

@@ -20,10 +20,10 @@ import social.ahtara.app.ui.theme.SurfaceMuted
 import social.ahtara.app.ui.theme.Teal
 import social.ahtara.app.ui.theme.TextPrimary
 
-/**
- * PLACEHOLDER tabs for the Business home, taken from the Business account description
- * ("customers, orders and revenue"). Replace with the real list.
- */
+
+
+
+
 enum class BusinessTab(val label: String) {
     OVERVIEW("Overview"),
     CUSTOMERS("Customers"),

@@ -44,6 +44,7 @@ ksp {
 }
 
 dependencies {
+    implementation(project(":network"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
