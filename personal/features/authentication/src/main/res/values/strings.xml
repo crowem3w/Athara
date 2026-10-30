@@ -31,7 +31,7 @@
     <string name="authentication_message_code_sent">If that account exists, we sent it a code.</string>
     <string name="authentication_error_code_required">Enter the code we sent you.</string>
     <string name="authentication_error_code_invalid">That code is wrong or expired.</string>
-    <string name="authentication_error_network">Can't reach the server. Check your connection and try again.</string>
+    <string name="authentication_error_network">Can\'t reach the server. Check your connection and try again.</string>
     <string name="authentication_action_forgot">Forgot password?</string>
     <string name="authentication_action_to_sign_up">New here? Create an account</string>
     <string name="authentication_action_to_sign_in">Already have an account? Sign in</string>

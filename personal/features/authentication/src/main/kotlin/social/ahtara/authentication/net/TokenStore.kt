@@ -3,7 +3,7 @@ package social.ahtara.authentication.net
 import android.content.Context
 import androidx.core.content.edit
 
-/** Access + refresh tokens issued by `/auth/*`. Cleared on sign-out and when a refresh is rejected. */
+/** Access + refresh tokens issued by the auth endpoints. Cleared on sign-out and when a refresh is rejected. */
 class TokenStore(context: Context) {
     private val prefs = context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
