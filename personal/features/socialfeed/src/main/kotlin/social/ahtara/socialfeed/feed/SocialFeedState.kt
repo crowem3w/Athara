@@ -94,7 +94,8 @@ class SocialFeedState internal constructor(
         update(post.id) { it.copy(isSaved = want) }
         scope.launch {
             try {
-                update(post.id) { it.copy(isSaved = api.setSaved(post.id, want).first) }
+                val active = api.setSaved(post.id, want).first
+                update(post.id) { it.copy(isSaved = active) }
             } catch (e: ApiException) {
                 update(post.id) { it.copy(isSaved = post.isSaved) }
                 notice = e.message
