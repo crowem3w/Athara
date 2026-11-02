@@ -1,6 +1,4 @@
 package org.example.authentication.domain
-
-/** A country entry for the mobile-number country-code picker. [dialCode] has no "+". */
 data class Country(val iso: String, val name: String, val dialCode: String) {
     /** Flag emoji built from the ISO 3166-1 alpha-2 code (regional-indicator symbols). */
     val flag: String
