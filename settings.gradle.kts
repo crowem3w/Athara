@@ -1,3 +1,8 @@
+/*
+ * Root settings file. Updated to add the repositories AGP needs
+ * (Google's Maven repo for the Android Gradle plugin + AndroidX artifacts).
+ */
+
 pluginManagement {
     repositories {
         google()
@@ -13,23 +18,10 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ahtara"
-
-
-
-
-
-val modules = mapOf(
-    ":app" to "app",
-    ":personal" to "personal/registration",
-    ":business" to "business/registration",
-    ":authentication" to "personal/features/authentication",
-    ":account" to "personal/features/account",
-    ":location" to "personal/features/location",
-    ":socialfeed" to "personal/features/socialfeed",
-    ":travel" to "personal/features/travel",
-)
-modules.forEach { (path, dir) ->
-    include(path)
-    project(path).projectDir = file(dir)
-}
+rootProject.name = "test"
+include("app")
+include("onboarding")
+include("authentication")
+include("personal")
+include("business")
+include("organization")

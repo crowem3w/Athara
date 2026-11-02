@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_title">Explore the world, together</string>
+    <string name="onboarding_body">Share your trips, discover new places and connect with fellow travelers.</string>
+    <string name="onboarding_get_started">Get Started</string>
+</resources>

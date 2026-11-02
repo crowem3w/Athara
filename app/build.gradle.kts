@@ -1,14 +1,14 @@
-
-
-
-
-
-
-
-
-
-
-
+/*
+ * App module. Uses Jetpack Compose for UI.
+ *
+ * No separate org.jetbrains.kotlin.android plugin is applied: AGP 9's
+ * built-in Kotlin support handles Kotlin sources automatically, and
+ * errors out if that plugin is applied alongside it. The Compose
+ * compiler, however, is a distinct Kotlin compiler plugin
+ * (org.jetbrains.kotlin.plugin.compose) and must still be applied
+ * explicitly, pinned to a Kotlin version compatible with AGP 9's
+ * bundled Kotlin compiler.
+ */
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -18,11 +18,11 @@ plugins {
 }
 
 android {
-    namespace = "social.ahtara.app"
+    namespace = "org.example.test"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "social.ahtara.app"
+        applicationId = "org.example.test"
         minSdk = 30
         targetSdk = 37
         versionCode = 1
@@ -46,16 +46,12 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":onboarding"))
     implementation(project(":authentication"))
     implementation(project(":personal"))
-    implementation(project(":location"))
     implementation(project(":business"))
-    
-    implementation(project(":account"))
-    implementation(project(":socialfeed"))
-    implementation(project(":travel"))
+    implementation(project(":organization"))
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -63,6 +59,5 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.material.icons.extended)
     debugImplementation(libs.androidx.ui.tooling)
 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="organization_home_title">Organization</string>
+    <string name="organization_home_greeting">Welcome, %1$s</string>
+    <string name="organization_stat_members">Members</string>
+    <string name="organization_stat_teams">Teams</string>
+    <string name="organization_stat_events">Upcoming events</string>
+    <string name="organization_profile_title">Organization profile</string>
+    <string name="organization_profile_login">Admin login (mobile): %1$s</string>
+    <string name="organization_profile_type">Account type: Organization</string>
+    <string name="organization_action_sign_out">Sign out</string>
+    <string name="organization_profile_industry">Organization type: %1$s</string>
+    <string name="organization_profile_phone">Phone: %1$s</string>
+    <string name="organization_profile_registration">Registration / tax ID: %1$s</string>
+    <string name="organization_section_members">Members</string>
+    <string name="organization_section_teams">Teams</string>
+    <string name="organization_section_events">Events</string>
+    <string name="organization_empty_members">No members yet. Tap Add to invite the first one.</string>
+    <string name="organization_empty_teams">No teams yet. Tap Add to create one.</string>
+    <string name="organization_empty_events">No events yet. Tap Add to schedule one.</string>
+    <string name="organization_action_add">Add</string>
+    <string name="organization_action_delete">Delete</string>
+    <string name="organization_action_save">Save</string>
+    <string name="organization_action_cancel">Cancel</string>
+    <string name="organization_dialog_member_title">Add member</string>
+    <string name="organization_dialog_team_title">Add team</string>
+    <string name="organization_dialog_event_title">Add event</string>
+    <string name="organization_label_member_name">Member name</string>
+    <string name="organization_label_member_role">Role (optional)</string>
+    <string name="organization_label_team_name">Team name</string>
+    <string name="organization_label_event_title">Event title</string>
+    <string name="organization_label_event_date">Date (YYYY-MM-DD)</string>
+    <string name="organization_error_required">Required</string>
+    <string name="organization_error_date">Enter a valid date, e.g. 2026-10-20</string>
+</resources>
