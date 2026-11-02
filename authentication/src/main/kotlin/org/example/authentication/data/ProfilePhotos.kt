@@ -8,6 +8,8 @@ import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
 import java.io.File
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import kotlin.math.max
 
 /** Decodes images, downsampled and rotated upright according to their EXIF orientation (camera photos). */
@@ -62,6 +64,26 @@ internal class ProfilePhotoStore(private val context: Context) {
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }
         file.absolutePath
     }.getOrNull()
+
+    /** Path of the cached picture if the file exists. */
+    fun existingPath(userId: String, kind: Kind): String? =
+        File(dir, "$userId${kind.suffix}.jpg").takeIf { it.isFile }?.absolutePath
+
+    /** Downloads the server copy at [url] into the cache. Blocking: call from Dispatchers.IO. Null on any failure. */
+    fun download(userId: String, url: String, kind: Kind, http: OkHttpClient): String? = runCatching {
+        http.newCall(Request.Builder().url(url).build()).execute().use { response ->
+            if (!response.isSuccessful) return@use null
+            dir.mkdirs()
+            val file = File(dir, "$userId${kind.suffix}.jpg")
+            response.body.byteStream().use { input -> file.outputStream().use { input.copyTo(it) } }
+            file.absolutePath
+        }
+    }.getOrNull()
+
+    /** Removes everything this store ever wrote (legacy local-account cleanup). */
+    fun deleteAll() {
+        dir.deleteRecursively()
+    }
 
     /** Deletes [userId]'s picture of the given [kind], or all of them when [kind] is null. */
     fun delete(userId: String, kind: Kind? = null) {

@@ -15,6 +15,9 @@ import org.example.business.data.BusinessDao
 import org.example.business.data.BusinessDatabase
 import org.example.business.data.CustomerEntity
 import org.example.business.data.OrderEntity
+import org.example.core.sync.SyncCoordinator
+import org.example.business.data.deleteCustomer
+import org.example.business.data.deleteOrder
 
 internal data class BusinessUiState(
     val customers: List<CustomerEntity> = emptyList(),
@@ -26,6 +29,8 @@ internal data class BusinessUiState(
 internal class BusinessViewModel(
     private val dao: BusinessDao,
     private val ownerId: String,
+    /** Called after every local change so the sync engine pushes it as soon as the device is online. */
+    private val onChanged: () -> Unit,
 ) : ViewModel() {
 
     val state: StateFlow<BusinessUiState> =
@@ -36,6 +41,7 @@ internal class BusinessViewModel(
     fun addCustomer(name: String) {
         viewModelScope.launch {
             dao.insertCustomer(CustomerEntity(ownerId = ownerId, name = name.trim()))
+            onChanged()
         }
     }
 
@@ -50,21 +56,29 @@ internal class BusinessViewModel(
                     createdAt = System.currentTimeMillis(),
                 )
             )
+            onChanged()
         }
     }
 
     fun deleteCustomer(id: Long) {
-        viewModelScope.launch { dao.deleteCustomer(id, ownerId) }
+        viewModelScope.launch {
+            dao.deleteCustomer(id, ownerId)
+            onChanged()
+        }
     }
 
     fun deleteOrder(id: Long) {
-        viewModelScope.launch { dao.deleteOrder(id, ownerId) }
+        viewModelScope.launch {
+            dao.deleteOrder(id, ownerId)
+            onChanged()
+        }
     }
 
     companion object {
         fun factory(ownerId: String) = viewModelFactory {
             initializer {
-                BusinessViewModel(BusinessDatabase.get(this[APPLICATION_KEY]!!).dao(), ownerId)
+                val app = this[APPLICATION_KEY]!!
+                BusinessViewModel(BusinessDatabase.get(app).dao(), ownerId) { SyncCoordinator.requestSync(app) }
             }
         }
     }

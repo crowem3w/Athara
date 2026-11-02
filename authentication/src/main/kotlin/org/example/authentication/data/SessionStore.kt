@@ -1,82 +1,74 @@
 package org.example.authentication.data
 
-import android.content.Context
-import androidx.core.content.edit
 import org.example.authentication.domain.AccountDetails
 import org.example.authentication.domain.AccountType
 import org.example.authentication.domain.AuthUser
+import org.example.core.secure.SecureStore
+import org.json.JSONObject
 
-/** Remembers who is signed in across app restarts. */
-internal class SessionStore(context: Context) {
-    private val prefs = context.applicationContext
-        .getSharedPreferences("authentication_session", Context.MODE_PRIVATE)
+/**
+ * Remembers the signed-in profile across restarts, encrypted with the Keystore ([SecureStore]).
+ * It is only a cache of what the server returned; tokens live in the core TokenStore.
+ */
+internal class SessionStore(private val secure: SecureStore) {
 
     fun read(): AuthUser? {
-        val id = prefs.getString(KEY_ID, null) ?: return null
-        return AuthUser(
-            id = id,
-            identifier = prefs.getString(KEY_IDENTIFIER, "").orEmpty(),
-            displayName = prefs.getString(KEY_NAME, "").orEmpty(),
-            provider = prefs.getString(KEY_PROVIDER, "password").orEmpty(),
-            accountType = AccountType.fromName(prefs.getString(KEY_ACCOUNT_TYPE, null)),
-            details = AccountDetails(
-                industry = prefs.getString(KEY_INDUSTRY, null),
-                phone = prefs.getString(KEY_PHONE, null),
-                registrationId = prefs.getString(KEY_REGISTRATION_ID, null),
-            ),
-            username = prefs.getString(KEY_USERNAME, null),
-            email = prefs.getString(KEY_EMAIL, null),
-            birthday = prefs.getString(KEY_BIRTHDAY, null),
-            about = prefs.getString(KEY_ABOUT, null),
-            location = prefs.getString(KEY_LOCATION, null),
-            photoPath = prefs.getString(KEY_PHOTO_PATH, null),
-            coverPath = prefs.getString(KEY_COVER_PATH, null),
-        )
+        val raw = secure.getString(KEY_USER) ?: return null
+        return runCatching { fromJson(JSONObject(raw)) }.getOrNull()
     }
 
-    fun save(user: AuthUser) = prefs.edit {
-        putString(KEY_ID, user.id)
-        putString(KEY_IDENTIFIER, user.identifier)
-        putString(KEY_NAME, user.displayName)
-        putString(KEY_PROVIDER, user.provider)
-        putString(KEY_ACCOUNT_TYPE, user.accountType.name)
-        putString(KEY_INDUSTRY, user.details.industry)
-        putString(KEY_PHONE, user.details.phone)
-        putString(KEY_REGISTRATION_ID, user.details.registrationId)
-        putString(KEY_USERNAME, user.username)
-        putString(KEY_EMAIL, user.email)
-        putString(KEY_BIRTHDAY, user.birthday)
-        putString(KEY_ABOUT, user.about)
-        putString(KEY_LOCATION, user.location)
-        putString(KEY_PHOTO_PATH, user.photoPath)
-        putString(KEY_COVER_PATH, user.coverPath)
-    }
+    fun save(user: AuthUser) = secure.putString(KEY_USER, toJson(user).toString())
 
     /** A just-created account still has to go through the account setup step. */
-    fun markSetupPending(userId: String) = prefs.edit { putString(KEY_SETUP_PENDING, userId) }
+    fun markSetupPending(userId: String) = secure.putString(KEY_SETUP_PENDING, userId)
 
-    fun isSetupPending(userId: String): Boolean = prefs.getString(KEY_SETUP_PENDING, null) == userId
+    fun isSetupPending(userId: String): Boolean = secure.getString(KEY_SETUP_PENDING) == userId
 
-    fun completeSetup() = prefs.edit { remove(KEY_SETUP_PENDING) }
+    fun completeSetup() = secure.remove(KEY_SETUP_PENDING)
 
-    fun clear() = prefs.edit { clear() }
+    fun clear() {
+        secure.remove(KEY_USER)
+        secure.remove(KEY_SETUP_PENDING)
+    }
+
+    private fun toJson(u: AuthUser) = JSONObject().apply {
+        put("id", u.id)
+        put("identifier", u.identifier)
+        put("name", u.displayName)
+        put("provider", u.provider)
+        put("accountType", u.accountType.name)
+        put("industry", u.details.industry)
+        put("phone", u.details.phone)
+        put("registrationId", u.details.registrationId)
+        put("username", u.username)
+        put("email", u.email)
+        put("birthday", u.birthday)
+        put("about", u.about)
+        put("location", u.location)
+        put("photoPath", u.photoPath)
+        put("coverPath", u.coverPath)
+    }
+
+    private fun fromJson(o: JSONObject) = AuthUser(
+        id = o.getString("id"),
+        identifier = o.str("identifier").orEmpty(),
+        displayName = o.str("name").orEmpty(),
+        provider = o.str("provider") ?: "password",
+        accountType = AccountType.fromName(o.str("accountType")),
+        details = AccountDetails(o.str("industry"), o.str("phone"), o.str("registrationId")),
+        username = o.str("username"),
+        email = o.str("email"),
+        birthday = o.str("birthday"),
+        about = o.str("about"),
+        location = o.str("location"),
+        photoPath = o.str("photoPath"),
+        coverPath = o.str("coverPath"),
+    )
+
+    private fun JSONObject.str(key: String): String? = if (isNull(key)) null else getString(key)
 
     private companion object {
-        const val KEY_ID = "id"
+        const val KEY_USER = "session_user"
         const val KEY_SETUP_PENDING = "setup_pending_id"
-        const val KEY_IDENTIFIER = "identifier"
-        const val KEY_NAME = "name"
-        const val KEY_PROVIDER = "provider"
-        const val KEY_ACCOUNT_TYPE = "account_type"
-        const val KEY_INDUSTRY = "industry"
-        const val KEY_PHONE = "phone"
-        const val KEY_REGISTRATION_ID = "registration_id"
-        const val KEY_USERNAME = "username"
-        const val KEY_EMAIL = "email"
-        const val KEY_BIRTHDAY = "birthday"
-        const val KEY_ABOUT = "about"
-        const val KEY_LOCATION = "location"
-        const val KEY_PHOTO_PATH = "photo_path"
-        const val KEY_COVER_PATH = "cover_path"
     }
 }

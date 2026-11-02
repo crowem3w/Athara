@@ -12,11 +12,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.example.core.sync.SyncCoordinator
 import org.example.organization.data.EventEntity
 import org.example.organization.data.MemberEntity
 import org.example.organization.data.OrganizationDao
 import org.example.organization.data.OrganizationDatabase
 import org.example.organization.data.TeamEntity
+import org.example.organization.data.deleteEvent
+import org.example.organization.data.deleteMember
+import org.example.organization.data.deleteTeam
 
 internal data class OrganizationUiState(
     val members: List<MemberEntity> = emptyList(),
@@ -30,6 +34,8 @@ internal data class OrganizationUiState(
 internal class OrganizationViewModel(
     private val dao: OrganizationDao,
     private val ownerId: String,
+    /** Called after every local change so the sync engine pushes it as soon as the device is online. */
+    private val onChanged: () -> Unit,
 ) : ViewModel() {
 
     val state: StateFlow<OrganizationUiState> =
@@ -40,33 +46,50 @@ internal class OrganizationViewModel(
     fun addMember(name: String, role: String) {
         viewModelScope.launch {
             dao.insertMember(MemberEntity(ownerId = ownerId, name = name.trim(), role = role.trim().ifBlank { null }))
+            onChanged()
         }
     }
 
     fun addTeam(name: String) {
-        viewModelScope.launch { dao.insertTeam(TeamEntity(ownerId = ownerId, name = name.trim())) }
+        viewModelScope.launch {
+            dao.insertTeam(TeamEntity(ownerId = ownerId, name = name.trim()))
+            onChanged()
+        }
     }
 
     fun addEvent(title: String, isoDate: String) {
-        viewModelScope.launch { dao.insertEvent(EventEntity(ownerId = ownerId, title = title.trim(), date = isoDate)) }
+        viewModelScope.launch {
+            dao.insertEvent(EventEntity(ownerId = ownerId, title = title.trim(), date = isoDate))
+            onChanged()
+        }
     }
 
     fun deleteMember(id: Long) {
-        viewModelScope.launch { dao.deleteMember(id, ownerId) }
+        viewModelScope.launch {
+            dao.deleteMember(id, ownerId)
+            onChanged()
+        }
     }
 
     fun deleteTeam(id: Long) {
-        viewModelScope.launch { dao.deleteTeam(id, ownerId) }
+        viewModelScope.launch {
+            dao.deleteTeam(id, ownerId)
+            onChanged()
+        }
     }
 
     fun deleteEvent(id: Long) {
-        viewModelScope.launch { dao.deleteEvent(id, ownerId) }
+        viewModelScope.launch {
+            dao.deleteEvent(id, ownerId)
+            onChanged()
+        }
     }
 
     companion object {
         fun factory(ownerId: String) = viewModelFactory {
             initializer {
-                OrganizationViewModel(OrganizationDatabase.get(this[APPLICATION_KEY]!!).dao(), ownerId)
+                val app = this[APPLICATION_KEY]!!
+                OrganizationViewModel(OrganizationDatabase.get(app).dao(), ownerId) { SyncCoordinator.requestSync(app) }
             }
         }
     }

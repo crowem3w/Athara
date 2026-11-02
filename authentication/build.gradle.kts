@@ -1,9 +1,9 @@
 /*
  * Authentication library module. Hosts AuthenticationActivity, its own
- * Compose theme, resources (all prefixed "authentication_") and a local
- * Room-backed AuthRepository. Other modules only depend on the public API
- * in Authentication.kt / AuthRepository.kt, so the local implementation can
- * later be replaced by a real backend without touching :app.
+ * Compose theme, resources (all prefixed "authentication_") and a
+ * backend-backed (REST + tokens) AuthRepository. Other modules only depend on the public API
+ * in Authentication.kt / AuthRepository.kt, so the implementation can be swapped
+ * (see Authentication.install) without touching :app.
  */
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -38,18 +37,11 @@ kotlin {
     }
 }
 
-// Exported schemas make future Room migrations testable.
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-}
-
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
+    implementation(project(":core"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)

@@ -10,4 +10,6 @@ data class SocialAccount(
     val subject: String,
     val email: String?,
     val displayName: String,
+    /** Provider-signed ID token. The backend verifies it; without one the account cannot be used. */
+    val idToken: String? = null,
 )

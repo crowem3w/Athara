@@ -28,8 +28,8 @@ internal sealed interface GoogleResult {
  * Real Google sign-in through Credential Manager ("Sign in with Google" account picker).
  *
  * Needs the OAuth *web* client id in `authentication_google_web_client_id` (see google_auth.xml).
- * The ID token is read on the device only; a production backend must verify it server-side
- * before trusting the account.
+ * The ID token travels to the backend inside [SocialAccount], which must verify it (signature,
+ * `aud` = this web client id, `exp`) before trusting the account. `subjectOf` is only a fallback id.
  */
 internal object GoogleAuth {
 
@@ -56,6 +56,7 @@ internal object GoogleAuth {
                         subject = subjectOf(google.idToken) ?: google.id,
                         email = google.id,
                         displayName = google.displayName.orEmpty(),
+                        idToken = google.idToken,
                     )
                 )
             } else {

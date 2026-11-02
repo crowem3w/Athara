@@ -20,6 +20,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "test"
 include("app")
+include("core")
 include("onboarding")
 include("authentication")
 include("personal")

@@ -235,7 +235,7 @@ internal class AuthViewModel(
         }
     }
 
-    /** Apple stays a demo account for now. */
+    /** Apple sign-in is not implemented: no ID token, so the backend refuses it. */
     fun continueWithApple() = onSocialAccount(
         SocialAccount(SocialProvider.APPLE, subject = "demo.apple", email = null, displayName = "Demo Apple User")
     )
@@ -370,6 +370,8 @@ internal class AuthViewModel(
         AuthError.USERNAME_TAKEN -> R.string.authentication_error_username_taken
         AuthError.EMAIL_TAKEN -> R.string.authentication_error_email_taken
         AuthError.ACCOUNT_NOT_FOUND -> R.string.authentication_error_account_not_found
+        AuthError.NETWORK -> R.string.authentication_error_network
+        AuthError.VERIFICATION_REQUIRED -> R.string.authentication_error_verification_required
         AuthError.UNKNOWN -> R.string.authentication_error_unknown
     }
 

@@ -4,8 +4,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Backend-agnostic authentication contract. The UI and :app only depend on
- * this interface. To migrate to Firebase / a custom API, write another
- * implementation and register it with [org.example.authentication.Authentication.install].
+ * this interface. The default implementation is RemoteAuthRepository (REST + tokens);
+ * another one can be registered with [org.example.authentication.Authentication.install].
  */
 interface AuthRepository {
     /** The signed-in user, or null when signed out. */
@@ -82,7 +82,14 @@ data class AuthUser(
 
 enum class SocialProvider { GOOGLE, APPLE }
 
-enum class AuthError { INVALID_CREDENTIALS, IDENTIFIER_TAKEN, USERNAME_TAKEN, EMAIL_TAKEN, ACCOUNT_NOT_FOUND, UNKNOWN }
+enum class AuthError {
+    INVALID_CREDENTIALS, IDENTIFIER_TAKEN, USERNAME_TAKEN, EMAIL_TAKEN, ACCOUNT_NOT_FOUND,
+    /** No connection / timeout: nothing was changed, the user can retry. */
+    NETWORK,
+    /** The server wants a verified mobile number (OTP) before it accepts this request. */
+    VERIFICATION_REQUIRED,
+    UNKNOWN,
+}
 
 sealed interface AuthResult {
     data class Success(val user: AuthUser) : AuthResult

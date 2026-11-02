@@ -47,6 +47,6 @@ While it still starts with `YOUR_`, the Google buttons show "Google sign-in isn'
 | Works in debug, fails in release | The release / Play App Signing SHA-1 has no Android client. |
 
 ## Security note
-The app reads the Google ID token on the device only. Before trusting a Google account in
-production, send the token to your backend and verify it (signature, `aud` = your Web client
-ID, `exp`) there. Apple sign-in is still a local demo account.
+The app sends the Google ID token to the backend (`POST /v1/auth/social/login` and `/social/signup`).
+The backend must verify it (signature, `aud` = your Web client ID, `exp`) and issue its own tokens.
+Apple sign-in is not implemented yet (the backend rejects it).

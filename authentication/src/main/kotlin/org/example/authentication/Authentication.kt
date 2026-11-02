@@ -4,41 +4,48 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
-import org.example.authentication.data.LocalAuthRepository
+import org.example.authentication.data.PhoneProofStore
+import org.example.authentication.data.RemoteAuthRepository
+import org.example.authentication.data.RemotePhoneVerifier
 import org.example.authentication.domain.AuthRepository
-import org.example.authentication.domain.NoVerification
 import org.example.authentication.domain.PersonalSetup
 import org.example.authentication.domain.PhoneVerifier
 import org.example.authentication.ui.AuthenticationActivity
+import org.example.core.Core
 
 /**
  * Public entry point of the :authentication module.
  *
- * Uses a simple singleton provider (no DI library). To migrate to a real
- * backend, call [install] once with your own [AuthRepository] (e.g. in
- * Application.onCreate); nothing else in the app has to change.
+ * Needs `Core.init(...)` to have run (Application.onCreate). Uses a simple singleton provider (no
+ * DI library); [install] / [installPhoneVerifier] replace the defaults, e.g. in tests.
  */
 object Authentication {
+    private val proofs = PhoneProofStore()
+
     @Volatile
     private var repository: AuthRepository? = null
 
+    @Volatile
+    private var verifier: PhoneVerifier? = null
+
     fun repository(context: Context): AuthRepository =
         repository ?: synchronized(this) {
-            repository ?: LocalAuthRepository.create(context.applicationContext).also { repository = it }
+            repository ?: RemoteAuthRepository.create(context.applicationContext, proofs).also { repository = it }
         }
 
-    /** Replace the default local repository (call before first use). */
+    /** Replace the default repository (call before first use). */
     fun install(repository: AuthRepository) {
         this.repository = repository
     }
 
-    @Volatile
-    var phoneVerifier: PhoneVerifier = NoVerification
-        private set
+    /** SMS OTP verification. Default: the backend's /v1/auth/phone endpoints. */
+    fun phoneVerifier(): PhoneVerifier =
+        verifier ?: synchronized(this) {
+            verifier ?: RemotePhoneVerifier(Core.api, proofs).also { verifier = it }
+        }
 
-    /** Plug in real SMS OTP verification (see [PhoneVerifier]). */
     fun installPhoneVerifier(verifier: PhoneVerifier) {
-        phoneVerifier = verifier
+        this.verifier = verifier
     }
 
     fun isSignedIn(context: Context): Boolean =
@@ -50,7 +57,7 @@ object Authentication {
     /** Marks the account setup step as finished or skipped. */
     fun completeSetup(context: Context) = repository(context).completeSetup()
 
-    /** Saves the personal account setup answers on the signed-in user. */
+    /** Saves the personal account setup answers on the signed-in user. False if it could not be saved (e.g. offline). */
     suspend fun savePersonalSetup(context: Context, setup: PersonalSetup): Boolean =
         repository(context).savePersonalSetup(setup)
 
