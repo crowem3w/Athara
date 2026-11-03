@@ -18,7 +18,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "test"
+rootProject.name = "ahtara-client"
 include("app")
 include("core")
 include("onboarding")

@@ -13,7 +13,7 @@ import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-/** The whole REST surface the app uses. Contract: see API_CONTRACT.md. */
+/** The whole REST surface the app uses. Contract: see docs/API_CONTRACT.md. */
 interface BackendApi {
     // -- auth (no bearer token is attached to /v1/auth/**) --
     @POST("v1/auth/signup") suspend fun signUp(@Body body: SignUpRequest): Response<TokenResponse>

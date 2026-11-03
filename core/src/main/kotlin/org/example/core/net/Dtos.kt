@@ -88,7 +88,7 @@ data class UserDto(
 @Serializable
 data class TokenResponse(val accessToken: String, val refreshToken: String, val user: UserDto? = null)
 
-/** Error body for every 4xx: `code` is a stable machine-readable string (see API_CONTRACT.md). */
+/** Error body for every 4xx: `code` is a stable machine-readable string (see docs/API_CONTRACT.md). */
 @Serializable
 data class ErrorBody(val code: String? = null, val message: String? = null, val existingType: String? = null)
 
