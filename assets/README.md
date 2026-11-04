@@ -8,7 +8,7 @@ assets/
 ```
 
 Android only packages resources a module declares, so each module's `build.gradle.kts` adds its folder here
-as an extra `res` source directory (`sourceSets.getByName("main") { res.srcDir(...) }`). Resource names,
+as an extra `res` source directory (`androidComponents { onVariants { it.sources.res?.addStaticSourceDirectory(...) } }`). Resource names,
 the `<module>_` prefix and the generated `R` classes are unchanged, so no code refers to the new location.
 
 Rules:

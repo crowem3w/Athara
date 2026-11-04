@@ -33,4 +33,4 @@ Gradle project names are flat (`:network`, `:personal`, ...); `settings.gradle.k
 
 ## Assets
 
-Binary images (webp, png) live in `assets/images/<module>/`, grouped by resource type and then by owning module (see `assets/README.md`). Each module with images adds its folder through `sourceSets.getByName("main") { res.srcDir(...) }` in its `build.gradle.kts` (`identity-api`, `authentication`, `onboarding`). Vector icons, strings, colors and themes stay in each module's `src/main/res`.
+Binary images (webp, png) live in `assets/images/<module>/`, grouped by resource type and then by owning module (see `assets/README.md`). Each module with images adds its folder through `androidComponents { onVariants { ... addStaticSourceDirectory(...) } }` in its `build.gradle.kts` (`identity-api`, `authentication`, `onboarding`). Vector icons, strings, colors and themes stay in each module's `src/main/res`.

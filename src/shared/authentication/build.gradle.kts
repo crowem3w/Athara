@@ -26,14 +26,18 @@ android {
         compose = true
     }
 
-    // Binary images (webp, png) live in client/assets/images, not in src/main/res.
-    sourceSets.getByName("main") {
-        res.srcDir(rootProject.file("assets/images/authentication"))
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
+    }
+}
+
+// Binary images (webp, png) live in client/assets/images, not in src/main/res.
+// androidComponents is AGP's stable variant API; the old sourceSets DSL fails on AGP 9.
+androidComponents {
+    val imagesDir = rootProject.file("assets/images/authentication").absolutePath
+    onVariants { variant ->
+        variant.sources.res?.addStaticSourceDirectory(imagesDir)
     }
 }
 
