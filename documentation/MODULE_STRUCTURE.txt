@@ -1,0 +1,71 @@
+client/
+│
+├── src/
+│   │
+│   ├── core/
+│   │   └── # Contains the foundational technical infrastructure
+│   │      required by the entire application. Responsible for
+│   │      cross-cutting capabilities, system-level configurations,
+│   │      technical abstractions, and common application mechanisms.
+│   │      This layer should remain independent of account-specific
+│   │      business rules and application features.
+│   │
+│   ├── shared/
+│   │   └── # Contains reusable resources consumed by multiple
+│   │      modules throughout the application. Responsible for
+│   │      maintaining consistency and avoiding unnecessary
+│   │      duplication of presentation components, common utilities,
+│   │      shared definitions, and reusable application resources.
+│   │      Contents should remain generic and independent of
+│   │      individual account types.
+│   │
+│   ├── modules/
+│   │   │
+│   │   ├── personal/
+│   │   │   └── # Contains the complete client-side implementation
+│   │   │      of the Personal account experience. Responsible for
+│   │   │      personal-account-specific presentation, workflows,
+│   │   │      application functionality, state management,
+│   │   │      business rules, and interactions. This module
+│   │   │      should encapsulate functionality exclusive to
+│   │   │      Personal accounts.
+│   │   │
+│   │   ├── business/
+│   │   │   └── # Contains the complete client-side implementation
+│   │   │      of the Business account experience. Responsible for
+│   │   │      business-account-specific presentation, workflows,
+│   │   │      application functionality, state management,
+│   │   │      business rules, and interactions. This module
+│   │   │      should encapsulate functionality exclusive to
+│   │   │      Business accounts.
+│   │   │
+│   │   └── organization/
+│   │       └── # Contains the complete client-side implementation
+│   │          of the Organization account experience. Responsible
+│   │          for organization-specific presentation, workflows,
+│   │          application functionality, state management,
+│   │          business rules, and interactions. This module
+│   │          should encapsulate functionality exclusive to
+│   │          Organization accounts.
+│   │
+│   └── app/
+│       └── # Contains the application's composition, initialization,
+│          and orchestration mechanisms. Responsible for assembling
+│          the application, establishing its execution lifecycle,
+│          configuring the root application structure, coordinating
+│          navigation between modules, managing application-wide
+│          routing, registering dependencies, and integrating
+│          foundational application configurations. This layer
+│          connects the modules without owning their internal
+│          business logic or feature implementations.
+│
+├── assets/
+│   └── # Contains static resources required by the application,
+│      including visual assets, fonts, illustrations, and other
+│      resources consumed by the client application.
+│
+└── documentation/
+    └── # Contains technical documentation describing the
+       application's architecture, structural conventions,
+       development standards, implementation decisions,
+       module responsibilities, and maintenance guidelines.
