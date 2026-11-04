@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.example.authentication.R
-import org.example.authentication.domain.SocialAccount
+import org.example.identityapi.SocialAccount
 import org.example.authentication.social.GoogleAuth
 import org.example.authentication.social.GoogleResult
 

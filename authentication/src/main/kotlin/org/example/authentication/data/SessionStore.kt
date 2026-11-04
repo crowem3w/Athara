@@ -1,9 +1,9 @@
 package org.example.authentication.data
 
-import org.example.authentication.domain.AccountDetails
-import org.example.authentication.domain.AccountType
-import org.example.authentication.domain.AuthUser
-import org.example.core.secure.SecureStore
+import org.example.identityapi.AccountDetails
+import org.example.identityapi.AccountType
+import org.example.identityapi.AuthUser
+import org.example.securestorage.SecureStore
 import org.json.JSONObject
 
 /**

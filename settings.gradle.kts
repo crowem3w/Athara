@@ -20,7 +20,11 @@ dependencyResolutionManagement {
 
 rootProject.name = "ahtara-client"
 include("app")
-include("core")
+include("secure-storage")
+include("network")
+include("sync-engine")
+include("identity-api")
+include("design-system")
 include("onboarding")
 include("authentication")
 include("personal")

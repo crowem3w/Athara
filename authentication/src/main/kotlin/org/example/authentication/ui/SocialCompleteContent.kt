@@ -30,7 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.example.authentication.R
 import org.example.authentication.domain.Country
-import org.example.authentication.domain.SocialProvider
+import org.example.identityapi.SocialProvider
 
 /**
  * Second half of social sign-up: Google / Apple succeeded for a new user, so the form only asks

@@ -60,10 +60,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.example.authentication.R
-import org.example.authentication.domain.AccountType
+import org.example.identityapi.AccountType
 import org.example.authentication.domain.Country
-import org.example.authentication.domain.SocialProvider
-import org.example.authentication.ui.theme.AuthenticationTheme
+import org.example.identityapi.SocialProvider
+import org.example.designsystem.AppTheme
 
 /**
  * Entry screen after onboarding. Opens on the login form ([LoginScreen]).
@@ -81,7 +81,7 @@ class AuthenticationActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            AuthenticationTheme {
+            AppTheme {
                 val state by viewModel.state.collectAsState()
                 LaunchedEffect(state.signedIn) {
                     if (state.signedIn) {
@@ -561,7 +561,7 @@ internal fun SignUpFlowScreen(
                 label = "signUpStep",
             ) { showForm ->
                 if (showForm) {
-                    AuthenticationTheme(formState.accountType) {
+                    AppTheme(formState.accountType) {
                         RegistrationBody(accountType = formState.accountType, title = registrationTitle(formState)) {
                             AuthenticationFormContent(
                                 state = formState,

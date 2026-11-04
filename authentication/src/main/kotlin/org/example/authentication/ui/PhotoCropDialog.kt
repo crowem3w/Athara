@@ -51,7 +51,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.example.authentication.R
-import org.example.authentication.data.ImageDecoding
+import org.example.designsystem.ImageDecoding
 
 private const val MaxZoom = 6f
 

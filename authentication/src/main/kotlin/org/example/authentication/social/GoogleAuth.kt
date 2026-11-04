@@ -12,8 +12,8 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import org.example.authentication.R
-import org.example.authentication.domain.SocialAccount
-import org.example.authentication.domain.SocialProvider
+import org.example.identityapi.SocialAccount
+import org.example.identityapi.SocialProvider
 import org.json.JSONObject
 
 internal sealed interface GoogleResult {

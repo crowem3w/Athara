@@ -58,8 +58,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.authentication.R
-import org.example.authentication.domain.SocialProvider
-import org.example.authentication.ui.theme.AuthenticationTheme
+import org.example.identityapi.SocialProvider
+import org.example.designsystem.AppTheme
 
 /**
  * Sign-in ("Welcome back") screen: pill-shaped username-email-or-mobile / password fields, a primary
@@ -337,7 +337,7 @@ private fun SocialButton(
 @Preview(showBackground = true, widthDp = 411, heightDp = 891)
 @Composable
 private fun LoginScreenPreview() {
-    AuthenticationTheme {
+    AppTheme {
         LoginScreen(
             state = AuthUiState(mode = AuthMode.SIGN_IN),
             onPassword = {}, onSubmit = {}, onLoginId = {},

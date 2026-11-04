@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import org.example.authentication.R
+import org.example.designsystem.R as DsR
 import kotlin.math.PI
 import kotlin.math.exp
 import kotlin.math.sin
@@ -74,7 +75,7 @@ internal fun StepProgressBar(
     modifier: Modifier = Modifier,
     totalSteps: Int = SIGN_UP_TOTAL_STEPS,
 ) {
-    val active = colorResource(R.color.authentication_primary)
+    val active = colorResource(DsR.color.designsystem_primary)
     val inactive = colorResource(R.color.authentication_progress_inactive)
 
     // Read only inside the draw block, so frames do not recompose.

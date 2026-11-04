@@ -13,8 +13,8 @@ import androidx.room.RoomDatabase
 import androidx.room.Update
 import java.util.UUID
 import kotlinx.coroutines.flow.Flow
-import org.example.core.sync.SyncRow
-import org.example.core.sync.SyncState
+import org.example.syncengine.SyncRow
+import org.example.syncengine.SyncState
 
 /**
  * Every row belongs to one signed-in user ([ownerId] = AuthUser.id, i.e. the server's user id), so

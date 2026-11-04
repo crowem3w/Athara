@@ -9,13 +9,18 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.example.authentication.Authentication
 import org.example.business.data.BusinessSync
-import org.example.core.Core
-import org.example.core.CoreConfig
-import org.example.core.sync.SyncCoordinator
+import org.example.identityapi.Identity
+import org.example.network.Core
+import org.example.network.CoreConfig
 import org.example.organization.data.OrganizationSync
+import org.example.syncengine.SyncCoordinator
+import org.example.syncengine.SyncInstaller
 
 class App : Application() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
+    /** Every feature that owns synced tables. Adding a feature = adding one entry here. */
+    private val syncInstallers: List<SyncInstaller> = listOf(BusinessSync, OrganizationSync)
 
     override fun onCreate() {
         super.onCreate()
@@ -31,13 +36,15 @@ class App : Application() {
             ),
         )
 
-        // 2) tell the sync engine which tables exist
-        BusinessSync.install(this)
-        OrganizationSync.install(this)
+        // 2) let feature modules reach the signed-in user through :identity-api
+        Authentication.init()
 
-        // 3) sync while someone is signed in; stop when signed out
+        // 3) tell the sync engine which tables exist
+        syncInstallers.forEach { it.install(this) }
+
+        // 4) sync while someone is signed in; stop when signed out
         scope.launch {
-            Authentication.repository(this@App).currentUser
+            Identity.repository(this@App).currentUser
                 .map { it?.id }
                 .distinctUntilChanged()
                 .collect { userId ->

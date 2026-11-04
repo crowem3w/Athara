@@ -5,11 +5,12 @@ import java.util.UUID
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import org.example.core.net.RecordDto
-import org.example.core.sync.SyncCoordinator
-import org.example.core.sync.SyncState
-import org.example.core.sync.TableSync
-import org.example.core.sync.str
+import org.example.network.RecordDto
+import org.example.syncengine.SyncCoordinator
+import org.example.syncengine.SyncInstaller
+import org.example.syncengine.SyncState
+import org.example.syncengine.TableSync
+import org.example.syncengine.str
 
 internal class MemberSync(private val dao: OrganizationDao) : TableSync<MemberEntity>("members") {
     override suspend fun pending(ownerId: String) = dao.pendingMembers(ownerId)
@@ -85,9 +86,9 @@ internal class EventSync(private val dao: OrganizationDao) : TableSync<EventEnti
     override fun markSynced(row: EventEntity) = row.copy(syncState = SyncState.SYNCED)
 }
 
-/** Registers this module's tables with the sync engine. Call once from Application.onCreate. */
-object OrganizationSync {
-    fun install(context: Context) {
+/** Registers this module's tables with the sync engine (listed in App.kt). */
+object OrganizationSync : SyncInstaller {
+    override fun install(context: Context) {
         val dao = OrganizationDatabase.get(context).dao()
         SyncCoordinator.register(MemberSync(dao))
         SyncCoordinator.register(TeamSync(dao))

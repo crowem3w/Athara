@@ -13,15 +13,15 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.authentication.Authentication
 import org.example.authentication.R
-import org.example.authentication.domain.AccountDetails
-import org.example.authentication.domain.AccountType
-import org.example.authentication.domain.AuthError
-import org.example.authentication.domain.AuthRepository
-import org.example.authentication.domain.AuthResult
+import org.example.identityapi.AccountDetails
+import org.example.identityapi.AccountType
+import org.example.identityapi.AuthError
+import org.example.identityapi.AuthRepository
+import org.example.identityapi.AuthResult
 import org.example.authentication.domain.Countries
 import org.example.authentication.domain.Country
-import org.example.authentication.domain.SocialAccount
-import org.example.authentication.domain.SocialProvider
+import org.example.identityapi.SocialAccount
+import org.example.identityapi.SocialProvider
 import org.example.authentication.domain.Validators
 import org.example.authentication.domain.Validators.Problem
 

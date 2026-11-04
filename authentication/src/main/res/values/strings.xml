@@ -73,15 +73,6 @@
     <string name="authentication_action_continue">Continue</string>
     <string name="authentication_account_title">Choose your account type</string>
     <string name="authentication_account_subtitle">Pick the option that fits how you will use the app. You can sign in later if you already have an account.</string>
-    <string name="authentication_account_personal">Personal</string>
-    <string name="authentication_account_personal_desc">For individuals: manage your own profile and activity.</string>
-    <string name="authentication_account_business">Business</string>
-    <string name="authentication_account_business_desc">For companies and sole traders: customers, orders and revenue.</string>
-    <string name="authentication_account_organization">Organization</string>
-    <string name="authentication_account_organization_desc">For nonprofits, schools and teams: members and groups.</string>
-    <string name="authentication_title_sign_up_personal">Create your personal account</string>
-    <string name="authentication_title_sign_up_business">Create your business account</string>
-    <string name="authentication_title_sign_up_organization">Create your organization account</string>
     <string name="authentication_setup_photo">Profile picture</string>
     <string name="authentication_setup_photo_gallery">Choose from gallery</string>
     <string name="authentication_setup_photo_camera">Take a photo</string>
@@ -98,19 +89,8 @@
     <string name="authentication_setup_location_hint">City, country</string>
     <string name="authentication_setup_continue">Continue</string>
     <string name="authentication_setup_skip">Skip for now</string>
-    <string name="authentication_title_setup_personal">Set up your personal account</string>
-    <string name="authentication_title_setup_business">Set up your business account</string>
-    <string name="authentication_title_setup_organization">Set up your organization account</string>
-    <string name="authentication_label_name_personal">Full name</string>
-    <string name="authentication_label_name_business">Business name</string>
-    <string name="authentication_label_name_organization">Organization name</string>
-
     <!-- Business / organization details -->
-    <string name="authentication_label_industry_business">Industry</string>
-    <string name="authentication_label_industry_organization">Organization type</string>
     <string name="authentication_label_phone">Phone number</string>
-    <string name="authentication_label_registration_business">Business registration / tax ID (optional)</string>
-    <string name="authentication_label_registration_organization">Registration / tax ID (optional)</string>
     <string name="authentication_error_industry_required">This field is required</string>
     <string name="authentication_error_phone_required">Please enter a phone number</string>
     <string name="authentication_error_phone_invalid">Enter a valid phone number</string>

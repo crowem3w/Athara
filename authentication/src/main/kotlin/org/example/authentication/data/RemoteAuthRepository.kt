@@ -14,30 +14,19 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
-import org.example.authentication.domain.AccountDetails
-import org.example.authentication.domain.AccountType
-import org.example.authentication.domain.AuthError
-import org.example.authentication.domain.AuthRepository
-import org.example.authentication.domain.AuthResult
-import org.example.authentication.domain.AuthUser
-import org.example.authentication.domain.PersonalSetup
-import org.example.authentication.domain.SocialAccount
-import org.example.authentication.domain.SocialProvider
-import org.example.core.Core
-import org.example.core.net.ApiResult
-import org.example.core.net.BackendApi
-import org.example.core.net.DetailsDto
-import org.example.core.net.LogoutRequest
-import org.example.core.net.ProfileUpdateRequest
-import org.example.core.net.ResetPasswordRequest
-import org.example.core.net.SignInRequest
-import org.example.core.net.SignUpRequest
-import org.example.core.net.SocialLoginRequest
-import org.example.core.net.SocialSignUpRequest
-import org.example.core.net.TokenResponse
-import org.example.core.net.UserDto
-import org.example.core.net.apiCall
-import org.example.core.secure.TokenStore
+import org.example.identityapi.AccountDetails
+import org.example.identityapi.AccountType
+import org.example.identityapi.AuthError
+import org.example.identityapi.AuthRepository
+import org.example.identityapi.AuthResult
+import org.example.identityapi.AuthUser
+import org.example.identityapi.PersonalSetup
+import org.example.identityapi.SocialAccount
+import org.example.identityapi.SocialProvider
+import org.example.network.Core
+import org.example.network.ApiResult
+import org.example.network.apiCall
+import org.example.securestorage.TokenStore
 
 /**
  * Backend implementation: the server owns accounts and passwords; the device holds only tokens
@@ -46,7 +35,7 @@ import org.example.core.secure.TokenStore
  */
 internal class RemoteAuthRepository(
     private val context: Context,
-    private val api: BackendApi,
+    private val api: AuthApi,
     private val http: OkHttpClient,
     private val tokens: TokenStore,
     private val session: SessionStore,
@@ -319,7 +308,7 @@ internal class RemoteAuthRepository(
 
         fun create(context: Context, proofs: PhoneProofStore): RemoteAuthRepository = RemoteAuthRepository(
             context = context,
-            api = Core.api,
+            api = Core.create(AuthApi::class.java),
             http = Core.http,
             tokens = Core.tokens,
             session = SessionStore(Core.secure),

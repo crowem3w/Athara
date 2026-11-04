@@ -1,7 +1,7 @@
 package org.example.authentication.ui
 
 import androidx.compose.runtime.Composable
-import org.example.authentication.domain.AccountType
+import org.example.identityapi.AccountType
 
 /**
  * Account setup step shown after registration (step 4 of the sign-up progress bar). Same layout as

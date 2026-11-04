@@ -10,8 +10,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import org.example.authentication.domain.AccountType
-import org.example.authentication.domain.PersonalSetup
+import org.example.identityapi.AccountType
+import org.example.identityapi.PersonalSetup
 import org.example.authentication.ui.AccountSetupScreen
 import org.example.authentication.ui.PersonalSetupFields
 

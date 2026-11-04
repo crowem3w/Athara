@@ -13,10 +13,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import org.example.authentication.Authentication
-import org.example.authentication.domain.AccountType
+import org.example.identityapi.Identity
+import org.example.identityapi.AccountType
 import org.example.authentication.ui.AccountSignUp
-import org.example.authentication.ui.theme.AuthenticationTheme
+import org.example.designsystem.AppTheme
 
 /**
  * Organization account entry point.
@@ -28,19 +28,19 @@ class OrgRegForm : ComponentActivity() {
 
     // Only used while signed in: all rows are scoped to the signed-in user's id.
     private val viewModel: OrganizationViewModel by viewModels {
-        OrganizationViewModel.factory(Authentication.repository(this).currentUser.value?.id.orEmpty())
+        OrganizationViewModel.factory(Identity.repository(this).currentUser.value?.id.orEmpty())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val user = Authentication.repository(this).currentUser.value
+        val user = Identity.repository(this).currentUser.value
         // Just created the account (sign-up happens in AuthenticationActivity): show setup before home.
-        val setupPendingAtStart = user != null && Authentication.isSetupPending(this)
+        val setupPendingAtStart = user != null && Identity.isSetupPending(this)
         setContent {
             var setupPending by rememberSaveable { mutableStateOf(setupPendingAtStart) }
             var setupStep by rememberSaveable { mutableStateOf(false) }
-            AuthenticationTheme(AccountType.ORGANIZATION) {
+            AppTheme(AccountType.ORGANIZATION) {
                 if (user != null && setupPending) {
                     OrgSetupAcc(onBack = { finishSetup(); setupPending = false }) // empty for now: back skips to home
                 } else if (user != null) {
@@ -56,7 +56,7 @@ class OrgRegForm : ComponentActivity() {
                         onDeleteEvent = viewModel::deleteEvent,
                         onSignOut = {
                             lifecycleScope.launch {
-                                Authentication.signOut(this@OrgRegForm)
+                                Identity.signOut(this@OrgRegForm)
                                 finish()
                             }
                         },
@@ -84,5 +84,5 @@ class OrgRegForm : ComponentActivity() {
         }
     }
 
-    private fun finishSetup() = Authentication.completeSetup(this)
+    private fun finishSetup() = Identity.completeSetup(this)
 }

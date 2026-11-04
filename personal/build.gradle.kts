@@ -36,7 +36,9 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":authentication"))
+    implementation(project(":identity-api"))
+    implementation(project(":design-system"))
+    implementation(project(":authentication")) // sign-up and setup screens only
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

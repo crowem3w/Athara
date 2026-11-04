@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.example.core.sync.SyncCoordinator
+import org.example.syncengine.SyncCoordinator
 import org.example.organization.data.EventEntity
 import org.example.organization.data.MemberEntity
 import org.example.organization.data.OrganizationDao

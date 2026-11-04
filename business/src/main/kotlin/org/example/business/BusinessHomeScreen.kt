@@ -37,9 +37,9 @@ import java.math.BigDecimal
 import java.text.DateFormat
 import java.text.NumberFormat
 import java.util.Date
-import org.example.authentication.domain.AccountType
-import org.example.authentication.domain.AuthUser
-import org.example.authentication.ui.AccountTypeBadge
+import org.example.identityapi.AccountType
+import org.example.identityapi.AuthUser
+import org.example.designsystem.AccountTypeBadge
 
 private enum class BusinessDialog { CUSTOMER, ORDER }
 

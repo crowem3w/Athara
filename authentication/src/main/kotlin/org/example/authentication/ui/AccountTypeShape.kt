@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
-import org.example.authentication.domain.AccountType
+import org.example.identityapi.AccountType
 
 /**
  * Decorative teal free-form shape drawn at the right edge of an account type card.

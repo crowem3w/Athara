@@ -57,8 +57,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import org.example.authentication.R
-import org.example.authentication.data.ImageDecoding
-import org.example.authentication.domain.PersonalSetup
+import org.example.identityapi.R as IdentityR
+import org.example.designsystem.ImageDecoding
+import org.example.identityapi.PersonalSetup
 
 private const val AboutMaxLength = 150
 
@@ -275,7 +276,7 @@ private fun ProfilePictureFrame(
                         )
                     } else {
                         Image(
-                            painter = painterResource(R.drawable.authentication_ic_personal),
+                            painter = painterResource(IdentityR.drawable.identityapi_ic_personal),
                             contentDescription = description,
                             modifier = Modifier.size(44.dp),
                         )

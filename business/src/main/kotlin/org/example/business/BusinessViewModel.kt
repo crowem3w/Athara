@@ -15,7 +15,7 @@ import org.example.business.data.BusinessDao
 import org.example.business.data.BusinessDatabase
 import org.example.business.data.CustomerEntity
 import org.example.business.data.OrderEntity
-import org.example.core.sync.SyncCoordinator
+import org.example.syncengine.SyncCoordinator
 import org.example.business.data.deleteCustomer
 import org.example.business.data.deleteOrder
 

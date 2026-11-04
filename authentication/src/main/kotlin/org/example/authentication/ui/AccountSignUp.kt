@@ -5,7 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.example.authentication.domain.AccountType
+import org.example.identityapi.AccountType
 
 /**
  * Sign-up form for one [AccountType]. Public entry point for the account-type

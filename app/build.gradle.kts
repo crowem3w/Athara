@@ -38,7 +38,7 @@ android {
     // client, because the staging build has a different package name.
     buildTypes {
         debug {
-            buildConfigField("String", "API_BASE_URL", "\"http://127.0.0.1:8080/\"") // emulator -> host machine
+            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/\"") // emulator -> host machine
             buildConfigField("boolean", "ALLOW_CLEARTEXT", "true")
         }
         create("staging") {
@@ -70,7 +70,9 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":core"))
+    implementation(project(":network"))
+    implementation(project(":sync-engine"))
+    implementation(project(":identity-api"))
     implementation(project(":onboarding"))
     implementation(project(":authentication"))
     implementation(project(":personal"))

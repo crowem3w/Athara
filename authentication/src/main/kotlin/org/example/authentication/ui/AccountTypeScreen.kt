@@ -50,7 +50,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.example.authentication.R
-import org.example.authentication.domain.AccountType
+import org.example.designsystem.AccountTypeBadge
+import org.example.designsystem.R as DsR
+import org.example.identityapi.AccountType
 
 private val CardMinHeight = 172.dp
 private val CardMaxHeight = 220.dp
@@ -181,7 +183,7 @@ private fun AccountTypeCard(
         Box(modifier = Modifier.fillMaxSize()) {
             AccountTypeShape(
                 type = type,
-                color = colorResource(R.color.authentication_primary),
+                color = colorResource(DsR.color.designsystem_primary),
                 modifier = Modifier.fillMaxSize(),
             )
             // Layer 2 (above the shape): the illustration, anchored to the right and allowed to

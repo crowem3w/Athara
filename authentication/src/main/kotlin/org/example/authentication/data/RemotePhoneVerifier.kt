@@ -1,15 +1,12 @@
 package org.example.authentication.data
 
-import org.example.authentication.domain.PhoneVerifier
-import org.example.core.net.ApiResult
-import org.example.core.net.BackendApi
-import org.example.core.net.SendCodeRequest
-import org.example.core.net.VerifyCodeRequest
-import org.example.core.net.apiCall
+import org.example.identityapi.PhoneVerifier
+import org.example.network.ApiResult
+import org.example.network.apiCall
 
 /** SMS OTP through the backend (it owns the SMS provider). A successful verify stores the proof for the next request. */
 internal class RemotePhoneVerifier(
-    private val api: BackendApi,
+    private val api: AuthApi,
     private val proofs: PhoneProofStore,
 ) : PhoneVerifier {
 

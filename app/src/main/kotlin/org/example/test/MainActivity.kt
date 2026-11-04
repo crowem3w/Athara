@@ -23,8 +23,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
-import org.example.authentication.Authentication
 import org.example.authentication.AuthenticationContract
+import org.example.identityapi.Identity
 import org.example.onboarding.Onboarding
 import org.example.onboarding.OnboardingContract
 import org.example.test.ui.theme.TestTheme
@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
     // backing out while still signed in closes the app.
     private val homeLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         homeInProgress = false
-        if (Authentication.isSignedIn(this)) finish()
+        if (Identity.isSignedIn(this)) finish()
     }
 
     // If the user backs out of onboarding without finishing it, close the app.
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
         // Covers: right after onboarding, cold start, sign-up/sign-in, and signOut().
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                Authentication.repository(this@MainActivity).currentUser.collect { user ->
+                Identity.repository(this@MainActivity).currentUser.collect { user ->
                     if (!Onboarding.isCompleted(this@MainActivity)) return@collect
                     if (user == null) {
                         if (!authInProgress) {

@@ -5,12 +5,13 @@ import java.util.UUID
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import org.example.core.net.RecordDto
-import org.example.core.sync.SyncCoordinator
-import org.example.core.sync.SyncState
-import org.example.core.sync.TableSync
-import org.example.core.sync.long
-import org.example.core.sync.str
+import org.example.network.RecordDto
+import org.example.syncengine.SyncCoordinator
+import org.example.syncengine.SyncInstaller
+import org.example.syncengine.SyncState
+import org.example.syncengine.TableSync
+import org.example.syncengine.long
+import org.example.syncengine.str
 
 internal class CustomerSync(private val dao: BusinessDao) : TableSync<CustomerEntity>("customers") {
     override suspend fun pending(ownerId: String) = dao.pendingCustomers(ownerId)
@@ -64,9 +65,9 @@ internal class OrderSync(private val dao: BusinessDao) : TableSync<OrderEntity>(
     override fun markSynced(row: OrderEntity) = row.copy(syncState = SyncState.SYNCED)
 }
 
-/** Registers this module's tables with the sync engine. Call once from Application.onCreate. */
-object BusinessSync {
-    fun install(context: Context) {
+/** Registers this module's tables with the sync engine (listed in App.kt). */
+object BusinessSync : SyncInstaller {
+    override fun install(context: Context) {
         val dao = BusinessDatabase.get(context).dao()
         SyncCoordinator.register(CustomerSync(dao))
         SyncCoordinator.register(OrderSync(dao))

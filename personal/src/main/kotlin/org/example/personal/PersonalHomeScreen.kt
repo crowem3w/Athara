@@ -22,10 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.example.authentication.domain.AccountType
-import org.example.authentication.domain.AuthUser
-import org.example.authentication.ui.AccountTypeBadge
-import org.example.authentication.ui.ProfileHeader
+import org.example.identityapi.AccountType
+import org.example.identityapi.AuthUser
+import org.example.designsystem.AccountTypeBadge
+import org.example.designsystem.ProfileHeader
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

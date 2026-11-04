@@ -44,7 +44,7 @@ import androidx.compose.ui.zIndex
 import androidx.annotation.StringRes
 import androidx.compose.ui.res.stringResource
 import org.example.authentication.R
-import org.example.authentication.domain.AccountType
+import org.example.identityapi.AccountType
 
 /** Share of the height under the top bar: small illustration, tall panel. */
 private const val IllustrationWeight = 0.6f

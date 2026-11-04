@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="identityapi_account_personal">Personal</string>
+    <string name="identityapi_account_personal_desc">For individuals: manage your own profile and activity.</string>
+    <string name="identityapi_account_business">Business</string>
+    <string name="identityapi_account_business_desc">For companies and sole traders: customers, orders and revenue.</string>
+    <string name="identityapi_account_organization">Organization</string>
+    <string name="identityapi_account_organization_desc">For nonprofits, schools and teams: members and groups.</string>
+    <string name="identityapi_title_sign_up_personal">Create your personal account</string>
+    <string name="identityapi_title_sign_up_business">Create your business account</string>
+    <string name="identityapi_title_sign_up_organization">Create your organization account</string>
+    <string name="identityapi_title_setup_personal">Set up your personal account</string>
+    <string name="identityapi_title_setup_business">Set up your business account</string>
+    <string name="identityapi_title_setup_organization">Set up your organization account</string>
+    <string name="identityapi_label_name_personal">Full name</string>
+    <string name="identityapi_label_name_business">Business name</string>
+    <string name="identityapi_label_name_organization">Organization name</string>
+    <string name="identityapi_label_industry_business">Industry</string>
+    <string name="identityapi_label_industry_organization">Organization type</string>
+    <string name="identityapi_label_registration_business">Business registration / tax ID (optional)</string>
+    <string name="identityapi_label_registration_organization">Registration / tax ID (optional)</string>
+</resources>

@@ -32,9 +32,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import java.time.LocalDate
-import org.example.authentication.domain.AccountType
-import org.example.authentication.domain.AuthUser
-import org.example.authentication.ui.AccountTypeBadge
+import org.example.identityapi.AccountType
+import org.example.identityapi.AuthUser
+import org.example.designsystem.AccountTypeBadge
 
 private enum class OrganizationDialog { MEMBER, TEAM, EVENT }
 
