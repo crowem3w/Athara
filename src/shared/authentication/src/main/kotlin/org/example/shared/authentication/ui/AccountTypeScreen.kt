@@ -57,16 +57,16 @@ import org.example.core.identityapi.AccountType
 private val CardMinHeight = 172.dp
 private val CardMaxHeight = 220.dp
 
-/** Space taken by everything in the scroll area that is not a card (title, subtitle, gaps). */
+
 private val NonCardHeight = 120.dp
 
-/**
- * Body of the first sign-up step: pick Personal, Business or Organization, then Continue.
- *
- * The three cards grow to share the free height; the Continue button and "Already have an
- * account? Sign in" stay pinned to the bottom. The selected card is elevated with an accent
- * border, the others are dimmed. The back button and progress bar live in [SignUpStepHeader].
- */
+
+
+
+
+
+
+
 @Composable
 internal fun AccountTypeScreen(
     onSelect: (AccountType) -> Unit,
@@ -153,7 +153,7 @@ private fun AccountTypeCard(
     val spec = tween<Float>(200)
 
     val elevation by animateDpAsState(if (isSelected) 12.dp else 0.dp, tween(200), label = "elevation")
-    // Nothing chosen yet: all cards are equal. Once one is chosen, the others fade back.
+    
     val contentAlpha by animateFloatAsState(
         targetValue = if (hasSelection && !isSelected) 0.55f else 1f,
         animationSpec = spec,
@@ -186,8 +186,8 @@ private fun AccountTypeCard(
                 color = colorResource(DsR.color.designsystem_primary),
                 modifier = Modifier.fillMaxSize(),
             )
-            // Layer 2 (above the shape): the illustration, anchored to the right and allowed to
-            // overlap the shape. Fit keeps the whole artwork visible inside its box.
+            
+            
             Image(
                 painter = painterResource(type.illustration),
                 contentDescription = null,
@@ -199,7 +199,7 @@ private fun AccountTypeCard(
                     .fillMaxWidth(0.50f)
                     .padding(top = 10.dp, bottom = 10.dp, end = 8.dp),
             )
-            // Layer 3: badge, title and description, kept clear of the illustration.
+            
             Column(
                 modifier = Modifier
                     .align(Alignment.CenterStart)
@@ -220,7 +220,7 @@ private fun AccountTypeCard(
                     color = colorResource(R.color.authentication_muted),
                 )
             }
-            // Top layer: selection ring in the top-end corner.
+            
             Box(modifier = Modifier.align(Alignment.TopEnd).padding(14.dp)) {
                 SelectionIndicator(isSelected = isSelected, accent = accent)
             }
@@ -228,7 +228,7 @@ private fun AccountTypeCard(
     }
 }
 
-/** Empty ring when not selected; accent-filled circle with a check mark when selected. */
+
 @Composable
 private fun SelectionIndicator(isSelected: Boolean, accent: Color) {
     val fill by animateColorAsState(if (isSelected) accent else Color.Transparent, tween(200), label = "indicator")

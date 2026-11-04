@@ -7,7 +7,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-/** Generic sync endpoints, shared by every synced resource. Contract: see docs/API_CONTRACT.md. */
+
 interface SyncApi {
     @POST("v1/sync/{resource}/push")
     suspend fun push(@Path("resource") resource: String, @Body body: PushRequest): Response<PushResponse>

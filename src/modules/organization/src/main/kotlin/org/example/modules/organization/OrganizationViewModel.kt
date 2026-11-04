@@ -27,14 +27,14 @@ internal data class OrganizationUiState(
     val teams: List<TeamEntity> = emptyList(),
     val events: List<EventEntity> = emptyList(),
 ) {
-    /** Events dated today or later. */
+    
     val upcomingEvents: Int get() = LocalDate.now().toString().let { today -> events.count { it.date >= today } }
 }
 
 internal class OrganizationViewModel(
     private val dao: OrganizationDao,
     private val ownerId: String,
-    /** Called after every local change so the sync engine pushes it as soon as the device is online. */
+    
     private val onChanged: () -> Unit,
 ) : ViewModel() {
 
@@ -95,7 +95,7 @@ internal class OrganizationViewModel(
     }
 }
 
-/** Returns the normalized ISO date (yyyy-MM-dd), or null if [input] is not a valid date. */
+
 internal fun parseIsoDate(input: String): String? =
     try {
         LocalDate.parse(input.trim()).toString()

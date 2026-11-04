@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-/** Access/refresh tokens, encrypted at rest. Thread-safe; [signedIn] flips to false when tokens are cleared. */
+
 class TokenStore(private val secure: SecureStore) {
 
     @Serializable

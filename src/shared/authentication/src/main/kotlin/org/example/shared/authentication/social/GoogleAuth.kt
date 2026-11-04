@@ -24,13 +24,13 @@ internal sealed interface GoogleResult {
     data object Failed : GoogleResult
 }
 
-/**
- * Real Google sign-in through Credential Manager ("Sign in with Google" account picker).
- *
- * Needs the OAuth *web* client id in `authentication_google_web_client_id` (see google_auth.xml).
- * The ID token travels to the backend inside [SocialAccount], which must verify it (signature,
- * `aud` = this web client id, `exp`) before trusting the account. `subjectOf` is only a fallback id.
- */
+
+
+
+
+
+
+
 internal object GoogleAuth {
 
     suspend fun signIn(activityContext: Context): GoogleResult {
@@ -39,7 +39,7 @@ internal object GoogleAuth {
 
         val option = GetGoogleIdOption.Builder()
             .setServerClientId(clientId)
-            .setFilterByAuthorizedAccounts(false) // offer every Google account on the device
+            .setFilterByAuthorizedAccounts(false) 
             .build()
         val request = GetCredentialRequest.Builder().addCredentialOption(option).build()
 
@@ -73,7 +73,7 @@ internal object GoogleAuth {
         }
     }
 
-    /** The `sub` claim of the ID token (the stable Google account id). */
+    
     private fun subjectOf(idToken: String): String? = runCatching {
         val payload = idToken.split(".")[1]
         val json = String(Base64.decode(payload, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP))

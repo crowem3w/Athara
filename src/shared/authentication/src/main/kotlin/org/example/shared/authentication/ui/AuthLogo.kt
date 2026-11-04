@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.example.shared.authentication.R
 
-/** Brand logo shown at the top of the authentication screens. Height follows the image's aspect ratio. */
+
 @Composable
 internal fun AuthLogo(
     modifier: Modifier = Modifier,

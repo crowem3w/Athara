@@ -1,8 +1,8 @@
-/*
- * :personal library module. Hosts PerRegForm: the personal sign-up form
- * (from :authentication) while signed out, and the personal home screen once
- * signed in. Resources are prefixed "personal_" to avoid merge clashes.
- */
+
+
+
+
+
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -38,7 +38,7 @@ kotlin {
 dependencies {
     implementation(project(":identity-api"))
     implementation(project(":design-system"))
-    implementation(project(":authentication")) // sign-up and setup screens only
+    implementation(project(":authentication")) 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

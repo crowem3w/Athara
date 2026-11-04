@@ -40,11 +40,11 @@ private val HeaderAvatarRing = 5.dp
 private val HeaderGray = Color(0xFFD8DBE0)
 private val HeaderPlaceholder = Color(0xFFE4E6EB)
 
-/**
- * Read-only profile header, same look as the setup step: a 2:1 cover with the circular avatar on
- * its bottom-left edge, half on the cover and half below it. [coverPath] and [photoPath] are the
- * file paths saved on [org.example.core.identityapi.AuthUser]; flat gray / person icon when null.
- */
+
+
+
+
+
 @Composable
 fun ProfileHeader(coverPath: String?, photoPath: String?, modifier: Modifier = Modifier) {
     val cover = rememberFileImage(coverPath, 1000)

@@ -63,7 +63,7 @@ import org.example.core.identityapi.PersonalSetup
 
 private const val AboutMaxLength = 150
 
-/** Cover banner behind the profile picture. */
+
 private val CoverShape = RoundedCornerShape(20.dp)
 private val CoverMaxWidth = 340.dp
 private val AvatarSize = 112.dp
@@ -76,10 +76,10 @@ private val PlaceholderFill = Color(0xFFE4E6EB)
 private val BadgeFill = Color(0xFFE4E6EB)
 private val BadgeIcon = Color(0xFF050505)
 
-/**
- * Fields of the personal account setup step: profile picture, about, location, then Continue and
- * Skip for now. Everything is optional. Meant to be the content of [AccountSetupScreen].
- */
+
+
+
+
 @Composable
 fun ColumnScope.PersonalSetupFields(
     onContinue: (PersonalSetup) -> Unit,
@@ -90,7 +90,7 @@ fun ColumnScope.PersonalSetupFields(
     var about by rememberSaveable { mutableStateOf("") }
     var location by rememberSaveable { mutableStateOf("") }
 
-    // Which picture the gallery / camera result is for
+    
     var target by rememberSaveable { mutableStateOf(PhotoTarget.Avatar) }
     fun setPicture(uri: String?) {
         when (target) {
@@ -99,7 +99,7 @@ fun ColumnScope.PersonalSetupFields(
         }
     }
 
-    // Picked / photographed image waiting to be cropped
+    
     var cropUri by rememberSaveable { mutableStateOf<String?>(null) }
 
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -132,7 +132,7 @@ fun ColumnScope.PersonalSetupFields(
         },
         onCamera = { picked ->
             target = picked
-            // The camera app writes into a file in our cache, shared through the FileProvider.
+            
             runCatching {
                 val dir = File(context.cacheDir, "camera").apply { mkdirs() }
                 val file = File.createTempFile("photo_", ".jpg", dir)
@@ -150,7 +150,7 @@ fun ColumnScope.PersonalSetupFields(
         modifier = Modifier.align(Alignment.CenterHorizontally),
     )
 
-    // About
+    
     SetupLabel(R.string.authentication_setup_about)
     CompactTextField(
         value = about,
@@ -166,7 +166,7 @@ fun ColumnScope.PersonalSetupFields(
         modifier = Modifier.align(Alignment.End).padding(end = 4.dp),
     )
 
-    // Location
+    
     SetupLabel(R.string.authentication_setup_location)
     CompactTextField(
         value = location,
@@ -186,16 +186,16 @@ fun ColumnScope.PersonalSetupFields(
     ) { Text(stringResource(R.string.authentication_setup_skip)) }
 }
 
-/** Which of the two pictures a gallery / camera / remove action is for. */
+
 private enum class PhotoTarget { Avatar, Cover }
 
-/**
- * Facebook-style profile header. A rounded 2:1 cover banner (flat light gray until a cover photo is
- * chosen), inset a little from the panel edges, with the circular avatar on its bottom-left edge,
- * half on the cover and half below it. The avatar has a thick ring in the panel color and a camera
- * badge on its bottom-right. Tapping the cover or the avatar (or its badge) opens a menu: choose
- * from gallery, take a photo and, when one is set, remove it.
- */
+
+
+
+
+
+
+
 @Composable
 private fun ProfilePictureFrame(
     photo: ImageBitmap?,
@@ -214,11 +214,11 @@ private fun ProfilePictureFrame(
     Box(
         modifier = modifier
             .padding(horizontal = 12.dp)
-            .padding(bottom = AvatarSize / 2) // room for the half of the avatar that hangs below the cover
+            .padding(bottom = AvatarSize / 2) 
             .widthIn(max = CoverMaxWidth)
             .fillMaxWidth(),
     ) {
-        // Cover banner
+        
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -253,7 +253,7 @@ private fun ProfilePictureFrame(
             )
         }
 
-        // Avatar: bottom-left of the cover, half on it and half below
+        
         Box(
             modifier = Modifier
                 .align(Alignment.BottomStart)
@@ -283,7 +283,7 @@ private fun ProfilePictureFrame(
                     }
                 }
             }
-            // Camera badge on the circle's bottom-right edge
+            
             Box(
                 modifier = Modifier
                     .size(BadgeSize)
@@ -315,7 +315,7 @@ private fun ProfilePictureFrame(
     }
 }
 
-/** Gallery / camera menu, plus a remove entry while a picture is set. */
+
 @Composable
 private fun PhotoMenu(
     expanded: Boolean,
@@ -353,7 +353,7 @@ private fun SetupLabel(label: Int) {
     )
 }
 
-/** Decodes the picked or photographed image off the main thread, downsampled and rotated upright. */
+
 @Composable
 private fun rememberPhoto(uri: String?, maxSide: Int): ImageBitmap? {
     val resolver = LocalContext.current.contentResolver

@@ -8,9 +8,9 @@ import android.media.ExifInterface
 import android.net.Uri
 import kotlin.math.max
 
-/** Decodes images, downsampled and rotated upright according to their EXIF orientation (camera photos). */
+
 object ImageDecoding {
-    /** The longer side of the result ends up between [maxSide] and 2 * [maxSide] pixels (or smaller if the source is). */
+    
     fun decode(resolver: ContentResolver, uri: Uri, maxSide: Int): Bitmap? {
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }

@@ -1,8 +1,8 @@
-/*
- * :organization library module. Hosts OrgRegForm: the organization sign-up form
- * (from :authentication) while signed out, and the organization home screen once
- * signed in. Resources are prefixed "organization_" to avoid merge clashes.
- */
+
+
+
+
+
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -36,7 +36,7 @@ kotlin {
     }
 }
 
-// Exported schemas make future Room migrations testable.
+
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
@@ -44,7 +44,7 @@ ksp {
 dependencies {
     implementation(project(":identity-api"))
     implementation(project(":design-system"))
-    implementation(project(":authentication")) // sign-up and setup screens only
+    implementation(project(":authentication")) 
     implementation(project(":network"))
     implementation(project(":sync-engine"))
     implementation(libs.androidx.core.ktx)

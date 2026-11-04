@@ -1,6 +1,6 @@
 package org.example.shared.authentication.domain
 data class Country(val iso: String, val name: String, val dialCode: String) {
-    /** Flag emoji built from the ISO 3166-1 alpha-2 code (regional-indicator symbols). */
+    
     val flag: String
         get() = iso.map { String(Character.toChars(0x1F1E6 + (it - 'A'))) }.joinToString("")
 
@@ -8,12 +8,12 @@ data class Country(val iso: String, val name: String, val dialCode: String) {
 }
 
 object Countries {
-    /** Philippines is the default country code. */
+    
     val DEFAULT: Country get() = byIso("PH")!!
 
     private val POPULAR_ISO = listOf("PH", "US", "CA", "GB", "AU", "SG", "AE", "SA", "JP", "KR", "HK", "MY")
 
-    // iso|name|dial code
+    
     private const val TABLE = """
 AF|Afghanistan|93;AL|Albania|355;DZ|Algeria|213;AS|American Samoa|1684;AD|Andorra|376;AO|Angola|244;AI|Anguilla|1264;AG|Antigua and Barbuda|1268;AR|Argentina|54;AM|Armenia|374;AW|Aruba|297;AU|Australia|61;AT|Austria|43;AZ|Azerbaijan|994;
 BS|Bahamas|1242;BH|Bahrain|973;BD|Bangladesh|880;BB|Barbados|1246;BY|Belarus|375;BE|Belgium|32;BZ|Belize|501;BJ|Benin|229;BM|Bermuda|1441;BT|Bhutan|975;BO|Bolivia|591;BA|Bosnia and Herzegovina|387;BW|Botswana|267;BR|Brazil|55;IO|British Indian Ocean Territory|246;VG|British Virgin Islands|1284;BN|Brunei|673;BG|Bulgaria|359;BF|Burkina Faso|226;BI|Burundi|257;
@@ -34,12 +34,12 @@ UG|Uganda|256;UA|Ukraine|380;AE|United Arab Emirates|971;GB|United Kingdom|44;US
 VU|Vanuatu|678;VA|Vatican City|379;VE|Venezuela|58;VN|Vietnam|84;WF|Wallis and Futuna|681;YE|Yemen|967;ZM|Zambia|260;ZW|Zimbabwe|263
 """
 
-    /** Every country, A–Z by name. */
+    
     val all: List<Country> = TABLE.replace("\n", "").split(';').filter { it.isNotBlank() }
         .map { row -> row.trim().split('|').let { Country(it[0], it[1], it[2]) } }
         .sortedBy { it.name }
 
-    /** Shown at the top of the picker, in this order. */
+    
     val popular: List<Country> = POPULAR_ISO.mapNotNull { iso -> all.firstOrNull { it.iso == iso } }
 
     fun byIso(iso: String): Country? = all.firstOrNull { it.iso == iso }

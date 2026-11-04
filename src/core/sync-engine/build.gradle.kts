@@ -1,8 +1,8 @@
-/*
- * :sync-engine library module. Outbox-based sync (server is authoritative) plus WorkManager
- * scheduling. Feature modules own their Room tables and plug in a SyncAdapter / TableSync, and
- * expose a SyncInstaller so the app can register them.
- */
+
+
+
+
+
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -31,7 +31,7 @@ kotlin {
 }
 
 dependencies {
-    // SyncAdapter's signatures use the network DTOs and kotlinx-serialization's JsonObject.
+    
     api(project(":network"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.work.runtime.ktx)

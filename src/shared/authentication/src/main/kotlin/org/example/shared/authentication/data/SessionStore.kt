@@ -6,10 +6,10 @@ import org.example.core.identityapi.AuthUser
 import org.example.core.securestorage.SecureStore
 import org.json.JSONObject
 
-/**
- * Remembers the signed-in profile across restarts, encrypted with the Keystore ([SecureStore]).
- * It is only a cache of what the server returned; tokens live in the core TokenStore.
- */
+
+
+
+
 internal class SessionStore(private val secure: SecureStore) {
 
     fun read(): AuthUser? {
@@ -19,7 +19,7 @@ internal class SessionStore(private val secure: SecureStore) {
 
     fun save(user: AuthUser) = secure.putString(KEY_USER, toJson(user).toString())
 
-    /** A just-created account still has to go through the account setup step. */
+    
     fun markSetupPending(userId: String) = secure.putString(KEY_SETUP_PENDING, userId)
 
     fun isSetupPending(userId: String): Boolean = secure.getString(KEY_SETUP_PENDING) == userId

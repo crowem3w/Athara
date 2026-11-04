@@ -17,24 +17,24 @@ import org.example.core.identityapi.AccountType
 import org.example.shared.authentication.ui.AccountSignUp
 import org.example.shared.designsystem.AppTheme
 
-/**
- * Personal account entry point.
- *  - Signed out: shows the personal sign-up form. Finishes with RESULT_OK once the
- *    account exists (RESULT_FIRST_USER = "I already have an account").
- *  - Signed in: shows the personal home screen; signing out finishes the Activity.
- */
+
+
+
+
+
+
 class PerRegForm : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val user = Identity.repository(this).currentUser.value
-        // Just created the account (sign-up happens in AuthenticationActivity): show setup before home.
+        
         val setupPendingAtStart = user != null && Identity.isSetupPending(this)
         setContent {
             var setupPending by rememberSaveable { mutableStateOf(setupPendingAtStart) }
             var setupStep by rememberSaveable { mutableStateOf(false) }
-            // Latest user: the setup step saves picture paths on it after `user` was read
+            
             val latestUser by Identity.repository(this@PerRegForm).currentUser.collectAsState()
             AppTheme(AccountType.PERSONAL) {
                 if (user != null && setupPending) {
@@ -47,8 +47,8 @@ class PerRegForm : ComponentActivity() {
                             }
                         },
                         onSkip = { finishSetup(); setupPending = false },
-                        // Back to sign-up: delete the just-created account and sign out;
-                        // MainActivity then re-opens authentication.
+                        
+                        
                         onBack = {
                             lifecycleScope.launch {
                                 Identity.discardNewAccount(this@PerRegForm)
@@ -81,7 +81,7 @@ class PerRegForm : ComponentActivity() {
                             setResult(Activity.RESULT_OK)
                             finish()
                         },
-                        // Back to the sign-up form: the just-created account is deleted.
+                        
                         onBack = {
                             lifecycleScope.launch {
                                 Identity.discardNewAccount(this@PerRegForm)
@@ -92,12 +92,12 @@ class PerRegForm : ComponentActivity() {
                 } else {
                     AccountSignUp(
                         accountType = AccountType.PERSONAL,
-                        onSignedUp = { setupStep = true }, // next section: PerSetupAcc
+                        onSignedUp = { setupStep = true }, 
                         onSignIn = {
                             setResult(Activity.RESULT_FIRST_USER)
                             finish()
                         },
-                        onBack = { finish() }, // result stays CANCELED: back to account type selection
+                        onBack = { finish() }, 
                     )
                 }
             }

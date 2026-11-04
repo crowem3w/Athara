@@ -1,8 +1,8 @@
-/*
- * :design-system library module. The app's Compose theme (AppTheme), the account type badge, the
- * read-only ProfileHeader and image decoding helpers. Resources are prefixed "designsystem_".
- * Depends on :identity-api only for AccountType (accent color and icon).
- */
+
+
+
+
+
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 

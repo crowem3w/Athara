@@ -1,10 +1,10 @@
-/*
- * Onboarding library module. Hosts OnboardingActivity along with its own
- * Compose theme and resources (all resources are prefixed "onboarding_"
- * to avoid clashing with :app when manifests/resources are merged).
- * As in :app, AGP 9's built-in Kotlin support is used, plus the Compose
- * compiler plugin.
- */
+
+
+
+
+
+
+
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -31,8 +31,8 @@ android {
     }
 }
 
-// Binary images (webp, png) live in client/assets/images, not in src/main/res.
-// androidComponents is AGP's stable variant API; the old sourceSets DSL fails on AGP 9.
+
+
 androidComponents {
     val imagesDir = rootProject.file("assets/images/onboarding").absolutePath
     onVariants { variant ->

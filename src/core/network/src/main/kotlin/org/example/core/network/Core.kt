@@ -12,12 +12,12 @@ import org.example.core.securestorage.TokenStore
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
-/**
- * @property baseUrl API root, must end with "/" and be https (see [allowCleartext]).
- * @property allowCleartext permit http:// (local dev only; also needs the debug manifest flag).
- * @property httpLogging log request lines (never bodies or the Authorization header).
- * @property certificatePins host to list of "sha256/..." pins; empty = system trust only.
- */
+
+
+
+
+
+
 data class CoreConfig(
     val baseUrl: String,
     val allowCleartext: Boolean = false,
@@ -25,10 +25,10 @@ data class CoreConfig(
     val certificatePins: Map<String, List<String>> = emptyMap(),
 )
 
-/**
- * Process-wide wiring for networking and secure storage. Call [init] once in Application.onCreate.
- * Feature modules build their own Retrofit services with [create]; the generic sync endpoints are [sync].
- */
+
+
+
+
 object Core {
     private class Graph(
         val context: Context,
@@ -50,13 +50,13 @@ object Core {
     val secure: SecureStore get() = requireGraph().secure
     val tokens: TokenStore get() = requireGraph().tokens
 
-    /** Generic sync endpoints (/v1/sync/{resource}). */
+    
     val sync: SyncApi get() = requireGraph().sync
 
-    /** Authenticated client (adds the bearer token for our API host only). Use it to download photos etc. */
+    
     val http: OkHttpClient get() = requireGraph().http
 
-    /** Creates a Retrofit service on the authenticated client, e.g. `Core.create(MyApi::class.java)`. */
+    
     fun <T> create(service: Class<T>): T = requireGraph().retrofit.create(service)
 
     private fun requireGraph() = graph ?: error("Core.init(...) must be called in Application.onCreate")
@@ -100,7 +100,7 @@ object Core {
             .addConverterFactory(NetworkJson.asConverterFactory("application/json; charset=UTF-8".toMediaType()))
             .build()
 
-        // No interceptor/authenticator on this one: it is what the authenticator calls.
+        
         val refreshApi = retrofit(client()).create(TokenRefreshApi::class.java)
         val http = client {
             addInterceptor(AuthInterceptor(tokens, baseUrl.host))

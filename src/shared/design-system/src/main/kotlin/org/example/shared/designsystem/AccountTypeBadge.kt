@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.example.core.identityapi.AccountType
 
-/** Round icon in the account type's accent color; shared by the selection cards and the home screens. */
+
 @Composable
 fun AccountTypeBadge(type: AccountType, modifier: Modifier = Modifier, size: Dp = 48.dp) {
     val accent = colorResource(type.accentColor)

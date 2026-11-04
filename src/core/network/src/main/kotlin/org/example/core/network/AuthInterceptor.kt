@@ -3,7 +3,7 @@ package org.example.core.network
 import okhttp3.Interceptor
 import okhttp3.Response
 
-/** Adds the bearer token to calls to our own API host only (never to CDN / third-party hosts). */
+
 internal class AuthInterceptor(private val tokens: org.example.core.securestorage.TokenStore, private val apiHost: String) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()

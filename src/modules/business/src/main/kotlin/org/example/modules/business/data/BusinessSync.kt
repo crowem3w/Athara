@@ -65,7 +65,7 @@ internal class OrderSync(private val dao: BusinessDao) : TableSync<OrderEntity>(
     override fun markSynced(row: OrderEntity) = row.copy(syncState = SyncState.SYNCED)
 }
 
-/** Registers this module's tables with the sync engine (listed in App.kt). */
+
 object BusinessSync : SyncInstaller {
     override fun install(context: Context) {
         val dao = BusinessDatabase.get(context).dao()

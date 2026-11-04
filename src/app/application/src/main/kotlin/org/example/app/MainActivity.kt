@@ -33,22 +33,22 @@ class MainActivity : ComponentActivity() {
     private var authInProgress = false
     private var homeInProgress = false
 
-    // If the user backs out of authentication without signing in, close the app.
+    
     private val authLauncher = registerForActivityResult(AuthenticationContract()) { signedIn ->
         authInProgress = false
         if (!signedIn) finish()
     }
 
-    // Home screen of the signed-in user's account type (:personal / :business / :organization).
-    // Signing out closes it and the session observer below re-opens authentication;
-    // backing out while still signed in closes the app.
+    
+    
+    
     private val homeLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         homeInProgress = false
         if (Identity.isSignedIn(this)) finish()
     }
 
-    // If the user backs out of onboarding without finishing it, close the app.
-    // Once onboarding is done, the session observer below opens sign-in.
+    
+    
     private val onboardingLauncher = registerForActivityResult(OnboardingContract()) { completed ->
         if (!completed) finish()
     }
@@ -56,13 +56,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // savedInstanceState == null: don't relaunch after rotation/recreation.
+        
         if (savedInstanceState == null && !Onboarding.isCompleted(this)) {
             onboardingLauncher.launch(Unit)
         }
-        // Signed out (and onboarding done): open authentication, which starts on the login
-        // screen ("Sign up" leads to account-type selection). Signed in: open the home for their account type.
-        // Covers: right after onboarding, cold start, sign-up/sign-in, and signOut().
+        
+        
+        
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 Identity.repository(this@MainActivity).currentUser.collect { user ->

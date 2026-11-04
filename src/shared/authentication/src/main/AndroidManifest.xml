@@ -8,7 +8,6 @@
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.Authentication" />
 
-        <!-- Lets the camera app write the profile photo into our cache. -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.authentication.fileprovider"

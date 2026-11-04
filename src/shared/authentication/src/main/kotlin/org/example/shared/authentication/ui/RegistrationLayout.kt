@@ -46,31 +46,31 @@ import androidx.compose.ui.res.stringResource
 import org.example.shared.authentication.R
 import org.example.core.identityapi.AccountType
 
-/** Share of the height under the top bar: small illustration, tall panel. */
+
 private const val IllustrationWeight = 0.6f
 private const val PanelWeight = 1.4f
 
 private val PanelShape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
 
-/** Gap between the white panel and the screen's true left and right edges. */
+
 private val PanelSideInset = 8.dp
 
-/** Heading kept fixed above the scrolling fields: the account title, or the extra social step. */
+
 @StringRes
 internal fun registrationTitle(state: AuthUiState): Int =
     if (state.socialAccount != null) R.string.authentication_social_complete_title else state.accountType.signUpTitle
 
-/** Very light wash of the account type's accent, used behind the illustration. */
+
 internal fun registrationTint(accent: Color): Color = accent.copy(alpha = 0.10f).compositeOver(Color.White)
 
-/**
- * Registration step below the top bar: a compact account type illustration on top and the form
- * on a white panel with rounded top corners below it (about two thirds of the height). The
- * panel's [title] stays fixed with an underline divider; only the fields below it scroll. The
- * input bars are drawn borderless with soft shadows (see [LocalSoftFields]).
- *
- * While the keyboard is open the illustration collapses so the form gets the whole height.
- */
+
+
+
+
+
+
+
+
 @Composable
 internal fun RegistrationBody(
     accountType: AccountType,
@@ -108,15 +108,15 @@ internal fun RegistrationBody(
         ) {
             CompositionLocalProvider(LocalSoftFields provides true) {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    // Fixed header: stays put while the fields scroll.
+                    
                     Text(
                         text = stringResource(title),
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 14.dp),
                     )
-                    // Divider as a soft shadow, inset from the panel edges (not full width). The bar is the
-                    // panel color so only its shadow shows; zIndex keeps the shadow above scrolling fields.
+                    
+                    
                     val glow = MaterialTheme.colorScheme.primary.copy(alpha = 0.55f)
                     Box(
                         modifier = Modifier
@@ -139,7 +139,7 @@ internal fun RegistrationBody(
                             .fillMaxWidth()
                             .verticalScroll(rememberScrollState())
                             .navigationBarsPadding()
-                            // Side padding leaves room for the field shadows inside the scroll area.
+                            
                             .padding(start = 24.dp, end = 24.dp, top = 20.dp, bottom = 20.dp),
                         verticalArrangement = Arrangement.spacedBy(14.dp),
                         content = content,
@@ -150,10 +150,10 @@ internal fun RegistrationBody(
     }
 }
 
-/**
- * Whole registration screen for the standalone sign-up entry points (:personal, :business,
- * :organization): tinted background, top bar, then [RegistrationBody].
- */
+
+
+
+
 @Composable
 internal fun RegistrationScreen(
     accountType: AccountType,

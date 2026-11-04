@@ -89,21 +89,21 @@ internal fun OrganizationHomeScreen(
                 }
             }
 
-            // ----- Members -----
+            
             item { SectionHeader(R.string.organization_section_members) { dialog = OrganizationDialog.MEMBER } }
             if (state.members.isEmpty()) item { Text(stringResource(R.string.organization_empty_members), style = MaterialTheme.typography.bodyMedium) }
             items(state.members, key = { "member-${it.id}" }) { member ->
                 ItemRow(member.name, member.role) { onDeleteMember(member.id) }
             }
 
-            // ----- Teams -----
+            
             item { SectionHeader(R.string.organization_section_teams) { dialog = OrganizationDialog.TEAM } }
             if (state.teams.isEmpty()) item { Text(stringResource(R.string.organization_empty_teams), style = MaterialTheme.typography.bodyMedium) }
             items(state.teams, key = { "team-${it.id}" }) { team ->
                 ItemRow(team.name, null) { onDeleteTeam(team.id) }
             }
 
-            // ----- Events -----
+            
             item { SectionHeader(R.string.organization_section_events) { dialog = OrganizationDialog.EVENT } }
             if (state.events.isEmpty()) item { Text(stringResource(R.string.organization_empty_events), style = MaterialTheme.typography.bodyMedium) }
             items(state.events, key = { "event-${it.id}" }) { event ->

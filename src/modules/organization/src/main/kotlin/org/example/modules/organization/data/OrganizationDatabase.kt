@@ -16,12 +16,12 @@ import kotlinx.coroutines.flow.Flow
 import org.example.core.syncengine.SyncRow
 import org.example.core.syncengine.SyncState
 
-/**
- * Every row belongs to one signed-in user ([ownerId] = AuthUser.id, i.e. the server's user id), so
- * accounts never see each other's data. The last four columns are sync bookkeeping ([SyncRow]):
- * new local rows start as PENDING_UPSERT, deleting a synced row only tombstones it (PENDING_DELETE)
- * until the server confirms.
- */
+
+
+
+
+
+
 @Entity(
     tableName = "members",
     indices = [Index("ownerId"), Index(value = ["clientId"], unique = true), Index(value = ["ownerId", "serverId"], unique = true)],
@@ -59,7 +59,7 @@ internal data class EventEntity(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     val ownerId: String,
     val title: String,
-    /** ISO date (yyyy-MM-dd); sorts and compares correctly as text. */
+    
     val date: String,
     override val clientId: String = UUID.randomUUID().toString(),
     override val serverId: String? = null,
@@ -69,7 +69,7 @@ internal data class EventEntity(
 
 @Dao
 internal interface OrganizationDao {
-    // ---- what the UI reads and writes (tombstoned rows are hidden) ----
+    
     @Query("SELECT * FROM members WHERE ownerId = :ownerId AND syncState != 2 ORDER BY name COLLATE NOCASE")
     fun members(ownerId: String): Flow<List<MemberEntity>>
 
@@ -83,11 +83,11 @@ internal interface OrganizationDao {
     @Insert suspend fun insertTeam(team: TeamEntity): Long
     @Insert suspend fun insertEvent(event: EventEntity): Long
 
-    /** Never reached the server: remove outright. */
+    
     @Query("DELETE FROM members WHERE id = :id AND ownerId = :ownerId AND serverId IS NULL")
     suspend fun deleteLocalOnlyMember(id: Long, ownerId: String)
 
-    /** Known to the server: keep a tombstone until the delete is pushed. */
+    
     @Query("UPDATE members SET syncState = 2 WHERE id = :id AND ownerId = :ownerId AND serverId IS NOT NULL")
     suspend fun tombstoneMember(id: Long, ownerId: String)
 
@@ -103,7 +103,7 @@ internal interface OrganizationDao {
     @Query("UPDATE events SET syncState = 2 WHERE id = :id AND ownerId = :ownerId AND serverId IS NOT NULL")
     suspend fun tombstoneEvent(id: Long, ownerId: String)
 
-    // ---- what the sync engine uses ----
+    
     @Query("SELECT * FROM members WHERE ownerId = :ownerId AND syncState != 0 ORDER BY id")
     suspend fun pendingMembers(ownerId: String): List<MemberEntity>
 
@@ -147,7 +147,7 @@ internal interface OrganizationDao {
     suspend fun deleteEventRow(id: Long)
 }
 
-/** Same call sites as before the migration: delete a synced row = tombstone, an unsynced one = remove. */
+
 internal suspend fun OrganizationDao.deleteMember(id: Long, ownerId: String) {
     deleteLocalOnlyMember(id, ownerId)
     tombstoneMember(id, ownerId)
@@ -176,8 +176,8 @@ internal abstract class OrganizationDatabase : RoomDatabase() {
 
         fun get(context: Context): OrganizationDatabase = instance ?: synchronized(this) {
             instance ?: Room.databaseBuilder(context.applicationContext, OrganizationDatabase::class.java, "organization.db")
-                // v1 was the offline-only schema (ownerId = old local user ids, which no longer exist).
-                // Pre-production: those rows are dropped on purpose. From v2 on, write real Migrations.
+                
+                
                 .fallbackToDestructiveMigrationFrom(true, 1)
                 .build().also { instance = it }
         }

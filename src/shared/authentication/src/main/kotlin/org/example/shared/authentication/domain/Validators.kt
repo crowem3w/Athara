@@ -3,25 +3,46 @@ package org.example.shared.authentication.domain
 import java.time.DateTimeException
 import java.time.LocalDate
 
-/** Pure input validation, shared by every repository implementation. */
+
 object Validators {
     private val PH_MOBILE = Regex("^9\\d{9}$")
     private val USERNAME = Regex("^[A-Za-z][A-Za-z0-9_]{2,19}$")
     private val EMAIL = Regex("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
     private val PHONE_LIKE = Regex("^\\+?[\\d\\s\\-().]+$")
 
-    enum class Problem { REQUIRED, INVALID, WEAK, UNDERAGE }
+    enum class Problem { REQUIRED, INVALID, WEAK, UNDERAGE, TOO_LONG, MARKUP }
 
-    /** Youngest age that may sign up. */
+    
     const val MIN_AGE = 13
 
-    fun name(value: String): Problem? =
-        if (value.isBlank()) Problem.REQUIRED else null
+    const val MAX_TEXT = 100
+    const val MAX_PASSWORD = 128
 
-    /**
-     * National part of a typed mobile number: digits only, with the country code (if the
-     * user typed "+<code>") and the leading trunk "0" removed. Pure; no validation.
-     */
+    private val MARKUP = Regex("<[A-Za-z/!?]")
+
+    /** Mirrors the server's sanitizer: drops control and invisible characters and collapses whitespace. */
+    fun sanitize(value: String): String =
+        value.replace(Regex("\\s+"), " ")
+            .filterNot { it.isISOControl() || it in '\u200B'..'\u200F' || it in '\u202A'..'\u202E' || it == '\uFEFF' }
+            .trim()
+
+    /** Shared rule for free text: required, no markup (rejected, as on the server), length-capped. */
+    fun text(value: String, max: Int = MAX_TEXT): Problem? {
+        val v = sanitize(value)
+        return when {
+            v.isEmpty() -> Problem.REQUIRED
+            MARKUP.containsMatchIn(value) -> Problem.MARKUP
+            v.length > max -> Problem.TOO_LONG
+            else -> null
+        }
+    }
+
+    fun name(value: String): Problem? = text(value)
+
+    
+
+
+
     fun nationalDigits(country: Country, raw: String): String {
         val t = raw.trim()
         var digits = t.filter { it.isDigit() }
@@ -29,7 +50,7 @@ object Validators {
         return digits.removePrefix("0")
     }
 
-    /** Mobile number for [country]. PH numbers must be 9XX XXX XXXX; others 4+ digits, E.164 max 15. */
+    
     fun mobile(country: Country, raw: String): Problem? {
         if (raw.none { it.isDigit() }) return Problem.REQUIRED
         val n = nationalDigits(country, raw)
@@ -38,7 +59,7 @@ object Validators {
         return if (ok) null else Problem.INVALID
     }
 
-    /** 3-20 characters: letters, digits and underscores, starting with a letter. */
+    
     fun username(value: String): Problem? {
         val v = value.trim()
         if (v.isEmpty()) return Problem.REQUIRED
@@ -51,11 +72,11 @@ object Validators {
         return if (EMAIL.matches(v)) null else Problem.INVALID
     }
 
-    /**
-     * Turns what the user typed on the sign-in / reset screens into the key the repository looks up:
-     * an email (contains "@"), an E.164 mobile number (digits, optionally with "+<code>"; a number
-     * without a code uses [country]), or otherwise a username. Always lowercase.
-     */
+    
+
+
+
+
     fun loginKey(country: Country, raw: String): String {
         val t = raw.trim()
         return when {
@@ -66,17 +87,17 @@ object Validators {
         }
     }
 
-    /**
-     * Digits of a Philippine mobile number as typed or pasted (+63 / 63 / a leading 0 are dropped),
-     * at most 10, e.g. "+63 917 123 4567" and "09171234567" both give "9171234567".
-     */
+    
+
+
+
     fun cleanPhMobile(raw: String): String {
         var d = raw.filter { it.isDigit() }
         if (d.startsWith("63") && (raw.trimStart().startsWith("+") || d.length > 10)) d = d.drop(2)
         return d.removePrefix("0").take(10)
     }
 
-    /** Birthday typed as separate month / day / year fields. Must be a real past date, at least [MIN_AGE] years ago. */
+    
     fun birthday(month: String, day: String, year: String, today: LocalDate = LocalDate.now()): Problem? {
         if (month.isBlank() || day.isBlank() || year.isBlank()) return Problem.REQUIRED
         val m = month.toIntOrNull()
@@ -95,17 +116,16 @@ object Validators {
         }
     }
 
-    /** ISO form (yyyy-MM-dd) of a birthday that already passed [birthday] validation. */
+    
     fun birthdayIso(month: String, day: String, year: String): String =
         LocalDate.of(year.toInt(), month.toInt(), day.toInt()).toString()
 
-    /** E.164 form, e.g. +639171234567. Used as the account identifier. */
+    
     fun toE164(country: Country, raw: String): String = "+${country.dialCode}${nationalDigits(country, raw)}"
 
-    fun required(value: String): Problem? =
-        if (value.isBlank()) Problem.REQUIRED else null
+    fun required(value: String): Problem? = text(value)
 
-    /** 7-15 digits; spaces, dashes, dots, parentheses and a leading + are allowed. */
+    
     fun phone(value: String): Problem? {
         val v = value.trim()
         if (v.isEmpty()) return Problem.REQUIRED
@@ -113,9 +133,10 @@ object Validators {
         return if (allowedChars && v.count { it.isDigit() } in 7..15) null else Problem.INVALID
     }
 
-    /** Minimum 8 characters, at least one letter and one digit. */
+    
     fun newPassword(value: String): Problem? = when {
         value.isEmpty() -> Problem.REQUIRED
+        value.length > MAX_PASSWORD -> Problem.WEAK
         value.length < 8 || value.none { it.isLetter() } || value.none { it.isDigit() } -> Problem.WEAK
         else -> null
     }

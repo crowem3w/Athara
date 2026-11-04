@@ -39,12 +39,12 @@ import java.time.ZoneOffset
 import org.example.shared.authentication.R
 import org.example.shared.authentication.domain.Validators
 
-/** What the birthday row calls: the three text fields and the date picker result. */
+
 internal class BirthdayActions(
     val onMonth: (String) -> Unit,
     val onDay: (String) -> Unit,
     val onYear: (String) -> Unit,
-    /** Date picker confirmed: (month, day, year). */
+    
     val onDate: (Int, Int, Int) -> Unit,
 ) {
     companion object {
@@ -52,11 +52,11 @@ internal class BirthdayActions(
     }
 }
 
-/**
- * Birthday as separate Month / Day / Year number fields plus a calendar button that opens a date
- * picker. Typing is smart: a month starting 2-9 or a day starting 4-9 pads itself to two digits,
- * and a full field moves focus to the next one. One error message is shown under the whole row.
- */
+
+
+
+
+
 @Composable
 internal fun BirthdayInput(
     month: String,
@@ -129,7 +129,7 @@ private fun DatePartField(
         value = value,
         onValueChange = { raw ->
             var digits = raw.filter { it.isDigit() }.take(maxLength)
-            // First digit that can only be a whole month / day ("5" -> "05"): finish it for the user.
+            
             if (padAbove != null && digits.length == 1 && value.isEmpty() && digits[0] > padAbove) digits = "0$digits"
             onChange(digits)
             if (digits.length == maxLength && value.length < maxLength) focus.moveFocus(FocusDirection.Next)
@@ -149,7 +149,7 @@ private fun BirthdayPickerDialog(
     onConfirm: (LocalDate) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    // Latest selectable day: today minus the minimum age.
+    
     val latest = remember { LocalDate.now().minusYears(Validators.MIN_AGE.toLong()) }
     val latestMillis = remember { latest.toUtcMillis() }
     val start = initial?.takeIf { it.year >= MinYear && !it.isAfter(latest) }
@@ -180,12 +180,12 @@ private fun BirthdayPickerDialog(
 
 private const val MinYear = 1900
 
-/** The typed fields as a date, or null when they are not (yet) a real date. */
+
 private fun parseDate(month: String, day: String, year: String): LocalDate? = runCatching {
     LocalDate.of(year.toInt(), month.toInt(), day.toInt())
 }.getOrNull()
 
-// The Material date picker works in UTC midnight milliseconds.
+
 private fun LocalDate.toUtcMillis(): Long = atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 
 private fun Long.toUtcDate(): LocalDate = Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()

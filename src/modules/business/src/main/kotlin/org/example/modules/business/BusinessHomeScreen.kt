@@ -94,7 +94,7 @@ internal fun BusinessHomeScreen(
                 }
             }
 
-            // ----- Orders -----
+            
             item { SectionHeader(R.string.business_section_orders) { dialog = BusinessDialog.ORDER } }
             if (state.orders.isEmpty()) item { Text(stringResource(R.string.business_empty_orders), style = MaterialTheme.typography.bodyMedium) }
             items(state.orders, key = { "order-${it.id}" }) { order ->
@@ -107,7 +107,7 @@ internal fun BusinessHomeScreen(
                 )
             }
 
-            // ----- Customers -----
+            
             item { SectionHeader(R.string.business_section_customers) { dialog = BusinessDialog.CUSTOMER } }
             if (state.customers.isEmpty()) item { Text(stringResource(R.string.business_empty_customers), style = MaterialTheme.typography.bodyMedium) }
             items(state.customers, key = { "customer-${it.id}" }) { customer ->

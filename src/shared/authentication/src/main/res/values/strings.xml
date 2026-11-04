@@ -58,17 +58,18 @@
     <string name="authentication_error_account_not_found">No account found for these details</string>
     <string name="authentication_error_network">No connection. Check your internet and try again.</string>
     <string name="authentication_error_verification_required">Please verify your mobile number first.</string>
+    <string name="authentication_error_text_markup">Remove any HTML or markup (such as &lt;b&gt;)</string>
+    <string name="authentication_error_text_too_long">That\'s too long (100 characters maximum)</string>
+    <string name="authentication_error_invalid_input">Some details look invalid. Please check the highlighted fields.</string>
     <string name="authentication_error_unknown">Something went wrong. Please try again.</string>
     <string name="authentication_message_password_reset">Password updated. You can now sign in.</string>
 
-    <!-- Login screen -->
     <string name="authentication_login_subtitle">Log in to continue your journey.</string>
     <string name="authentication_action_log_in">Log In</string>
     <string name="authentication_or_continue_with">or continue with</string>
     <string name="authentication_login_no_account">Don\'t have an account?</string>
     <string name="authentication_action_sign_up_short">Sign up</string>
 
-    <!-- Account type selection (first screen after onboarding) -->
     <string name="authentication_action_back">Back</string>
     <string name="authentication_action_continue">Continue</string>
     <string name="authentication_account_title">Choose your account type</string>
@@ -89,14 +90,12 @@
     <string name="authentication_setup_location_hint">City, country</string>
     <string name="authentication_setup_continue">Continue</string>
     <string name="authentication_setup_skip">Skip for now</string>
-    <!-- Business / organization details -->
     <string name="authentication_label_phone">Phone number</string>
     <string name="authentication_error_industry_required">This field is required</string>
     <string name="authentication_error_phone_required">Please enter a phone number</string>
     <string name="authentication_error_phone_invalid">Enter a valid phone number</string>
     <string name="authentication_error_identifier_taken_type">This mobile number is already registered (%1$s account). Please sign in instead.</string>
 
-    <!-- Mobile identifier -->
     <string name="authentication_hint_mobile">Mobile number</string>
     <string name="authentication_hint_mobile_optional">Mobile number (optional)</string>
     <string name="authentication_hint_login_id">Username, email or mobile</string>

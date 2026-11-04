@@ -2,7 +2,7 @@ package org.example.shared.authentication.data
 
 import kotlinx.serialization.Serializable
 
-// Wire types of the /v1/auth/** and /v1/me endpoints (see docs/API_CONTRACT.md). Only this module uses them.
+
 
 @Serializable
 internal data class DetailsDto(val industry: String? = null, val phone: String? = null, val registrationId: String? = null)
@@ -39,6 +39,12 @@ internal data class SocialSignUpRequest(
 internal data class ResetPasswordRequest(val identifier: String, val newPassword: String, val phoneVerificationToken: String? = null)
 
 @Serializable
+internal data class ValidateRequest(val field: String, val value: String)
+
+@Serializable
+internal data class ValidateResponse(val valid: Boolean, val code: String? = null, val message: String? = null)
+
+@Serializable
 internal data class LogoutRequest(val refreshToken: String)
 
 @Serializable
@@ -72,6 +78,6 @@ internal data class UserDto(
     val coverUrl: String? = null,
 )
 
-/** [user] is optional on refresh responses. */
+
 @Serializable
 internal data class TokenResponse(val accessToken: String, val refreshToken: String, val user: UserDto? = null)

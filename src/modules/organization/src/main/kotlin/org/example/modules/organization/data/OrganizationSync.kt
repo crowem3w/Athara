@@ -86,7 +86,7 @@ internal class EventSync(private val dao: OrganizationDao) : TableSync<EventEnti
     override fun markSynced(row: EventEntity) = row.copy(syncState = SyncState.SYNCED)
 }
 
-/** Registers this module's tables with the sync engine (listed in App.kt). */
+
 object OrganizationSync : SyncInstaller {
     override fun install(context: Context) {
         val dao = OrganizationDatabase.get(context).dao()

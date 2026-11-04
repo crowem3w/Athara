@@ -72,25 +72,25 @@ import kotlin.math.round
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-/** Roughly the height of a typical phone keyboard. */
+
 private val PanelHeight = 300.dp
 private val PanelCornerRadius = 28.dp
 
-// Road / roller animation tuning
+
 private val WaveAmplitude = 8.dp
 private val WaveLength = 140.dp
 private val RollerSize = 36.dp
-private const val TripMillis = 1500         // one crossing of the panel (left -> right or back)
-private const val RoadScrollRatio = 0.5f    // road scroll distance per distance the roller travels
+private const val TripMillis = 1500         
+private const val RoadScrollRatio = 0.5f    
 
-// "Get Started" exit animation: wind up to the left, then accelerate off the right edge
-private const val WindUpSides = 2           // wind-up distance, in roller side lengths
+
+private const val WindUpSides = 2           
 private const val WindUpMillis = 450
 private const val LaunchMillis = 900
 
-// Hand-off to the sign-in screen: while the roller leaves, the right end of the line rises so it
-// meets the line that AuthenticationActivity continues from. Keep OnboardingLift in sync with
-// the matching constants in the :authentication module's LoginRoadStrip.kt.
+
+
+
 private val OnboardingLift = 56.dp
 private const val LiftDelayMillis = 300
 private const val LiftMillis = 600
@@ -98,10 +98,10 @@ private const val LiftMillis = 600
 class OnboardingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Light system bar icons-on-light style, regardless of the system dark mode.
+        
         val lightBars = SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT)
         enableEdgeToEdge(statusBarStyle = lightBars, navigationBarStyle = lightBars)
-        // Result stays RESULT_CANCELED unless the user taps Get Started.
+        
         setContent {
             OnboardingTheme {
                 WelcomeScreen(onGetStarted = ::completeOnboarding)
@@ -113,27 +113,27 @@ class OnboardingActivity : ComponentActivity() {
         Onboarding.markCompleted(this)
         setResult(Activity.RESULT_OK)
         finish()
-        // No slide/fade: the sign-in screen continues the line from where it stopped.
+        
         @Suppress("DEPRECATION")
         overridePendingTransition(0, 0)
     }
 }
 
-/**
- * The panel's top edge: rounded corners plus a bumpy "road" wave that scrolls
- * backwards ([scroll]) while the roller travels forward.
- */
+
+
+
+
 private class Road(
     private val cornerRadius: Float,
     private val amplitude: Float,
     private val wavelength: Float,
     private val scroll: Float,
-    /** Extra room above the panel's resting top edge so the line can rise without leaving the bounds. */
+    
     private val headroom: Float = 0f,
-    /** How far the right end of the line has risen (px); 0 at the left end, full at the right edge. */
+    
     private val lift: Float = 0f,
 ) {
-    /** Y of the surface at [x], measured down from the top of the panel's bounds. */
+    
     fun yAt(x: Float, width: Float): Float {
         val xc = x.coerceIn(0f, width)
         val r = cornerRadius
@@ -170,13 +170,13 @@ private class RoadTopShape(private val road: Road) : Shape {
     }
 }
 
-/** Distance the roller travels between its two end stops: a whole number of sides. */
+
 private fun Density.trackLength(width: Float): Float {
     val side = RollerSize.toPx()
     return max(1f, floor((width - 2f * side) / side)) * side
 }
 
-/** Road state for roller [distance] from the left stop (px, may be < 0 or > track); the road scrolls opposite to the roller. */
+
 private fun Density.roadAt(distance: Float, width: Float, lift: Float = 0f): Road {
     return Road(
         cornerRadius = PanelCornerRadius.toPx(),
@@ -188,19 +188,19 @@ private fun Density.roadAt(distance: Float, width: Float, lift: Float = 0f): Roa
     )
 }
 
-/**
- * Rounded square rolling along the road between a left and a right stop.
- * It rolls one side length per 90 degrees (and un-rolls on the way back),
- * so it rests flat at both ends.
- */
+
+
+
+
+
 private fun DrawScope.drawRoller(distance: Float, lift: Float, color: Color) {
     val s = RollerSize.toPx()
     val road = roadAt(distance, size.width, lift)
 
     val cx = s + distance
     val angle = distance / s * 90f
-    // Height of a rolling square's center: dips to s/2 when flat, rises to s/sqrt(2) on a corner.
-    // floor-based modulo so negative angles (wind-up to the left) work too.
+    
+    
     val within = angle - floor(angle / 90f) * 90f
     val local = (within - 45f) * (PI.toFloat() / 180f)
     val centerHeight = s / sqrt(2f) * cos(local)
@@ -213,15 +213,15 @@ private fun DrawScope.drawRoller(distance: Float, lift: Float, color: Color) {
             size = Size(s, s),
             cornerRadius = CornerRadius(s * 0.28f),
         )
-        // Marker so the rotation is visible.
+        
         drawCircle(Color.White, radius = s * 0.09f, center = Offset(cx + s * 0.2f, cy - s * 0.2f))
     }
 }
 
 @Composable
 internal fun WelcomeScreen(onGetStarted: () -> Unit) {
-    // Idle: loops while waiting for the tap: 0 -> 1 -> 0 -> ... (back and forth).
-    // The State is only read in draw/layer blocks below, so frames skip recomposition.
+    
+    
     val idle = rememberInfiniteTransition(label = "roller").animateFloat(
         initialValue = 0f,
         targetValue = 1f,
@@ -233,15 +233,15 @@ internal fun WelcomeScreen(onGetStarted: () -> Unit) {
     )
     val rollerColor = MaterialTheme.colorScheme.primary
 
-    // Exit: after "Get Started" the roller is driven by [exitDistance] (px) instead.
+    
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     var panelWidth by remember { mutableFloatStateOf(0f) }
     var exiting by remember { mutableStateOf(false) }
     val exitDistance = remember { Animatable(0f) }
-    val exitLift = remember { Animatable(0f) } // right end of the line rising toward the sign-in screen
+    val exitLift = remember { Animatable(0f) } 
 
-    // Roller distance from the left stop, read only in draw/layer blocks.
+    
     val distance: () -> Float = {
         if (exiting) exitDistance.value
         else idle.value * density.run { trackLength(panelWidth) }
@@ -251,14 +251,14 @@ internal fun WelcomeScreen(onGetStarted: () -> Unit) {
         if (exiting || panelWidth <= 0f) return@start
         val width = panelWidth
         val side = with(density) { RollerSize.toPx() }
-        val from = idle.value * density.run { trackLength(width) } // freeze where it is
-        // Wind up two sides to the left (never past the left edge), then launch.
+        val from = idle.value * density.run { trackLength(width) } 
+        
         val windUp = max(from - WindUpSides * side, -side / 2f)
         scope.launch {
             exitDistance.snapTo(from)
             exiting = true
             exitDistance.animateTo(windUp, tween(WindUpMillis, easing = FastOutSlowInEasing))
-            // Accelerate until fully off the right edge, while the line's right end rises.
+            
             launch {
                 delay(LiftDelayMillis.toLong())
                 exitLift.animateTo(
@@ -276,8 +276,8 @@ internal fun WelcomeScreen(onGetStarted: () -> Unit) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
     ) {
-        // Illustration: scaled to fit the area above the panel (never cropped
-        // or covered) and pinned to the top.
+        
+        
         Image(
             painter = painterResource(R.drawable.onboarding_background),
             contentDescription = null,
@@ -288,15 +288,15 @@ internal fun WelcomeScreen(onGetStarted: () -> Unit) {
             contentScale = ContentScale.Fit,
         )
 
-        // Panel container: extends under the navigation bar; content area is PanelHeight.
+        
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .onSizeChanged { panelWidth = it.width.toFloat() },
         ) {
-            // White panel with the animated road-shaped top edge (and shadow).
-            // Shape is read in the layer block, so animation frames skip recomposition.
+            
+            
             Box(
                 modifier = Modifier
                     .matchParentSize()
@@ -310,13 +310,13 @@ internal fun WelcomeScreen(onGetStarted: () -> Unit) {
 
             Column(
                 modifier = Modifier
-                    .padding(top = OnboardingLift) // headroom for the rising line; content stays put
+                    .padding(top = OnboardingLift) 
                     .navigationBarsPadding()
                     .height(PanelHeight)
                     .padding(
                         start = 24.dp,
                         end = 24.dp,
-                        top = 24.dp + WaveAmplitude * 2, // clear the deepest bump
+                        top = 24.dp + WaveAmplitude * 2, 
                         bottom = 24.dp,
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -343,7 +343,7 @@ internal fun WelcomeScreen(onGetStarted: () -> Unit) {
                 }
             }
 
-            // Roller drawn on top of everything, riding the panel's top edge.
+            
             Canvas(Modifier.matchParentSize()) {
                 drawRoller(distance(), exitLift.value, rollerColor)
             }

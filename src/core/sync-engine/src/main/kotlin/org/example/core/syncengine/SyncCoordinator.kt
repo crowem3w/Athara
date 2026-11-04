@@ -23,10 +23,10 @@ import org.example.core.network.apiCall
 
 enum class SyncOutcome { SUCCESS, RETRY, SIGNED_OUT }
 
-/**
- * Runs push-then-pull for every registered [SyncAdapter] and schedules it with WorkManager.
- * Pushes are idempotent (clientId), pulls are cursor-based, so running twice or being killed halfway is safe.
- */
+
+
+
+
 object SyncCoordinator {
     private const val BATCH = 50
     private const val PAGE = 200
@@ -40,13 +40,13 @@ object SyncCoordinator {
         if (adapters.none { it.resource == adapter.resource }) adapters.add(adapter)
     }
 
-    /** Sync soon, once the device is online. Safe to call after every local change. */
+    
     fun requestSync(context: Context) {
         val request = OneTimeWorkRequestBuilder<SyncWorker>()
             .setConstraints(online())
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
             .build()
-        // APPEND_OR_REPLACE: a change made while a sync is running gets its own follow-up run.
+        
         WorkManager.getInstance(context).enqueueUniqueWork(WORK_NOW, ExistingWorkPolicy.APPEND_OR_REPLACE, request)
     }
 
@@ -61,10 +61,10 @@ object SyncCoordinator {
         work.cancelUniqueWork(WORK_PERIODIC)
     }
 
-    /**
-     * Forget all pull cursors (next sync re-downloads everything). Call it whenever a local database
-     * is wiped or recreated, otherwise records older than the cursor would never come back.
-     */
+    
+
+
+
     fun resetCursors(context: Context) = prefs(context).edit { clear() }
 
     suspend fun syncNow(): SyncOutcome = mutex.withLock {
@@ -83,7 +83,7 @@ object SyncCoordinator {
     private suspend fun syncResource(adapter: SyncAdapter, userId: String): SyncOutcome {
         var fullResync = false
 
-        // 1) push local changes
+        
         while (true) {
             val pending = adapter.pendingMutations(userId)
             if (pending.isEmpty()) break
@@ -93,11 +93,11 @@ object SyncCoordinator {
                 }
                 is ApiResult.Failure -> return failure(result)
             }
-            // No progress (server skipped or half-answered the batch): stop and retry later instead of looping.
+            
             if (adapter.pendingMutations(userId).size >= pending.size) return SyncOutcome.RETRY
         }
 
-        // 2) pull the server's changes
+        
         val context = Core.appContext
         var cursor = if (fullResync) null else prefs(context).getString(cursorKey(userId, adapter.resource), null)
         do {
@@ -115,7 +115,7 @@ object SyncCoordinator {
     }
 
     private fun failure(result: ApiResult.Failure): SyncOutcome = when {
-        !Core.tokens.signedIn.value -> SyncOutcome.SIGNED_OUT // refresh token was rejected
+        !Core.tokens.signedIn.value -> SyncOutcome.SIGNED_OUT 
         else -> SyncOutcome.RETRY
     }
 

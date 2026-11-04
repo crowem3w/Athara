@@ -61,11 +61,11 @@ import org.example.shared.authentication.R
 import org.example.core.identityapi.SocialProvider
 import org.example.shared.designsystem.AppTheme
 
-/**
- * Sign-in ("Welcome back") screen: pill-shaped username-email-or-mobile / password fields, a primary
- * Log In button, Google / Apple buttons and a link to sign-up. The form is
- * bottom-aligned and the brand logo is centered in the space above it.
- */
+
+
+
+
+
 @Composable
 internal fun LoginScreen(
     state: AuthUiState,
@@ -75,7 +75,7 @@ internal fun LoginScreen(
     onForgotPassword: () -> Unit,
     onSocial: (SocialProvider) -> Unit,
     onSignUp: () -> Unit,
-    /** Real Google sign-in: signs in the user linked to the picked Google account. */
+    
     social: SocialActions = SocialActions.None,
 ) {
     val google = rememberGoogleSignIn(social)
@@ -92,15 +92,15 @@ internal fun LoginScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    // At least the full screen, so content sits at the bottom;
-                    // scrolls when the keyboard or a large font shrinks the space.
+                    
+                    
                     .heightIn(min = screenHeight)
                     .padding(horizontal = 24.dp, vertical = 16.dp),
                 verticalArrangement = Arrangement.Bottom,
             ) {
-                // Logo + rolling-square road, centered as a group in the otherwise empty area
-                // above the form. The weight takes whatever height is left over; it collapses
-                // when the keyboard shrinks the space.
+                
+                
+                
                 Box(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     contentAlignment = Alignment.Center,
@@ -127,7 +127,7 @@ internal fun LoginScreen(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Spacer(Modifier.height(28.dp)) // gap between the subtitle text and the mobile number bar
+                Spacer(Modifier.height(28.dp)) 
 
                 state.info?.let {
                     Text(
@@ -323,7 +323,7 @@ private fun SocialButton(
         colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onBackground),
         modifier = Modifier.fillMaxWidth().height(ButtonHeight),
     ) {
-        // Brand logos keep their own colors, so no tint.
+        
         Icon(painterResource(icon), contentDescription = null, tint = Color.Unspecified, modifier = Modifier.size(22.dp))
         Spacer(Modifier.width(10.dp))
         Text(

@@ -1,10 +1,10 @@
-/*
- * Authentication library module. Hosts AuthenticationActivity, the sign-up / setup screens,
- * resources (all prefixed "authentication_") and a backend-backed (REST + tokens) AuthRepository.
- * The contract (AuthRepository, AuthUser, AccountType...) lives in :identity-api and the theme in
- * :design-system, so the implementation can be swapped (see Authentication.install) without
- * touching :app or the feature modules.
- */
+
+
+
+
+
+
+
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -32,8 +32,8 @@ android {
     }
 }
 
-// Binary images (webp, png) live in client/assets/images, not in src/main/res.
-// androidComponents is AGP's stable variant API; the old sourceSets DSL fails on AGP 9.
+
+
 androidComponents {
     val imagesDir = rootProject.file("assets/images/authentication").absolutePath
     onVariants { variant ->

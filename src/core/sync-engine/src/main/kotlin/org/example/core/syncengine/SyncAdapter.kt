@@ -21,44 +21,44 @@ object SyncStatus {
     const val GONE = "gone"
 }
 
-/** One synced table. A feature module registers one adapter per resource with [SyncCoordinator]. */
+
 interface SyncAdapter {
-    /** Path segment of /v1/sync/{resource}. */
+    
     val resource: String
 
-    /** Local changes not yet acknowledged by the server, oldest first. */
+    
     suspend fun pendingMutations(ownerId: String): List<MutationDto>
 
-    /** Applies the server's answer to one pushed change. Returns true if a full re-pull is needed. */
+    
     suspend fun applyPushResult(ownerId: String, result: MutationResultDto): Boolean
 
-    /** Applies records pulled from the server. The server's version wins. */
+    
     suspend fun applyRemote(ownerId: String, records: List<RecordDto>)
 }
 
-/** Columns every synced Room entity carries. */
+
 interface SyncRow {
-    /** Local primary key. */
+    
     val id: Long
-    /** Client-generated UUID: idempotency key for pushes, and the link when the push response is lost. */
+    
     val clientId: String
-    /** Null until the server has acknowledged the row. */
+    
     val serverId: String?
-    /** Last server version seen (0 = never synced). */
+    
     val version: Long
-    /** One of [SyncState]. */
+    
     val syncState: Int
 }
 
-/**
- * Generic outbox logic over a Room table, so each entity only describes its columns.
- *
- * Server-authoritative rules:
- *  - whatever record the server returns (applied OR conflict) overwrites the local row;
- *  - a pulled record never overwrites a row with a pending local change; that change is pushed first
- *    and the server's answer then decides (this protects edits made while a sync is running);
- *  - a rejected change is dropped and the next pull restores the server's state.
- */
+
+
+
+
+
+
+
+
+
 abstract class TableSync<E : SyncRow>(final override val resource: String) : SyncAdapter {
     protected abstract suspend fun pending(ownerId: String): List<E>
     protected abstract suspend fun byServerId(ownerId: String, serverId: String): E?
@@ -68,10 +68,10 @@ abstract class TableSync<E : SyncRow>(final override val resource: String) : Syn
     protected abstract suspend fun delete(id: Long)
     protected abstract fun toData(row: E): JsonObject
 
-    /** Builds the row for [record]: copy [existing] (or create a new row for [ownerId]) with the server's fields and SYNCED state. */
+    
     protected abstract fun fromRemote(ownerId: String, existing: E?, record: RecordDto): E
 
-    /** [row] unchanged but with syncState = SYNCED. */
+    
     protected abstract fun markSynced(row: E): E
 
     final override suspend fun pendingMutations(ownerId: String): List<MutationDto> =
@@ -96,9 +96,9 @@ abstract class TableSync<E : SyncRow>(final override val resource: String) : Syn
             result.status == SyncStatus.GONE -> { delete(local.id); false }
             result.status == SyncStatus.REJECTED -> {
                 if (local.serverId == null) delete(local.id) else update(markSynced(local))
-                local.serverId != null // restore the server's state with a full pull
+                local.serverId != null 
             }
-            else -> false // "applied" without a record: leave it pending, the engine retries
+            else -> false 
         }
     }
 

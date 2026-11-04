@@ -35,23 +35,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-/** Height of every input bar in the authentication screens. */
+
 internal val FieldHeight = 48.dp
 
-/** Height of every button bar in the authentication screens. */
+
 internal val ButtonHeight = 48.dp
 
-/**
- * When true, every [CompactTextField] below is drawn borderless on a white fill with a soft
- * shadow, and a strong accent-tinted shadow while focused. Provided by the registration panel.
- */
+
+
+
+
 internal val LocalSoftFields = compositionLocalOf { false }
 
-/**
- * A [FieldHeight]-tall outlined text field. The stock OutlinedTextField can't go below 56dp
- * (its inner padding would clip the text), so this builds it from BasicTextField with a
- * tighter content padding. The error message sits below the bar.
- */
+
+
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CompactTextField(
@@ -68,15 +68,15 @@ internal fun CompactTextField(
     shape: Shape = CircleShape,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
     height: Dp = FieldHeight,
-    /** False for a multi-line box (pass a taller [height]). */
+    
     singleLine: Boolean = true,
-    /** Red styling without a message (several fields sharing one message below them). */
+    
     forceError: Boolean = false,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isError = error != null || forceError
 
-    // Soft mode: no border; a light shadow at rest, a strong accent shadow when focused.
+    
     val soft = LocalSoftFields.current
     val focused by interactionSource.collectIsFocusedAsState()
     val primary = MaterialTheme.colorScheme.primary

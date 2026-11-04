@@ -7,16 +7,16 @@ import okhttp3.Response
 import okhttp3.Route
 import org.example.core.securestorage.TokenStore
 
-/**
- * Called by OkHttp on a 401. Exchanges the refresh token for a new pair (single-flight: concurrent
- * 401s wait on the lock and reuse the token the first one obtained) and retries the request once.
- * If the server rejects the refresh token the session is over: tokens are cleared and
- * [TokenStore.signedIn] turns false so the app returns to the sign-in screen. Network errors during
- * refresh keep the tokens, so a flaky connection never signs the user out.
- */
+
+
+
+
+
+
+
 internal class TokenAuthenticator(
     private val tokens: TokenStore,
-    private val refreshApi: TokenRefreshApi, // built on a client WITHOUT this authenticator
+    private val refreshApi: TokenRefreshApi, 
 ) : Authenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
@@ -26,9 +26,9 @@ internal class TokenAuthenticator(
     }
 
     private fun refreshLocked(response: Response): Request? {
-        val current = tokens.accessToken ?: return null // already signed out
+        val current = tokens.accessToken ?: return null 
         val sent = response.request.header("Authorization")?.removePrefix("Bearer ")
-        if (sent != null && sent != current) return retry(response, current) // another call already refreshed
+        if (sent != null && sent != current) return retry(response, current) 
 
         val refresh = tokens.refreshToken ?: return null
         val userId = tokens.userId.orEmpty()
@@ -39,7 +39,7 @@ internal class TokenAuthenticator(
                 retry(response, body.accessToken)
             }
             is ApiResult.Failure -> {
-                if (result.httpCode in 400..499) tokens.clear() // refresh token rejected: session over
+                if (result.httpCode in 400..499) tokens.clear() 
                 null
             }
         }

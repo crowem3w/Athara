@@ -5,14 +5,14 @@ import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.content.edit
 
-/**
- * Public entry point of the :onboarding module.
- */
+
+
+
 object Onboarding {
     private const val PREFS_NAME = "onboarding_prefs"
     private const val KEY_COMPLETED = "completed"
 
-    /** True once the user has tapped "Get Started" at least once. */
+    
     fun isCompleted(context: Context): Boolean =
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .getBoolean(KEY_COMPLETED, false)
@@ -23,10 +23,10 @@ object Onboarding {
     }
 }
 
-/**
- * Launches [OnboardingActivity]. Result is true if onboarding was completed,
- * false if the user backed out.
- */
+
+
+
+
 class OnboardingContract : ActivityResultContract<Unit, Boolean>() {
     override fun createIntent(context: Context, input: Unit): Intent =
         Intent(context, OnboardingActivity::class.java)

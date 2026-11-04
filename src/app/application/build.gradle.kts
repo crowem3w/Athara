@@ -1,14 +1,14 @@
-/*
- * App module. Uses Jetpack Compose for UI.
- *
- * No separate org.jetbrains.kotlin.android plugin is applied: AGP 9's
- * built-in Kotlin support handles Kotlin sources automatically, and
- * errors out if that plugin is applied alongside it. The Compose
- * compiler, however, is a distinct Kotlin compiler plugin
- * (org.jetbrains.kotlin.plugin.compose) and must still be applied
- * explicitly, pinned to a Kotlin version compatible with AGP 9's
- * bundled Kotlin compiler.
- */
+
+
+
+
+
+
+
+
+
+
+
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -34,25 +34,25 @@ android {
         buildConfig = true
     }
 
-    // Three environments. Each needs its own backend and (for Google sign-in) its own Android OAuth
-    // client, because the staging build has a different package name.
+    
+    
     buildTypes {
         debug {
-            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/\"") // emulator -> host machine
+            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/\"") 
             buildConfigField("boolean", "ALLOW_CLEARTEXT", "true")
         }
         create("staging") {
             initWith(getByName("release"))
             applicationIdSuffix = ".staging"
             versionNameSuffix = "-staging"
-            // TODO: replace with the staging upload keystore; debug signing keeps it installable meanwhile.
+            
             signingConfig = signingConfigs.getByName("debug")
-            matchingFallbacks += listOf("release") // library modules only define debug/release
-            buildConfigField("String", "API_BASE_URL", "\"https://api.staging.example.org/\"") // TODO: real URL
+            matchingFallbacks += listOf("release") 
+            buildConfigField("String", "API_BASE_URL", "\"https://api.staging.example.org/\"") 
             buildConfigField("boolean", "ALLOW_CLEARTEXT", "false")
         }
         release {
-            buildConfigField("String", "API_BASE_URL", "\"https://api.example.org/\"") // TODO: real URL
+            buildConfigField("String", "API_BASE_URL", "\"https://api.example.org/\"") 
             buildConfigField("boolean", "ALLOW_CLEARTEXT", "false")
         }
     }

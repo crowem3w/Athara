@@ -36,14 +36,14 @@ import org.example.core.identityapi.SocialAccount
 import org.example.shared.authentication.social.GoogleAuth
 import org.example.shared.authentication.social.GoogleResult
 
-/**
- * What the social buttons and the follow-up "mobile number" step report back to the view model.
- * [None] is used by screens that have no social sign-up.
- */
+
+
+
+
 internal data class SocialActions(
     val onAccount: (SocialAccount) -> Unit = {},
     val onApple: () -> Unit = {},
-    /** A message to show, or null to just clear the loading state (e.g. the user cancelled). */
+    
     val onError: (Int?) -> Unit = {},
     val onCancel: () -> Unit = {},
     val onSubmit: () -> Unit = {},
@@ -53,12 +53,12 @@ internal data class SocialActions(
     }
 }
 
-/**
- * "or continue with" divider plus Google and Apple buttons, shown under the Sign up button on
- * the Personal registration form. Buttons use the same borderless, soft-shadow style as the
- * registration fields. Google opens the real account picker (Credential Manager); Apple is
- * still a demo account.
- */
+
+
+
+
+
+
 @Composable
 internal fun SocialSignUpSection(
     isLoading: Boolean,
@@ -126,7 +126,7 @@ private fun SocialSignUpButton(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth().height(ButtonHeight),
         ) {
-            // Brand logos keep their own colors, so no tint.
+            
             Icon(painterResource(icon), contentDescription = null, tint = Color.Unspecified, modifier = Modifier.size(22.dp))
             Spacer(Modifier.width(10.dp))
             Text(
@@ -139,13 +139,13 @@ private fun SocialSignUpButton(
     }
 }
 
-/** State and click handler of the Google account picker; shared by sign-up and login. */
+
 internal class GoogleSignIn(val picking: Boolean, val start: () -> Unit)
 
-/**
- * Opens the Google account picker and reports the outcome through [actions]:
- * [SocialActions.onAccount] with the picked account, or [SocialActions.onError].
- */
+
+
+
+
 @Composable
 internal fun rememberGoogleSignIn(actions: SocialActions): GoogleSignIn {
     val context = LocalContext.current

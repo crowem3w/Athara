@@ -6,17 +6,17 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
-/**
- * The kind of account a user signs up as. Each type is implemented by its own
- * Gradle module (:personal, :business, :organization).
- *
- * :identity-api cannot depend on those modules (they depend on it), so the
- * Activity is referenced by class name and resolved at runtime; all modules are
- * merged into the same app, so the lookup always succeeds.
- *
- * The strings, icons, illustrations and accent colors it points at live in this module's resources
- * (all prefixed "identityapi_").
- */
+
+
+
+
+
+
+
+
+
+
+
 enum class AccountType(
     val activityClassName: String,
     @StringRes val title: Int,
@@ -26,9 +26,9 @@ enum class AccountType(
     @StringRes val nameLabel: Int,
     @DrawableRes val icon: Int,
     @ColorRes val accentColor: Int,
-    /** Large illustration shown on the account type selection card. */
+    
     @DrawableRes val illustration: Int,
-    /** Label of the industry / organization-type field; null when the type has no extra details. */
+    
     @StringRes val industryLabel: Int? = null,
     @StringRes val registrationLabel: Int? = null,
 ) {
@@ -70,14 +70,14 @@ enum class AccountType(
         registrationLabel = R.string.identityapi_label_registration_organization,
     );
 
-    /** Business and Organization collect industry, phone and registration ID at sign-up. */
+    
     val hasDetails: Boolean get() = industryLabel != null
 
-    /** Intent for this type's Activity (sign-up form when signed out, home when signed in). */
+    
     fun intent(context: Context): Intent = Intent().setClassName(context, activityClassName)
 
     companion object {
-        /** Unknown / missing values (e.g. rows created before account types existed) are PERSONAL. */
+        
         fun fromName(name: String?): AccountType = entries.firstOrNull { it.name == name } ?: PERSONAL
     }
 }

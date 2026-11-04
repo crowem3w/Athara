@@ -53,10 +53,10 @@ import org.example.shared.authentication.R
 import org.example.shared.authentication.domain.Countries
 import org.example.shared.authentication.domain.Country
 
-/**
- * The account identifier: a mobile field with a country-code picker (+63 by default). [pill] matches the rounded
- * login-screen style.
- */
+
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun IdentifierInput(
@@ -117,11 +117,11 @@ internal fun IdentifierInput(
     }
 }
 
-/**
- * Sign-in / password-reset identifier: one free-text field that takes a username, an email or a
- * mobile number (see [org.example.shared.authentication.domain.Validators.loginKey]). [pill] matches the
- * rounded login-screen style.
- */
+
+
+
+
+
 @Composable
 internal fun LoginIdInput(
     value: String,
@@ -157,10 +157,10 @@ internal fun LoginIdInput(
     )
 }
 
-/**
- * Simple Personal sign-up mobile field: a fixed "+63" (no flag, no picker) and the number, spaced
- * as 9XX XXX XXXX while typing. The state holds just the digits (see [Validators.cleanPhMobile]).
- */
+
+
+
+
 @Composable
 internal fun PhMobileInput(
     value: String,
@@ -187,7 +187,7 @@ internal fun PhMobileInput(
     )
 }
 
-/** Shows "9171234567" as "917 123 4567" without changing the stored digits. */
+
 private object PhMobileTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val digits = text.text

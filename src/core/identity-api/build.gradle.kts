@@ -1,8 +1,8 @@
-/*
- * :identity-api library module. The contract between the authentication implementation and
- * everything else: AuthRepository, AuthUser, AccountType, PersonalSetup, PhoneVerifier and the
- * Identity entry point. No Compose, no networking. Resources are prefixed "identityapi_".
- */
+
+
+
+
+
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -24,8 +24,8 @@ android {
     }
 }
 
-// Binary images (webp, png) live in client/assets/images, not in src/main/res.
-// androidComponents is AGP's stable variant API; the old sourceSets DSL fails on AGP 9.
+
+
 androidComponents {
     val imagesDir = rootProject.file("assets/images/identity-api").absolutePath
     onVariants { variant ->
@@ -40,7 +40,7 @@ kotlin {
 }
 
 dependencies {
-    // StateFlow is part of AuthRepository's public API.
+    
     api(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.core.ktx)
 }

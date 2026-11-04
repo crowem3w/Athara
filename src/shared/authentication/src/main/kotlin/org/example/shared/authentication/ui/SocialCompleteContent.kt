@@ -32,10 +32,10 @@ import org.example.shared.authentication.R
 import org.example.shared.authentication.domain.Country
 import org.example.core.identityapi.SocialProvider
 
-/**
- * Second half of social sign-up: Google / Apple succeeded for a new user, so the form only asks
- * for the mobile number the account will be identified by.
- */
+
+
+
+
 @Composable
 internal fun ColumnScope.SocialCompleteContent(
     state: AuthUiState,
@@ -59,7 +59,7 @@ internal fun ColumnScope.SocialCompleteContent(
         color = colorResource(R.color.authentication_muted),
     )
 
-    // Who is signing up: initial avatar, name, and email (or the Apple demo label).
+    
     Surface(
         shape = RoundedCornerShape(16.dp),
         color = Color.White,

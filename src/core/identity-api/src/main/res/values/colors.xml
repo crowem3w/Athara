@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Per account type accents -->
     <color name="identityapi_accent_personal">#0E8A7D</color>
     <color name="identityapi_accent_business">#1F5FBF</color>
     <color name="identityapi_accent_organization">#7B3FA0</color>

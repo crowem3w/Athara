@@ -1,7 +1,7 @@
-/*
- * :secure-storage library module. Android Keystore (AES-256-GCM) encrypted key-value store and
- * token storage. No networking, no UI. Depended on by :network.
- */
+
+
+
+
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -31,7 +31,7 @@ kotlin {
 }
 
 dependencies {
-    // StateFlow is part of TokenStore's public API.
+    
     api(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)

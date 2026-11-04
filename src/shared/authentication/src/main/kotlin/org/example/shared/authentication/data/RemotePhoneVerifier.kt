@@ -4,7 +4,7 @@ import org.example.core.identityapi.PhoneVerifier
 import org.example.core.network.ApiResult
 import org.example.core.network.apiCall
 
-/** SMS OTP through the backend (it owns the SMS provider). A successful verify stores the proof for the next request. */
+
 internal class RemotePhoneVerifier(
     private val api: AuthApi,
     private val proofs: PhoneProofStore,

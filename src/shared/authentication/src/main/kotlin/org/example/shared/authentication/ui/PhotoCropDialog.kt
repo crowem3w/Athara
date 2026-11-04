@@ -55,11 +55,11 @@ import org.example.shared.designsystem.ImageDecoding
 
 private const val MaxZoom = 6f
 
-/**
- * Full-screen crop editor. The photo can be dragged and pinched under a fixed crop window of the
- * given [aspect] (width / height); [circle] shows the window as a circle (profile picture) instead
- * of a rounded rectangle (cover). Done writes the visible part to a cache file and returns its URI.
- */
+
+
+
+
+
 @Composable
 internal fun PhotoCropDialog(
     uri: Uri,
@@ -90,7 +90,7 @@ internal fun PhotoCropDialog(
                 val corner = with(density) { 20.dp.toPx() }
                 val stroke = with(density) { 2.dp.toPx() }
 
-                // Crop window: as wide as the screen allows, at most 60% of its height
+                
                 var winW = containerW - 2 * margin
                 var winH = winW / aspect
                 if (winH > containerH * 0.6f) {

@@ -6,10 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.colorResource
 import org.example.core.identityapi.AccountType
 
-/**
- * The app's Material theme. Pass [accountType] to use that type's accent color
- * (Personal teal, Business blue, Organization purple).
- */
+
+
+
+
 @Composable
 fun AppTheme(accountType: AccountType? = null, content: @Composable () -> Unit) {
     val colorScheme = lightColorScheme(

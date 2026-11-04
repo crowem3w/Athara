@@ -4,20 +4,28 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 
-/** Shared JSON configuration: tolerant of new server fields, explicit about defaults, omits nulls. */
+
 val NetworkJson = Json {
     ignoreUnknownKeys = true
     encodeDefaults = true
     explicitNulls = false
 }
 
-/** Error body for every 4xx: `code` is a stable machine-readable string (see docs/API_CONTRACT.md). */
+
 @Serializable
-data class ErrorBody(val code: String? = null, val message: String? = null, val existingType: String? = null)
+data class FieldIssue(val field: String, val code: String, val message: String? = null)
 
-// ---- Sync ------------------------------------------------------------------------------------
+@Serializable
+data class ErrorBody(
+    val code: String? = null,
+    val message: String? = null,
+    val existingType: String? = null,
+    val fieldErrors: List<FieldIssue> = emptyList(),
+)
 
-/** One record as the server knows it. [data] holds the resource-specific fields. */
+
+
+
 @Serializable
 data class RecordDto(
     val serverId: String,
@@ -27,7 +35,7 @@ data class RecordDto(
     val data: JsonObject = JsonObject(emptyMap()),
 )
 
-/** A local change waiting to be sent. [op] is "upsert" or "delete". */
+
 @Serializable
 data class MutationDto(
     val clientId: String,
@@ -40,7 +48,7 @@ data class MutationDto(
 @Serializable
 data class PushRequest(val mutations: List<MutationDto>)
 
-/** [status]: "applied" | "conflict" | "rejected" | "gone". [record] is the server's canonical state, if any. */
+
 @Serializable
 data class MutationResultDto(val clientId: String, val status: String, val record: RecordDto? = null)
 
@@ -50,12 +58,12 @@ data class PushResponse(val results: List<MutationResultDto>)
 @Serializable
 data class PullResponse(val records: List<RecordDto>, val cursor: String? = null, val hasMore: Boolean = false)
 
-// ---- Token refresh (used only by TokenAuthenticator) ----------------------------------------
+
 
 @Serializable
 internal data class RefreshRequest(val refreshToken: String)
 
-/** The refresh response carries a full user object; only its id matters here (unknown keys are ignored). */
+
 @Serializable
 internal data class RefreshUser(val id: String)
 

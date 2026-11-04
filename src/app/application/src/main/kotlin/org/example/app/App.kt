@@ -19,30 +19,30 @@ import org.example.core.syncengine.SyncInstaller
 class App : Application() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
-    /** Every feature that owns synced tables. Adding a feature = adding one entry here. */
+    
     private val syncInstallers: List<SyncInstaller> = listOf(BusinessSync, OrganizationSync)
 
     override fun onCreate() {
         super.onCreate()
 
-        // 1) networking + secure storage (must come first)
+        
         Core.init(
             this,
             CoreConfig(
                 baseUrl = BuildConfig.API_BASE_URL,
                 allowCleartext = BuildConfig.ALLOW_CLEARTEXT,
                 httpLogging = BuildConfig.DEBUG,
-                // certificatePins = mapOf("api.example.org" to listOf("sha256/...")), // enable for staging/prod
+                
             ),
         )
 
-        // 2) let feature modules reach the signed-in user through :identity-api
+        
         Authentication.init()
 
-        // 3) tell the sync engine which tables exist
+        
         syncInstallers.forEach { it.install(this) }
 
-        // 4) sync while someone is signed in; stop when signed out
+        
         scope.launch {
             Identity.repository(this@App).currentUser
                 .map { it?.id }

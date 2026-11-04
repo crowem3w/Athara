@@ -29,7 +29,7 @@ internal data class BusinessUiState(
 internal class BusinessViewModel(
     private val dao: BusinessDao,
     private val ownerId: String,
-    /** Called after every local change so the sync engine pushes it as soon as the device is online. */
+    
     private val onChanged: () -> Unit,
 ) : ViewModel() {
 
@@ -84,7 +84,7 @@ internal class BusinessViewModel(
     }
 }
 
-/** "12.50" -> 1250. Null when the text is not a positive amount with at most 2 decimals. */
+
 internal fun parseAmountCents(input: String): Long? {
     val value = input.trim().replace(',', '.').toBigDecimalOrNull() ?: return null
     if (value.signum() <= 0 || value > BigDecimal("1000000000") || value.stripTrailingZeros().scale() > 2) return null

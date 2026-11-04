@@ -15,13 +15,13 @@ import org.example.core.identityapi.PersonalSetup
 import org.example.shared.authentication.ui.AccountSetupScreen
 import org.example.shared.authentication.ui.PersonalSetupFields
 
-/**
- * Personal account setup: the step after PerRegForm's sign-up form. Collects profile picture,
- * about and location (all optional). Continue saves them on the user; Skip for now saves nothing.
- *
- * Going back (header arrow or system back) goes back to sign-up and the new account is deleted,
- * so it first asks for confirmation. [onBack] runs only once the user has confirmed.
- */
+
+
+
+
+
+
+
 @Composable
 fun PerSetupAcc(
     onContinue: (PersonalSetup) -> Unit,

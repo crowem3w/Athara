@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Login form -->
     <color name="authentication_muted">#5F7572</color>
     <color name="authentication_field_background">#F2F9F8</color>
     <color name="authentication_field_border">#D5E9E6</color>

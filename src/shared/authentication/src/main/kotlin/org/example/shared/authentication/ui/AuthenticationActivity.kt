@@ -65,14 +65,14 @@ import org.example.shared.authentication.domain.Country
 import org.example.core.identityapi.SocialProvider
 import org.example.shared.designsystem.AppTheme
 
-/**
- * Entry screen after onboarding. Opens on the login form ([LoginScreen]).
- * "Sign up" shows account-type selection (Personal / Business / Organization);
- * picking a type shows that type's sign-up form on the same screen ([SignUpFlowScreen]). "Forgot password?"
- * shows the reset form. Back from selection / reset returns to login. Finishes
- * with RESULT_OK once the user is signed in; backing out of login returns
- * RESULT_CANCELED.
- */
+
+
+
+
+
+
+
+
 class AuthenticationActivity : ComponentActivity() {
 
     private val viewModel: AuthViewModel by viewModels { AuthViewModel.Factory }
@@ -89,8 +89,8 @@ class AuthenticationActivity : ComponentActivity() {
                         finish()
                     }
                 }
-                // Back from the registration form returns to account selection; back from selection /
-                // reset returns to login; back from login exits.
+                
+                
                 BackHandler(enabled = state.mode != AuthMode.SIGN_IN) {
                     viewModel.setMode(if (state.mode == AuthMode.SIGN_UP) AuthMode.SELECT_ACCOUNT else AuthMode.SIGN_IN, null)
                 }
@@ -105,7 +105,7 @@ class AuthenticationActivity : ComponentActivity() {
                         onSignUp = { viewModel.setMode(AuthMode.SELECT_ACCOUNT, null) },
                         social = viewModel.loginSocialActions,
                     )
-                    // Account type and registration form share one screen: fixed header, fading content.
+                    
                     AuthMode.SELECT_ACCOUNT, AuthMode.SIGN_UP -> SignUpFlowScreen(
                         state = state,
                         onBack = {
@@ -136,7 +136,7 @@ class AuthenticationActivity : ComponentActivity() {
                         onCountry = viewModel::onCountry,
                         social = viewModel.socialActions,
                     )
-                    // Password reset.
+                    
                     AuthMode.FORGOT_PASSWORD -> AuthenticationScreen(
                         state = state,
                         onMode = viewModel::setMode,
@@ -220,7 +220,7 @@ internal fun AuthenticationScreen(
                 .padding(
                     start = 24.dp,
                     end = 24.dp,
-                    // Same top offset as the account type screen so the back button does not jump.
+                    
                     top = if (mode == AuthMode.SIGN_UP) 32.dp else 20.dp,
                     bottom = 20.dp,
                 ),
@@ -228,7 +228,7 @@ internal fun AuthenticationScreen(
         ) {
             if (mode == AuthMode.SIGN_UP && onBack != null) {
                 SignUpStepHeader(currentStep = STEP_REGISTRATION, onBack = onBack)
-                Spacer(Modifier.height(4.dp)) // 8dp column spacing + 4dp = the 12dp gap on the account type screen
+                Spacer(Modifier.height(4.dp)) 
             }
             AuthenticationFormContent(
                 state = state,
@@ -257,7 +257,7 @@ internal fun AuthenticationScreen(
     }
 }
 
-/** Title, fields and buttons of the sign-in / sign-up / reset forms (no header, no scrolling). */
+
 @Composable
 internal fun ColumnScope.AuthenticationFormContent(
     state: AuthUiState,
@@ -281,7 +281,7 @@ internal fun ColumnScope.AuthenticationFormContent(
     onMobile: (String) -> Unit = {},
     onCountry: (Country) -> Unit = {},
     social: SocialActions = SocialActions.None,
-    /** False when the caller shows the title itself (the registration panel keeps it fixed). */
+    
     showTitle: Boolean = true,
 ) {
     val mode = state.mode
@@ -309,10 +309,10 @@ internal fun ColumnScope.AuthenticationFormContent(
     state.info?.let {
         Text(stringResource(it), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.bodyMedium)
     }
-    Spacer(Modifier.height(8.dp)) // gap between the heading text and the first input bar
+    Spacer(Modifier.height(8.dp)) 
 
     when {
-        // Personal sign-up: first name + surname side by side, username, then the optional email / mobile.
+        
         state.isPersonalSignUp -> {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
                 AuthField(
@@ -362,7 +362,7 @@ internal fun ColumnScope.AuthenticationFormContent(
                 imeAction = ImeAction.Next,
             )
         }
-        // Sign in / reset: username, email or mobile number in one field.
+        
         else -> LoginIdInput(
             value = state.loginId,
             onChange = onLoginId,
@@ -446,7 +446,7 @@ internal fun ColumnScope.AuthenticationFormContent(
         }
     }
 
-    // Personal registration only: sign up with a Google or Apple account instead of a password.
+    
     if (mode == AuthMode.SIGN_UP && state.accountType == AccountType.PERSONAL) {
         SocialSignUpSection(isLoading = state.isLoading, actions = social)
     }
@@ -497,11 +497,11 @@ internal fun ColumnScope.AuthenticationFormContent(
     }
 }
 
-/**
- * The two-step sign-up flow (account type, then registration form) on one screen. The back button
- * and progress bar are drawn once, above, and stay put; only the content below fades (150ms)
- * between the steps. The square on the bars hops to the next bar, or back, as the step changes.
- */
+
+
+
+
+
 @Composable
 internal fun SignUpFlowScreen(
     state: AuthUiState,
@@ -531,8 +531,8 @@ internal fun SignUpFlowScreen(
 ) {
     val registering = state.mode == AuthMode.SIGN_UP
 
-    // Going back clears the form's state right away; keep showing the last filled-in form while it
-    // fades out instead of flashing empty fields.
+    
+    
     var lastFormState by remember { mutableStateOf(state.copy(mode = AuthMode.SIGN_UP)) }
     if (registering) SideEffect { lastFormState = state }
     val formState = if (registering) state else lastFormState

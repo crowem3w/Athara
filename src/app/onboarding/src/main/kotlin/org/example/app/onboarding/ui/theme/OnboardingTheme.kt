@@ -6,10 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.colorResource
 import org.example.app.onboarding.R
 
-/**
- * Theme owned by the onboarding module. Light only for now, because the
- * background illustration has a white backdrop.
- */
+
+
+
+
 @Composable
 fun OnboardingTheme(content: @Composable () -> Unit) {
     val colorScheme = lightColorScheme(

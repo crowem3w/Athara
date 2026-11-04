@@ -28,11 +28,11 @@ import org.example.core.network.ApiResult
 import org.example.core.network.apiCall
 import org.example.core.securestorage.TokenStore
 
-/**
- * Backend implementation: the server owns accounts and passwords; the device holds only tokens
- * (Keystore-encrypted) and a cached copy of the profile. Server data always wins: the profile is
- * re-fetched on start, and an expired/revoked session signs the user out automatically.
- */
+
+
+
+
+
 internal class RemoteAuthRepository(
     private val context: Context,
     private val api: AuthApi,
@@ -49,15 +49,25 @@ internal class RemoteAuthRepository(
     override val currentUser: StateFlow<AuthUser?> = _currentUser.asStateFlow()
 
     init {
-        // Refresh token rejected (expired, revoked, password changed elsewhere): back to sign-in.
+        
         scope.launch {
             tokens.signedIn.collect { signedIn -> if (!signedIn && _currentUser.value != null) clearLocal() }
         }
-        // Server is authoritative: pick up profile changes made elsewhere.
+        
         if (_currentUser.value != null) scope.launch { refreshProfile() }
     }
 
-    // ---- sign up / sign in ------------------------------------------------------------------
+    
+
+    override suspend fun checkAvailable(field: String, value: String): Boolean? =
+        when (val result = apiCall { api.validate(ValidateRequest(field, value.trim())) }) {
+            is ApiResult.Ok -> when {
+                result.value.valid -> true
+                result.value.code == "TAKEN" -> false
+                else -> null 
+            }
+            is ApiResult.Failure -> null
+        }
 
     override suspend fun signUp(
         name: String,
@@ -90,7 +100,7 @@ internal class RemoteAuthRepository(
     override suspend fun signIn(identifier: String, password: String): AuthResult =
         startSession(apiCall { api.signIn(SignInRequest(normalize(identifier), password)) })
 
-    /** Demo social accounts are gone; real providers go through [continueWithSocial] with an ID token. */
+    
     override suspend fun signInWithSocial(provider: SocialProvider): AuthResult =
         AuthResult.Failure(AuthError.UNKNOWN)
 
@@ -111,7 +121,7 @@ internal class RemoteAuthRepository(
         return startSession(apiCall { api.socialSignUp(request) }, newAccount = true)
     }
 
-    /** The backend only accepts this together with a fresh OTP proof (see [PhoneProofStore]); it does not sign in. */
+    
     override suspend fun resetPassword(identifier: String, newPassword: String): AuthResult =
         when (val result = apiCall {
             api.resetPassword(ResetPasswordRequest(normalize(identifier), newPassword, proofs.consume()))
@@ -120,12 +130,12 @@ internal class RemoteAuthRepository(
             is ApiResult.Failure -> result.toFailure()
         }
 
-    // ---- session ----------------------------------------------------------------------------
+    
 
     override suspend fun signOut() {
         val refresh = tokens.refreshToken
         if (refresh != null) {
-            // Best effort: revoke server-side, but never keep the user stuck on a bad connection.
+            
             withTimeoutOrNull(LOGOUT_TIMEOUT_MS) { apiCall { api.logout(LogoutRequest(refresh)) } }
         }
         clearLocal()
@@ -136,7 +146,7 @@ internal class RemoteAuthRepository(
 
     override fun completeSetup() = session.completeSetup()
 
-    /** Deletes the just-created account on the server, then signs out. False (nothing changed) if that fails. */
+    
     override suspend fun discardNewAccount(): Boolean {
         val user = _currentUser.value ?: return false
         if (!session.isSetupPending(user.id)) return false
@@ -168,14 +178,14 @@ internal class RemoteAuthRepository(
         return true
     }
 
-    // ---- internals --------------------------------------------------------------------------
+    
 
     private sealed interface PhotoResult {
         data class Done(val path: String?) : PhotoResult
         data object Failed : PhotoResult
     }
 
-    /** Stores the picked image locally and mirrors it (or its removal) to the server. */
+    
     private suspend fun syncPhoto(user: AuthUser, kind: ProfilePhotoStore.Kind, uri: String?, old: String?): PhotoResult {
         val segment = kind.name.lowercase()
         if (uri == null) {
@@ -183,17 +193,17 @@ internal class RemoteAuthRepository(
             val result = apiCall { api.deletePhoto(segment) }
             return if (result is ApiResult.Failure && result.httpCode != 404) PhotoResult.Failed else PhotoResult.Done(null)
         }
-        val path = withContext(Dispatchers.IO) { photos.save(user.id, uri, kind) } ?: return PhotoResult.Done(old) // unreadable: keep old
+        val path = withContext(Dispatchers.IO) { photos.save(user.id, uri, kind) } ?: return PhotoResult.Done(old) 
         val part = MultipartBody.Part.createFormData("file", java.io.File(path).name, java.io.File(path).asRequestBody("image/jpeg".toMediaType()))
         return if (apiCall { api.uploadPhoto(segment, part) } is ApiResult.Ok) PhotoResult.Done(path) else PhotoResult.Failed
     }
 
-    /** Turns a token response into a signed-in session. [newAccount]: the account still needs the setup step. */
+    
     private suspend fun startSession(result: ApiResult<TokenResponse>, newAccount: Boolean = false): AuthResult {
         if (result is ApiResult.Failure) return result.toFailure()
         val body = (result as ApiResult.Ok).value
         val dto = body.user ?: run {
-            // Contract says the user comes with the tokens; fetch it if a server omits it.
+            
             tokens.save(TokenStore.Tokens(body.accessToken, body.refreshToken, userId = ""))
             when (val me = apiCall { api.me() }) {
                 is ApiResult.Ok -> me.value
@@ -206,14 +216,14 @@ internal class RemoteAuthRepository(
             photos.existingPath(dto.id, ProfilePhotoStore.Kind.COVER),
         )
         session.save(user)
-        // Set before _currentUser changes: observers open the account's screen as soon as it does.
+        
         if (newAccount) session.markSetupPending(user.id)
         _currentUser.value = user
         scope.launch { hydratePhotos(dto) }
         return AuthResult.Success(user)
     }
 
-    /** Signed in only if both tokens and the cached profile survived (e.g. not after an unreadable keystore entry). */
+    
     private fun restore(): AuthUser? {
         legacyCleanup()
         val user = if (tokens.signedIn.value) session.read() else null
@@ -225,7 +235,7 @@ internal class RemoteAuthRepository(
     }
 
     private suspend fun refreshProfile() {
-        val result = apiCall { api.me() } // a 401 here refreshes the token or, if rejected, signs out via TokenStore
+        val result = apiCall { api.me() } 
         if (result !is ApiResult.Ok) return
         val dto = result.value
         val current = _currentUser.value?.takeIf { it.id == dto.id } ?: return
@@ -235,7 +245,7 @@ internal class RemoteAuthRepository(
         hydratePhotos(dto)
     }
 
-    /** Downloads the server's pictures (new device / changed elsewhere); removes local ones the server no longer has. */
+    
     private suspend fun hydratePhotos(dto: UserDto) = withContext(Dispatchers.IO) {
         fun fetch(url: String?, kind: ProfilePhotoStore.Kind): String? =
             if (url == null) { photos.delete(dto.id, kind); null }
@@ -255,10 +265,10 @@ internal class RemoteAuthRepository(
         tokens.clear()
         session.clear()
         _currentUser.value = null
-        if (userId != null) photos.delete(userId) // private pictures do not stay on a signed-out device
+        if (userId != null) photos.delete(userId) 
     }
 
-    /** One-time removal of the old on-device accounts (password hashes, plain-text session, photos). */
+    
     private fun legacyCleanup() {
         if (!context.getDatabasePath(LEGACY_DB).exists()) return
         context.deleteDatabase(LEGACY_DB)
@@ -275,14 +285,15 @@ internal class RemoteAuthRepository(
             code == "EMAIL_TAKEN" -> AuthError.EMAIL_TAKEN
             code == "ACCOUNT_NOT_FOUND" || httpCode == 404 -> AuthError.ACCOUNT_NOT_FOUND
             code == "VERIFICATION_REQUIRED" -> AuthError.VERIFICATION_REQUIRED
+            code == "INVALID_REQUEST" -> AuthError.INVALID_INPUT
             else -> AuthError.UNKNOWN
         }
-        return AuthResult.Failure(error, existingType = existingType?.let { AccountType.fromName(it) })
+        return AuthResult.Failure(error, existingType = existingType?.let { AccountType.fromName(it) }, fieldCodes = fieldErrors)
     }
 
     private fun UserDto.toAuthUser(photoPath: String?, coverPath: String?) = AuthUser(
         id = id,
-        // What the profile screens show as "Login": username first, then mobile number, then email.
+        
         identifier = username ?: identifier ?: email.orEmpty(),
         displayName = displayName,
         provider = provider,
