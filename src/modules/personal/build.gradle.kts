@@ -1,9 +1,3 @@
-
-
-
-
-
-
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -29,6 +23,14 @@ android {
     }
 }
 
+// Raster images live in assets/images/personal (see assets/README.md).
+androidComponents {
+    val imagesDir = rootProject.file("assets/images/personal").absolutePath
+    onVariants { variant ->
+        variant.sources.res?.addStaticSourceDirectory(imagesDir)
+    }
+}
+
 kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_21)
@@ -38,14 +40,18 @@ kotlin {
 dependencies {
     implementation(project(":identity-api"))
     implementation(project(":design-system"))
-    implementation(project(":authentication")) 
+    implementation(project(":authentication"))
+    implementation(project(":travel"))
+    implementation(project(":socialfeed"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.kotlinx.coroutines.android)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended)
     debugImplementation(libs.androidx.ui.tooling)
 }

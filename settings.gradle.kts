@@ -34,6 +34,8 @@ val modulePaths = mapOf(
     "authentication" to "src/shared/authentication",
     
     "personal" to "src/modules/personal",
+    "travel" to "src/modules/personal/features/travel",
+    "socialfeed" to "src/modules/personal/features/socialfeed",
     "business" to "src/modules/business",
     "organization" to "src/modules/organization",
     

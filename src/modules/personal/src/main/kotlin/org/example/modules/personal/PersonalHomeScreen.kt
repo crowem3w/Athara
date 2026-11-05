@@ -1,74 +1,64 @@
 package org.example.modules.personal
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import org.example.core.identityapi.AccountType
+import org.example.modules.personal.features.travel.model.PlaceCategory
+import org.example.modules.personal.features.travel.model.ServiceArea
 import org.example.core.identityapi.AuthUser
-import org.example.shared.designsystem.AccountTypeBadge
-import org.example.shared.designsystem.ProfileHeader
+import org.example.modules.personal.home.HomeScreen
+import org.example.shared.designsystem.theme.AhtaraTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+private val CategorySaver = listSaver<Set<PlaceCategory>, String>(
+    save = { selected -> selected.map { it.name } },
+    restore = { names -> names.mapNotNull { PlaceCategory.fromName(it) }.toSet() },
+)
+
+/**
+ * Entry point of the Personal home. Owns the screen-level state (category filter, profile sheet);
+ * layout and feed behaviour live in [HomeScreen].
+ */
 @Composable
 internal fun PersonalHomeScreen(user: AuthUser, onSignOut: () -> Unit) {
-    Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.personal_home_title)) }) }) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            ProfileHeader(coverPath = user.coverPath, photoPath = user.photoPath)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                AccountTypeBadge(AccountType.PERSONAL, size = 56.dp)
-                Text(
-                    text = stringResource(R.string.personal_home_greeting, user.displayName),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-            Card(Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(stringResource(R.string.personal_profile_title), style = MaterialTheme.typography.titleMedium)
-                    Text(stringResource(R.string.personal_profile_login, user.identifier))
-                    Text(stringResource(R.string.personal_profile_type))
-                }
-            }
-            Card(Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(stringResource(R.string.personal_tips_title), style = MaterialTheme.typography.titleMedium)
-                    Text(stringResource(R.string.personal_tip_1))
-                    Text(stringResource(R.string.personal_tip_2))
-                    Text(stringResource(R.string.personal_tip_3))
-                }
-            }
-            OutlinedButton(onClick = onSignOut, modifier = Modifier.fillMaxWidth().height(52.dp)) {
-                Text(stringResource(R.string.personal_action_sign_out))
-            }
+    var categories by rememberSaveable(stateSaver = CategorySaver) { mutableStateOf(emptySet<PlaceCategory>()) }
+    var showProfile by rememberSaveable { mutableStateOf(false) }
+
+    AhtaraTheme {
+        HomeScreen(
+            // Default service area until place picking exists; use emptyList() to see the "add a place" state.
+            places = listOf(ServiceArea.default),
+            categories = categories,
+            onToggleCategory = { category ->
+                categories = if (category in categories) categories - category else categories + category
+            },
+            onClearCategories = { categories = emptySet() },
+            userInitial = user.displayName.trim().firstOrNull()?.uppercase() ?: "?",
+            onProfileClick = { showProfile = true },
+        )
+
+        if (showProfile) {
+            AlertDialog(
+                onDismissRequest = { showProfile = false },
+                title = { Text(user.displayName) },
+                text = { Text(stringResource(R.string.personal_profile_login, user.identifier)) },
+                confirmButton = {
+                    TextButton(onClick = { showProfile = false; onSignOut() }) {
+                        Text(stringResource(R.string.personal_action_sign_out))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showProfile = false }) {
+                        Text(stringResource(R.string.personal_profile_close))
+                    }
+                },
+            )
         }
     }
 }

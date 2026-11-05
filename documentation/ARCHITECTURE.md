@@ -12,6 +12,8 @@ Gradle project names are flat (`:network`, `:personal`, ...); `settings.gradle.k
 | shared | `src/shared/design-system` | `:design-system` | `org.example.shared.designsystem` |
 | shared | `src/shared/authentication` | `:authentication` | `org.example.shared.authentication` |
 | modules | `src/modules/personal` | `:personal` | `org.example.modules.personal` |
+| modules (Personal feature) | `src/modules/personal/features/travel` | `:travel` | `org.example.modules.personal.features.travel` |
+| modules (Personal feature) | `src/modules/personal/features/socialfeed` | `:socialfeed` | `org.example.modules.personal.features.socialfeed` |
 | modules | `src/modules/business` | `:business` | `org.example.modules.business` |
 | modules | `src/modules/organization` | `:organization` | `org.example.modules.organization` |
 | app | `src/app/application` | `:app` | `org.example.app` |
@@ -20,6 +22,14 @@ Gradle project names are flat (`:network`, `:personal`, ...); `settings.gradle.k
 ## Dependency rule
 
 `app` -> `modules` -> `shared` -> `core`. Nothing depends upward, and the three account modules never depend on each other.
+
+## Personal home
+
+`:personal` owns the home screen (`home/`: `HomeScreen`, `CollapsingHeaderState`, `components/`) and the screen state in `PersonalHomeScreen`.
+Reusable Personal features are sub-modules under `src/modules/personal/features/` and depend only on each other and on core/shared:
+`:travel` (place models) and `:socialfeed` (feed UI, state, `FeedRepository`). Feed data currently comes from `SampleFeedRepository`;
+swap in a backend-backed `FeedRepository` (via `:network`) in `rememberSocialFeedState`. Brand colours, typography and `AhtaraTheme`
+live in `:design-system` (`org.example.shared.designsystem.theme`).
 
 ## Unchanged on purpose
 
