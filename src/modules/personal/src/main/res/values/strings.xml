@@ -6,6 +6,7 @@
     <string name="personal_search_hint">Search destinations, people, or topics...</string>
     <string name="personal_filter_all">All</string>
     <string name="personal_create">Create</string>
+    <string name="personal_receive">Receive payment</string>
     <string name="personal_tab_home">Home</string>
     <string name="personal_tab_transport">Transport</string>
     <string name="personal_tab_messages">Messages</string>
@@ -16,6 +17,30 @@
     <string name="personal_profile_login">Mobile: %1$s</string>
     <string name="personal_profile_close">Close</string>
     <string name="personal_action_sign_out">Sign out</string>
+
+    <!-- Receive payment -->
+    <string name="personal_receive_title">Receive payment</string>
+    <string name="personal_receive_amount_label">Amount</string>
+    <string name="personal_receive_note_label">Note (optional)</string>
+    <string name="personal_receive_request">Request</string>
+    <string name="personal_receive_cancel">Cancel</string>
+    <string name="personal_receive_ready_title">Ready to receive</string>
+    <string name="personal_receive_hold">Hold your phone against the other phone to get paid.</string>
+    <string name="personal_receive_expires">Expires in %1$s</string>
+    <string name="personal_receive_expired">This request has expired.</string>
+    <string name="personal_receive_new">New request</string>
+    <string name="personal_receive_cancel_request">Cancel request</string>
+    <string name="personal_receive_simulate">Simulate payment</string>
+    <string name="personal_receive_paid_title">Payment received</string>
+    <string name="personal_receive_paid_body">Added to your balance.</string>
+    <string name="personal_receive_done">Done</string>
+
+    <!-- Fake balance (test money) -->
+    <string name="personal_balance_line">Balance: %1$s (test money)</string>
+    <string name="personal_balance_set">Set balance</string>
+    <string name="personal_balance_title">Set test balance</string>
+    <string name="personal_balance_hint">This is fake money for testing. Nothing here is real.</string>
+    <string name="personal_balance_save">Save</string>
 
     <!-- Account setup -->
     <string name="personal_setup_back_title">Go back to sign-up?</string>

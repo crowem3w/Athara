@@ -22,7 +22,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.nativeCanvas
@@ -73,8 +73,8 @@ internal fun BottomNavBar(
     showTransport: Boolean = true,
     showPlaces: Boolean = true,
     
-    centerIcon: ImageVector = Icons.Filled.Add,
-    centerLabel: String = stringResource(R.string.personal_create),
+    centerIcon: ImageVector = Icons.Filled.TouchApp,
+    centerLabel: String = stringResource(R.string.personal_receive),
     
     createVisibility: () -> Float = { 1f },
 ) {
