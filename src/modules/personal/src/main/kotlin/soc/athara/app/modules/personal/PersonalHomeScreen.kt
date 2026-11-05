@@ -21,7 +21,7 @@ import soc.athara.app.modules.personal.home.components.ReceivePaymentDialog
 import soc.athara.app.modules.personal.wallet.FakeBalanceStore
 import soc.athara.app.modules.personal.wallet.SetBalanceDialog
 import soc.athara.app.modules.personal.wallet.formatMoney
-import soc.athara.app.shared.designsystem.theme.AhtaraTheme
+import soc.athara.app.shared.designsystem.theme.AtharaTheme
 
 private val CategorySaver = listSaver<Set<PlaceCategory>, String>(
     save = { selected -> selected.map { it.name } },
@@ -46,7 +46,7 @@ internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
         mutableStateOf(user?.let { balanceStore.get(it.id) } ?: 0L)
     }
 
-    AhtaraTheme {
+    AtharaTheme {
         HomeScreen(
             // Default service area until place picking exists; use emptyList() to see the "add a place" state.
             places = listOf(ServiceArea.default),

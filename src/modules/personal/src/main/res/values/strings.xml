@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Home -->
-    <string name="personal_wordmark_description">Ahtara</string>
+    <string name="personal_wordmark_description">Athara</string>
     <string name="personal_refresh_feed">Refresh feed</string>
     <string name="personal_search_hint">Search destinations, people, or topics...</string>
     <string name="personal_filter_all">All</string>
-    <string name="personal_create">Create</string>
     <string name="personal_receive">Receive payment</string>
     <string name="personal_tab_home">Home</string>
     <string name="personal_tab_transport">Transport</string>

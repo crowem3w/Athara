@@ -37,7 +37,7 @@ changed and `MainActivity` routes again; any other result means the user left.
 ## Personal home
 
 `:personal` owns the home screen (`home/`: `HomeScreen`, `CollapsingHeaderState`, `components/`) and the screen state in `PersonalHomeScreen`.
-Personal's place models (`...personal.features.travel`) and social feed (`...personal.features.socialfeed`: UI, state, `FeedRepository`) live inside `:personal` as `internal` code. Feed data currently comes from `SampleFeedRepository`. Note: `:personal` may not depend on `:network` (see ISOLATION_AND_SHARING_GUIDELINES.md), so a backend-backed `FeedRepository` needs a decision first. Brand colours, typography and `AhtaraTheme`
+Personal's place models (`...personal.features.travel`) and social feed (`...personal.features.socialfeed`: UI, state, `FeedRepository`) live inside `:personal` as `internal` code. Feed data currently comes from `SampleFeedRepository`. Note: `:personal` may not depend on `:network` (see ISOLATION_AND_SHARING_GUIDELINES.md), so a backend-backed `FeedRepository` needs a decision first. Brand colours, typography and `AtharaTheme`
 live in `:design-system` (`soc.athara.app.shared.designsystem.theme`).
 
 ## Unchanged on purpose

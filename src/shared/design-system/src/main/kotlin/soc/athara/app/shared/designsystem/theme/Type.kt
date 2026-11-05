@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-val AhtaraTypography = M3Typography(
+val AtharaTypography = M3Typography(
     
     headlineSmall = TextStyle(
         fontFamily = FontFamily.Default,

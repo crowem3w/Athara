@@ -4,7 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-private val AhtaraColorScheme = lightColorScheme(
+private val AtharaColorScheme = lightColorScheme(
     primary = Teal,
     onPrimary = Background,
     primaryContainer = TealLight,
@@ -26,6 +26,6 @@ private val AhtaraColorScheme = lightColorScheme(
  * sign-up and setup screens stays in [soc.athara.app.shared.designsystem.AppTheme].
  */
 @Composable
-fun AhtaraTheme(content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = AhtaraColorScheme, typography = AhtaraTypography, content = content)
+fun AtharaTheme(content: @Composable () -> Unit) {
+    MaterialTheme(colorScheme = AtharaColorScheme, typography = AtharaTypography, content = content)
 }

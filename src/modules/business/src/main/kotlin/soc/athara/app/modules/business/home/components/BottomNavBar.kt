@@ -42,7 +42,7 @@ private val DipHalfWidth = 66.dp
 internal fun BottomNavBar(
     modifier: Modifier = Modifier,
     onReadClick: () -> Unit = {},
-    readerIcon: Painter = painterResource(R.drawable.business_ic_nfc_tag),
+    readerIcon: Painter = painterResource(R.drawable.business_ic_scan),
     readerLabel: String = stringResource(R.string.business_collect_payment),
     /** 1 = fully visible, 0 = hidden (follows the collapsing header). */
     readerVisibility: () -> Float = { 1f },

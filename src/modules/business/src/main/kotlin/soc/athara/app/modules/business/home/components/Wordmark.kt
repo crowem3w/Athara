@@ -1,33 +1,93 @@
 package soc.athara.app.modules.business.home.components
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import soc.athara.app.modules.business.R
-import soc.athara.app.shared.designsystem.theme.Teal
 
-/**
- * Text wordmark. The personal home draws a logo image (personal_logo / personal_logo_light) that is not in this
- * repository, so the business copy uses text; swap in the real logo drawable when it is available.
- */
+private const val PRESSED_SCALE = 0.95f
+
+
+
+
+
+
+
+
+
+
+
+
+
 @Composable
-internal fun Wordmark(modifier: Modifier = Modifier, onClick: (() -> Unit)? = null, onClickLabel: String? = null) {
-    val click = if (onClick != null) Modifier.clickable(onClickLabel = onClickLabel, role = Role.Button, onClick = onClick) else Modifier
-    Box(modifier = modifier.heightIn(min = 48.dp).then(click), contentAlignment = Alignment.CenterStart) {
-        Text(
-            text = stringResource(R.string.business_wordmark),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = Teal,
+internal fun Wordmark(
+    modifier: Modifier = Modifier,
+    height: Dp = 30.dp,
+    onClick: (() -> Unit)? = null,
+    onClickLabel: String? = null,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) PRESSED_SCALE else 1f,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "logoPressScale",
+    )
+
+    val onLightBackground = MaterialTheme.colorScheme.background.luminance() > 0.5f
+    val logoRes = if (onLightBackground) R.drawable.business_logo else R.drawable.business_logo_light
+
+    
+    
+    val clickModifier = if (onClick != null) {
+        Modifier.clickable(
+            interactionSource = interactionSource,
+            indication = null,
+            onClickLabel = onClickLabel,
+            role = Role.Button,
+            onClick = onClick,
+        )
+    } else {
+        Modifier
+    }
+
+    Box(
+        modifier = modifier
+            .heightIn(min = 48.dp)
+            .then(clickModifier),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        Image(
+            painter = painterResource(id = logoRes),
+            contentDescription = stringResource(R.string.business_wordmark_description),
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .height(height)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                },
         )
     }
 }

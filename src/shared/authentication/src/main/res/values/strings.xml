@@ -2,11 +2,9 @@
 <resources>
     <string name="authentication_logo_description">App logo</string>
     <string name="authentication_title_sign_in">Welcome back</string>
-    <string name="authentication_title_sign_up">Create your account</string>
     <string name="authentication_title_reset">Reset password</string>
     <string name="authentication_subtitle_reset">Enter your username, email or mobile number and choose a new password.</string>
 
-    <string name="authentication_label_name">Name</string>
     <string name="authentication_label_first_name">First name</string>
     <string name="authentication_label_surname">Surname (optional)</string>
     <string name="authentication_label_username">Username</string>

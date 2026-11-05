@@ -18,7 +18,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ahtara-client"
+rootProject.name = "athara-client"
 
 
 

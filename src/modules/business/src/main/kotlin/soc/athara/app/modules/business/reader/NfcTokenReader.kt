@@ -18,7 +18,7 @@ internal fun nfcAvailability(context: Context): NfcAvailability {
 
 /** The receiver's Host Card Emulation service must answer this AID (plan section 5). */
 internal object NfcProtocol {
-    /** Proprietary AID: 0xF0 followed by "AHTARA". */
+    /** Proprietary AID: 0xF0 followed by "ATHARA". */
     val AID: ByteArray = byteArrayOf(0xF0.toByte(), 0x41, 0x48, 0x54, 0x41, 0x52, 0x41)
 
     /** ISO 7816 SELECT by name: CLA INS P1 P2 Lc AID Le. */
