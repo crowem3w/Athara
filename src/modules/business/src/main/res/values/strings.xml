@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="business_home_title">Business</string>
+    <string name="business_home_greeting_guest">Welcome to Athara</string>
     <string name="business_home_greeting">Welcome, %1$s</string>
     <string name="business_stat_orders">Orders</string>
     <string name="business_stat_customers">Customers</string>

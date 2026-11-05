@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -17,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.Button
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -54,7 +56,7 @@ private const val ReaderButtonHideEnd = 0.5f
  * payment reader. The body is a placeholder until the business content is decided.
  */
 @Composable
-internal fun BusinessHomeScreen(user: AuthUser, onSignOut: () -> Unit) {
+internal fun BusinessHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin: () -> Unit) {
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val layoutDirection = LocalLayoutDirection.current
@@ -78,7 +80,7 @@ internal fun BusinessHomeScreen(user: AuthUser, onSignOut: () -> Unit) {
                     .graphicsLayer { translationY = bottomBarHeight * headerState.fraction },
             ) {
                 BottomNavBar(
-                    onReadClick = { showReader = true },
+                    onReadClick = { if (user == null) onLogin() else showReader = true },
                     readerVisibility = { 1f - (headerState.fraction / ReaderButtonHideEnd).coerceIn(0f, 1f) },
                 )
             }
@@ -105,8 +107,8 @@ internal fun BusinessHomeScreen(user: AuthUser, onSignOut: () -> Unit) {
                                     headerState.animateShow()
                                 }
                             },
-                            onProfileClick = { showProfile = true },
-                            userInitial = user.displayName.trim().firstOrNull()?.uppercase() ?: "?",
+                            onProfileClick = { if (user == null) onLogin() else showProfile = true },
+                            userInitial = user?.let { it.displayName.trim().firstOrNull()?.uppercase() ?: "?" },
                         )
                     }
                 }
@@ -124,7 +126,8 @@ internal fun BusinessHomeScreen(user: AuthUser, onSignOut: () -> Unit) {
             ) {
                 item {
                     Text(
-                        text = stringResource(R.string.business_home_greeting, user.displayName),
+                        text = if (user != null) stringResource(R.string.business_home_greeting, user.displayName)
+                        else stringResource(R.string.business_home_greeting_guest),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                     )
@@ -141,13 +144,20 @@ internal fun BusinessHomeScreen(user: AuthUser, onSignOut: () -> Unit) {
                         }
                     }
                 }
+                if (user == null) {
+                    item {
+                        Button(onClick = onLogin, modifier = Modifier.fillMaxWidth().padding(top = 24.dp).height(52.dp)) {
+                            Text(stringResource(R.string.business_guest_cta))
+                        }
+                    }
+                }
             }
         }
     }
 
     if (showReader) PaymentReaderSheet(onDismiss = { showReader = false })
 
-    if (showProfile) {
+    if (showProfile && user != null) {
         AlertDialog(
             onDismissRequest = { showProfile = false },
             title = { Text(user.displayName) },

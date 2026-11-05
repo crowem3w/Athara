@@ -50,7 +50,7 @@ class BusRegForm : ComponentActivity() {
             AppTheme(AccountType.BUSINESS) {
                 if (user != null && setupPending) {
                     BusSetupAcc(onBack = { finishSetup(); setupPending = false }) 
-                } else if (user != null) {
+                } else {
                     BusinessHomeScreen(
                         user = user,
                         onSignOut = {
@@ -59,9 +59,8 @@ class BusRegForm : ComponentActivity() {
                                 finish()
                             }
                         },
+                        onLogin = { authLauncher.launch(AccountType.BUSINESS) },
                     )
-                } else {
-                    BusinessGuestHome(onLogin = { authLauncher.launch(AccountType.BUSINESS) })
                 }
             }
         }
