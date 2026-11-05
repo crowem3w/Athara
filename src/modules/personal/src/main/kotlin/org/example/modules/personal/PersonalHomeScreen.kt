@@ -26,7 +26,7 @@ private val CategorySaver = listSaver<Set<PlaceCategory>, String>(
  * layout and feed behaviour live in [HomeScreen].
  */
 @Composable
-internal fun PersonalHomeScreen(user: AuthUser, onSignOut: () -> Unit) {
+internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin: () -> Unit) {
     var categories by rememberSaveable(stateSaver = CategorySaver) { mutableStateOf(emptySet<PlaceCategory>()) }
     var showProfile by rememberSaveable { mutableStateOf(false) }
 
@@ -39,11 +39,14 @@ internal fun PersonalHomeScreen(user: AuthUser, onSignOut: () -> Unit) {
                 categories = if (category in categories) categories - category else categories + category
             },
             onClearCategories = { categories = emptySet() },
-            userInitial = user.displayName.trim().firstOrNull()?.uppercase() ?: "?",
-            onProfileClick = { showProfile = true },
+            userInitial = user?.let { it.displayName.trim().firstOrNull()?.uppercase() ?: "?" },
+            // Guest: the avatar opens login / sign-up. Signed in: it opens the profile dialog.
+            onProfileClick = { if (user == null) onLogin() else showProfile = true },
+            // Guests can browse; likes and saves need an account and are ignored until they log in.
+            onRequireAccount = { user != null },
         )
 
-        if (showProfile) {
+        if (showProfile && user != null) {
             AlertDialog(
                 onDismissRequest = { showProfile = false },
                 title = { Text(user.displayName) },

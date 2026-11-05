@@ -42,5 +42,6 @@ kotlin {
 dependencies {
     
     api(libs.kotlinx.coroutines.android)
+    api(libs.androidx.activity)
     implementation(libs.androidx.core.ktx)
 }

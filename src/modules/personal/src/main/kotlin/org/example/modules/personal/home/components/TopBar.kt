@@ -19,11 +19,11 @@ import org.example.modules.personal.R
 
 
 @Composable
-fun TopBar(
+internal fun TopBar(
     modifier: Modifier = Modifier,
     onLogoClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
-    userInitial: String = "M",
+    userInitial: String? = null,
 ) {
     Row(
         modifier = modifier

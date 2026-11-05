@@ -12,6 +12,7 @@
     <string name="personal_tab_places">Places</string>
     <string name="personal_tab_saved">Saved</string>
     <string name="personal_tab_notifications">Notifications</string>
+    <string name="personal_tab_login">Log in</string>
     <string name="personal_profile_login">Mobile: %1$s</string>
     <string name="personal_profile_close">Close</string>
     <string name="personal_action_sign_out">Sign out</string>
@@ -21,4 +22,16 @@
     <string name="personal_setup_back_message">Your new account will be deleted. You can sign up again any time.</string>
     <string name="personal_setup_back_confirm">Delete and go back</string>
     <string name="personal_setup_back_stay">Stay</string>
+
+    <!-- Social feed -->
+    <string name="socialfeed_promoted">Promoted</string>
+    <string name="socialfeed_more_options">More options</string>
+    <string name="socialfeed_like">Like</string>
+    <string name="socialfeed_comments">Comments</string>
+    <string name="socialfeed_share">Share</string>
+    <string name="socialfeed_save">Save</string>
+    <string name="socialfeed_read_more">Read more</string>
+    <string name="socialfeed_empty_no_place">Add a place to see posts here.</string>
+    <string name="socialfeed_empty_filtered">No posts in the selected categories yet. Pick other categories or select All.</string>
+    <string name="socialfeed_empty">Nothing here yet.</string>
 </resources>

@@ -12,8 +12,6 @@ Gradle project names are flat (`:network`, `:personal`, ...); `settings.gradle.k
 | shared | `src/shared/design-system` | `:design-system` | `org.example.shared.designsystem` |
 | shared | `src/shared/authentication` | `:authentication` | `org.example.shared.authentication` |
 | modules | `src/modules/personal` | `:personal` | `org.example.modules.personal` |
-| modules (Personal feature) | `src/modules/personal/features/travel` | `:travel` | `org.example.modules.personal.features.travel` |
-| modules (Personal feature) | `src/modules/personal/features/socialfeed` | `:socialfeed` | `org.example.modules.personal.features.socialfeed` |
 | modules | `src/modules/business` | `:business` | `org.example.modules.business` |
 | modules | `src/modules/organization` | `:organization` | `org.example.modules.organization` |
 | app | `src/app/application` | `:app` | `org.example.app` |
@@ -23,12 +21,23 @@ Gradle project names are flat (`:network`, `:personal`, ...); `settings.gradle.k
 
 `app` -> `modules` -> `shared` -> `core`. Nothing depends upward, and the three account modules never depend on each other.
 
+## Launch flow
+
+```
+splash (system) -> onboarding (first launch only) -> account type -> Home of that type (guest)
+                                                                       \-> avatar / Log in -> login or sign-up -> Home (signed in)
+```
+
+`MainActivity` (app layer) only routes: onboarding if not completed, otherwise the signed-in user's own Home, otherwise the account type screen.
+The account type screen (`AccountTypeActivity`) and login / sign-up (`AuthenticationActivity`) live in `:authentication`.
+Each account module owns the Home of its type, guest and signed-in (`PerRegForm`, `BusRegForm`, `OrgRegForm`) and starts login through
+`AuthenticationContract` (in `:identity-api`), so the three modules never depend on each other. Result code `RESULT_OK` from an account activity means the session
+changed and `MainActivity` routes again; any other result means the user left.
+
 ## Personal home
 
 `:personal` owns the home screen (`home/`: `HomeScreen`, `CollapsingHeaderState`, `components/`) and the screen state in `PersonalHomeScreen`.
-Reusable Personal features are sub-modules under `src/modules/personal/features/` and depend only on each other and on core/shared:
-`:travel` (place models) and `:socialfeed` (feed UI, state, `FeedRepository`). Feed data currently comes from `SampleFeedRepository`;
-swap in a backend-backed `FeedRepository` (via `:network`) in `rememberSocialFeedState`. Brand colours, typography and `AhtaraTheme`
+Personal's place models (`...personal.features.travel`) and social feed (`...personal.features.socialfeed`: UI, state, `FeedRepository`) live inside `:personal` as `internal` code. Feed data currently comes from `SampleFeedRepository`. Note: `:personal` may not depend on `:network` (see ISOLATION_AND_SHARING_GUIDELINES.md), so a backend-backed `FeedRepository` needs a decision first. Brand colours, typography and `AhtaraTheme`
 live in `:design-system` (`org.example.shared.designsystem.theme`).
 
 ## Unchanged on purpose

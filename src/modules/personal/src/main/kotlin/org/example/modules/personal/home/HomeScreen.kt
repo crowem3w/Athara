@@ -56,8 +56,6 @@ import org.example.shared.designsystem.theme.TextSecondary
 
 private const val CreateButtonHideEnd = 0.5f
 
-/** Personal accounts are always signed in; feed actions need no login prompt. */
-private val SignedIn: () -> Boolean = { true }
 
 
 private val AppFeedColors = FeedColors(
@@ -69,17 +67,20 @@ private val AppFeedColors = FeedColors(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
+internal fun HomeScreen(
     
     places: List<PlaceSelection> = emptyList(),
     
     categories: Set<PlaceCategory> = emptySet(),
     onToggleCategory: (PlaceCategory) -> Unit = {},
     onClearCategories: () -> Unit = {},
-    userInitial: String = "M",
+    /** First letter of the signed-in user's name; null for a guest (the avatar then reads as "Log in"). */
+    userInitial: String? = null,
     onPlacesClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
     onCreateClick: () -> Unit = {},
+    /** Gate for feed actions (like, save). Return false to ignore the action. */
+    onRequireAccount: () -> Boolean = { true },
 ) {
     val listState = rememberLazyListState()
     val pullState = rememberPullToRefreshState()
@@ -246,7 +247,7 @@ fun HomeScreen(
                         isLoading = isRefreshing,
                         hasPlaces = places.isNotEmpty(),
                         colors = AppFeedColors,
-                        onRequireAccount = SignedIn,
+                        onRequireAccount = onRequireAccount,
                         categories = categories,
                     )
                 }

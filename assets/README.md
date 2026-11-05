@@ -11,7 +11,7 @@ Android only packages resources a module declares, so each module's `build.gradl
 as an extra `res` source directory (`androidComponents { onVariants { it.sources.res?.addStaticSourceDirectory(...) } }`). Resource names,
 the `<module>_` prefix and the generated `R` classes are unchanged, so no code refers to the new location.
 
-Current folders: `authentication`, `identity-api`, `onboarding`, `personal` (wordmark logos, `personal_logo*.png`).
+Current folders: `app` (system splash logo), `authentication`, `identity-api`, `onboarding`, `personal` (wordmark logos, `personal_logo*.png`).
 
 Rules:
 - Keep the per-module subfolder: pointing two modules at one shared folder would package every file into both.

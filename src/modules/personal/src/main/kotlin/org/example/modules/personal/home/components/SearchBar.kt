@@ -25,7 +25,7 @@ import org.example.shared.designsystem.theme.TextTertiary
 
 
 @Composable
-fun SearchBar(modifier: Modifier = Modifier) {
+internal fun SearchBar(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()

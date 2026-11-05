@@ -41,7 +41,7 @@ private const val PRESSED_SCALE = 0.95f
 
 
 @Composable
-fun Wordmark(
+internal fun Wordmark(
     modifier: Modifier = Modifier,
     height: Dp = 30.dp,
     onClick: (() -> Unit)? = null,

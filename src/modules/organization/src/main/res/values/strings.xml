@@ -32,4 +32,6 @@
     <string name="organization_label_event_date">Date (YYYY-MM-DD)</string>
     <string name="organization_error_required">Required</string>
     <string name="organization_error_date">Enter a valid date, e.g. 2026-10-20</string>
+    <string name="organization_guest_login">Log in</string>
+    <string name="organization_guest_cta">Log in or sign up</string>
 </resources>

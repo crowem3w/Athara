@@ -41,8 +41,6 @@ dependencies {
     implementation(project(":identity-api"))
     implementation(project(":design-system"))
     implementation(project(":authentication"))
-    implementation(project(":travel"))
-    implementation(project(":socialfeed"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

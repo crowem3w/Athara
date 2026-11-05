@@ -1,117 +1,57 @@
 package org.example.app
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import kotlinx.coroutines.launch
-import org.example.shared.authentication.AuthenticationContract
-import org.example.core.identityapi.Identity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import org.example.app.onboarding.Onboarding
 import org.example.app.onboarding.OnboardingContract
-import org.example.app.ui.theme.TestTheme
+import org.example.core.identityapi.Identity
+import org.example.shared.authentication.AccountTypeContract
 
+/**
+ * Launcher and router; it draws no UI of its own. Screen order:
+ *
+ *   splash (system) -> onboarding (first launch only) -> account type -> Home of that type (guest)
+ *                                                                          \-> avatar -> login / sign-up -> Home (signed in)
+ *
+ * A signed-in user skips straight to the Home of their own account type.
+ *
+ * Result contract with the account activities (PerRegForm, BusRegForm, OrgRegForm):
+ * RESULT_OK = the session changed (signed in from the guest Home), so route again;
+ * anything else = the user left that screen.
+ */
 class MainActivity : ComponentActivity() {
-    private var authInProgress = false
-    private var homeInProgress = false
 
-    
-    private val authLauncher = registerForActivityResult(AuthenticationContract()) { signedIn ->
-        authInProgress = false
-        if (!signedIn) finish()
-    }
-
-    
-    
-    
-    private val homeLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        homeInProgress = false
-        if (Identity.isSignedIn(this)) finish()
-    }
-
-    
-    
     private val onboardingLauncher = registerForActivityResult(OnboardingContract()) { completed ->
-        if (!completed) finish()
+        if (completed) route() else finish()
+    }
+
+    private val accountTypeLauncher = registerForActivityResult(AccountTypeContract()) { type ->
+        if (type != null) homeLauncher.launch(type.intent(this)) else finish()
+    }
+
+    private val homeLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        when {
+            result.resultCode == Activity.RESULT_OK -> route() // signed in from the guest Home
+            Identity.isSignedIn(this) -> finish() // a signed-in user backed out of their Home
+            else -> route() // guest backed out, or signed out: back to account type
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        
-        if (savedInstanceState == null && !Onboarding.isCompleted(this)) {
+        if (savedInstanceState == null) route()
+    }
+
+    private fun route() {
+        if (!Onboarding.isCompleted(this)) {
             onboardingLauncher.launch(Unit)
+            return
         }
-        
-        
-        
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                Identity.repository(this@MainActivity).currentUser.collect { user ->
-                    if (!Onboarding.isCompleted(this@MainActivity)) return@collect
-                    if (user == null) {
-                        if (!authInProgress) {
-                            authInProgress = true
-                            authLauncher.launch(Unit)
-                        }
-                    } else if (!homeInProgress) {
-                        homeInProgress = true
-                        homeLauncher.launch(user.accountType.intent(this@MainActivity))
-                    }
-                }
-            }
-        }
-        setContent {
-            TestTheme {
-                GreetingScreen()
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun GreetingScreen() {
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.app_name)) })
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(24.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(text = stringResource(R.string.hello_world))
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun GreetingScreenPreview() {
-    TestTheme {
-        GreetingScreen()
+        val user = Identity.repository(this).currentUser.value
+        if (user != null) homeLauncher.launch(user.accountType.intent(this)) else accountTypeLauncher.launch(Unit)
     }
 }

@@ -6,6 +6,6 @@ import org.example.shared.authentication.ui.AccountSetupScreen
 
 
 @Composable
-fun BusSetupAcc(onBack: () -> Unit) {
+internal fun BusSetupAcc(onBack: () -> Unit) {
     AccountSetupScreen(accountType = AccountType.BUSINESS, onBack = onBack)
 }

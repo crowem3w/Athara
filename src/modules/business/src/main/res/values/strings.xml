@@ -28,4 +28,6 @@
     <string name="business_label_order_amount">Amount</string>
     <string name="business_error_required">Required</string>
     <string name="business_error_amount">Enter a positive amount, e.g. 12.50</string>
+    <string name="business_guest_login">Log in</string>
+    <string name="business_guest_cta">Log in or sign up</string>
 </resources>

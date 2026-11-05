@@ -3,6 +3,11 @@
 
     <application>
         <activity
+            android:name=".ui.AccountTypeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Authentication" />
+
+        <activity
             android:name=".ui.AuthenticationActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"

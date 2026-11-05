@@ -61,6 +61,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.example.shared.authentication.R
 import org.example.core.identityapi.AccountType
+import org.example.core.identityapi.AuthenticationContract
 import org.example.shared.authentication.domain.Country
 import org.example.core.identityapi.SocialProvider
 import org.example.shared.designsystem.AppTheme
@@ -75,7 +76,20 @@ import org.example.shared.designsystem.AppTheme
 
 class AuthenticationActivity : ComponentActivity() {
 
-    private val viewModel: AuthViewModel by viewModels { AuthViewModel.Factory }
+    /** Type already chosen before the guest Home; null when the flow has to ask. */
+    private val preselected: AccountType? by lazy {
+        AccountType.entries.firstOrNull { it.name == intent.getStringExtra(EXTRA_ACCOUNT_TYPE) }
+    }
+
+    private val viewModel: AuthViewModel by viewModels {
+        AuthViewModel.factory(AuthMode.SIGN_IN, preselected ?: AccountType.PERSONAL)
+    }
+
+    /** "Sign up": straight to the registration form of the chosen type, or to the chooser if none was chosen. */
+    private fun openSignUp() {
+        val type = preselected
+        if (type != null) viewModel.selectAccountType(type) else viewModel.setMode(AuthMode.SELECT_ACCOUNT, null)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,7 +106,7 @@ class AuthenticationActivity : ComponentActivity() {
                 
                 
                 BackHandler(enabled = state.mode != AuthMode.SIGN_IN) {
-                    viewModel.setMode(if (state.mode == AuthMode.SIGN_UP) AuthMode.SELECT_ACCOUNT else AuthMode.SIGN_IN, null)
+                    viewModel.setMode(if (state.mode == AuthMode.SIGN_UP && preselected == null) AuthMode.SELECT_ACCOUNT else AuthMode.SIGN_IN, null)
                 }
                 when (state.mode) {
                     AuthMode.SIGN_IN -> LoginScreen(
@@ -102,7 +116,7 @@ class AuthenticationActivity : ComponentActivity() {
                         onLoginId = viewModel::onLoginId,
                         onForgotPassword = { viewModel.setMode(AuthMode.FORGOT_PASSWORD, null) },
                         onSocial = viewModel::signInWithSocial,
-                        onSignUp = { viewModel.setMode(AuthMode.SELECT_ACCOUNT, null) },
+                        onSignUp = ::openSignUp,
                         social = viewModel.loginSocialActions,
                     )
                     
@@ -110,7 +124,7 @@ class AuthenticationActivity : ComponentActivity() {
                         state = state,
                         onBack = {
                             viewModel.setMode(
-                                if (state.mode == AuthMode.SIGN_UP) AuthMode.SELECT_ACCOUNT else AuthMode.SIGN_IN,
+                                if (state.mode == AuthMode.SIGN_UP && preselected == null) AuthMode.SELECT_ACCOUNT else AuthMode.SIGN_IN,
                                 null,
                             )
                         },
@@ -127,7 +141,7 @@ class AuthenticationActivity : ComponentActivity() {
                         onConfirm = viewModel::onConfirm,
                         onSubmit = viewModel::submit,
                         onSocial = viewModel::signInWithSocial,
-                        onToSignUp = { viewModel.setMode(AuthMode.SELECT_ACCOUNT, null) },
+                        onToSignUp = ::openSignUp,
                         onToSignIn = { viewModel.setMode(AuthMode.SIGN_IN, null) },
                         onIndustry = viewModel::onIndustry,
                         onPhone = viewModel::onPhone,
@@ -146,12 +160,16 @@ class AuthenticationActivity : ComponentActivity() {
                         onConfirm = viewModel::onConfirm,
                         onSubmit = viewModel::submit,
                         onSocial = viewModel::signInWithSocial,
-                        onToSignUp = { viewModel.setMode(AuthMode.SELECT_ACCOUNT, null) },
+                        onToSignUp = ::openSignUp,
                         onToSignIn = { viewModel.setMode(AuthMode.SIGN_IN, null) },
                     )
                 }
             }
         }
+    }
+
+    internal companion object {
+        const val EXTRA_ACCOUNT_TYPE = AuthenticationContract.EXTRA_ACCOUNT_TYPE
     }
 }
 

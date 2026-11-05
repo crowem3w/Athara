@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.DirectionsBus
@@ -105,7 +106,7 @@ internal fun NotificationTab(modifier: Modifier = Modifier, onClick: () -> Unit 
 }
 
 @Composable
-internal fun AvatarTab(onClick: () -> Unit, initial: String, modifier: Modifier = Modifier) {
+internal fun AvatarTab(onClick: () -> Unit, initial: String?, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .size(36.dp)
@@ -114,6 +115,11 @@ internal fun AvatarTab(onClick: () -> Unit, initial: String, modifier: Modifier 
             .clickable(role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text = initial, style = MaterialTheme.typography.labelLarge, color = Teal)
+        if (initial != null) {
+            Text(text = initial, style = MaterialTheme.typography.labelLarge, color = Teal)
+        } else {
+            // Guest: the avatar is the Log in entry point.
+            Icon(Icons.Filled.Person, stringResource(R.string.personal_tab_login), tint = Teal)
+        }
     }
 }

@@ -15,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import org.example.core.identityapi.Identity
 import org.example.core.identityapi.AccountType
-import org.example.shared.authentication.ui.AccountSignUp
+import org.example.core.identityapi.AuthenticationContract
 import org.example.shared.designsystem.AppTheme
 
 
@@ -25,6 +25,14 @@ import org.example.shared.designsystem.AppTheme
 
 
 class BusRegForm : ComponentActivity() {
+
+    /** Login / sign-up for this account type, opened from the guest Home. Signed in: tell the app layer to route again. */
+    private val authLauncher = registerForActivityResult(AuthenticationContract()) { signedIn ->
+        if (signedIn) {
+            setResult(Activity.RESULT_OK)
+            finish()
+        }
+    }
 
     
     private val viewModel: BusinessViewModel by viewModels {
@@ -39,7 +47,6 @@ class BusRegForm : ComponentActivity() {
         val setupPendingAtStart = user != null && Identity.isSetupPending(this)
         setContent {
             var setupPending by rememberSaveable { mutableStateOf(setupPendingAtStart) }
-            var setupStep by rememberSaveable { mutableStateOf(false) }
             AppTheme(AccountType.BUSINESS) {
                 if (user != null && setupPending) {
                     BusSetupAcc(onBack = { finishSetup(); setupPending = false }) 
@@ -59,24 +66,8 @@ class BusRegForm : ComponentActivity() {
                             }
                         },
                     )
-                } else if (setupStep) {
-                    BusSetupAcc(
-                        onBack = {
-                            finishSetup()
-                            setResult(Activity.RESULT_OK)
-                            finish()
-                        },
-                    )
                 } else {
-                    AccountSignUp(
-                        accountType = AccountType.BUSINESS,
-                        onSignedUp = { setupStep = true }, 
-                        onSignIn = {
-                            setResult(Activity.RESULT_FIRST_USER)
-                            finish()
-                        },
-                        onBack = { finish() }, 
-                    )
+                    BusinessGuestHome(onLogin = { authLauncher.launch(AccountType.BUSINESS) })
                 }
             }
         }

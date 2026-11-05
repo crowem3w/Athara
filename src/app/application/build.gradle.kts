@@ -63,6 +63,14 @@ android {
     }
 }
 
+// Splash logo lives in assets/images/app (see assets/README.md).
+androidComponents {
+    val imagesDir = rootProject.file("assets/images/app").absolutePath
+    onVariants { variant ->
+        variant.sources.res?.addStaticSourceDirectory(imagesDir)
+    }
+}
+
 kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_21)
@@ -79,6 +87,7 @@ dependencies {
     implementation(project(":business"))
     implementation(project(":organization"))
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))

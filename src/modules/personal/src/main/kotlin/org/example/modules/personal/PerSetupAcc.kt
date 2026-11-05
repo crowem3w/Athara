@@ -23,7 +23,7 @@ import org.example.shared.authentication.ui.PersonalSetupFields
 
 
 @Composable
-fun PerSetupAcc(
+internal fun PerSetupAcc(
     onContinue: (PersonalSetup) -> Unit,
     onSkip: () -> Unit,
     onBack: () -> Unit,

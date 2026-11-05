@@ -64,7 +64,7 @@ private val DipDepth = FabSize - FabRise + FabGap
 private val DipHalfWidth = 66.dp
 
 @Composable
-fun BottomNavBar(
+internal fun BottomNavBar(
     modifier: Modifier = Modifier,
     onTransportClick: () -> Unit = {},
     onCreateClick: () -> Unit = {},

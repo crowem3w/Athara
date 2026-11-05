@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.Constraints
 import kotlin.math.roundToInt
 
 
-enum class HeaderSection { Filters, Search, TopBar }
+internal enum class HeaderSection { Filters, Search, TopBar }
 
 
 
@@ -26,7 +26,7 @@ enum class HeaderSection { Filters, Search, TopBar }
 
 
 @Stable
-class CollapsingHeaderState {
+internal class CollapsingHeaderState {
     var offset by mutableFloatStateOf(0f)
         private set
 
@@ -76,7 +76,7 @@ class CollapsingHeaderState {
 
 
 
-fun Modifier.collapsingSection(state: CollapsingHeaderState, section: HeaderSection): Modifier =
+internal fun Modifier.collapsingSection(state: CollapsingHeaderState, section: HeaderSection): Modifier =
     this
         .clipToBounds()
         .layout { measurable, constraints ->

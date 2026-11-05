@@ -29,7 +29,7 @@ import org.example.modules.personal.features.travel.model.PlaceCategory
 
 
 @Composable
-fun FilterTabs(
+internal fun FilterTabs(
     selected: Set<PlaceCategory>,
     onToggle: (PlaceCategory) -> Unit,
     onClear: () -> Unit,

@@ -70,7 +70,7 @@ private val NonCardHeight = 120.dp
 @Composable
 internal fun AccountTypeScreen(
     onSelect: (AccountType) -> Unit,
-    onSignIn: () -> Unit,
+    onSignIn: (() -> Unit)? = null,
 ) {
     var selectedName by rememberSaveable { mutableStateOf<String?>(null) }
     val selected = selectedName?.let { AccountType.fromName(it) }
@@ -132,11 +132,13 @@ internal fun AccountTypeScreen(
             )
         }
 
-        TextButton(
-            onClick = onSignIn,
-            modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 4.dp),
-        ) {
-            Text(stringResource(R.string.authentication_action_to_sign_in))
+        if (onSignIn != null) {
+            TextButton(
+                onClick = onSignIn,
+                modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 4.dp),
+            ) {
+                Text(stringResource(R.string.authentication_action_to_sign_in))
+            }
         }
     }
 }
