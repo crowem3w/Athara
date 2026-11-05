@@ -12,7 +12,7 @@ plugins {
 }
 
 android {
-    namespace = "org.example.shared.designsystem"
+    namespace = "soc.athara.app.shared.designsystem"
     compileSdk = 37
 
     defaultConfig {

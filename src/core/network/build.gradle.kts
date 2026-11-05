@@ -13,7 +13,7 @@ plugins {
 }
 
 android {
-    namespace = "org.example.core.network"
+    namespace = "soc.athara.app.core.network"
     compileSdk = 37
 
     defaultConfig {

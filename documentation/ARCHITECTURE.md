@@ -5,17 +5,17 @@ Gradle project names are flat (`:network`, `:personal`, ...); `settings.gradle.k
 
 | Layer | Directory | Gradle project | Package |
 |---|---|---|---|
-| core | `src/core/secure-storage` | `:secure-storage` | `org.example.core.securestorage` |
-| core | `src/core/network` | `:network` | `org.example.core.network` |
-| core | `src/core/sync-engine` | `:sync-engine` | `org.example.core.syncengine` |
-| core | `src/core/identity-api` | `:identity-api` | `org.example.core.identityapi` |
-| shared | `src/shared/design-system` | `:design-system` | `org.example.shared.designsystem` |
-| shared | `src/shared/authentication` | `:authentication` | `org.example.shared.authentication` |
-| modules | `src/modules/personal` | `:personal` | `org.example.modules.personal` |
-| modules | `src/modules/business` | `:business` | `org.example.modules.business` |
-| modules | `src/modules/organization` | `:organization` | `org.example.modules.organization` |
-| app | `src/app/application` | `:app` | `org.example.app` |
-| app | `src/app/onboarding` | `:onboarding` | `org.example.app.onboarding` |
+| core | `src/core/secure-storage` | `:secure-storage` | `soc.athara.app.core.securestorage` |
+| core | `src/core/network` | `:network` | `soc.athara.app.core.network` |
+| core | `src/core/sync-engine` | `:sync-engine` | `soc.athara.app.core.syncengine` |
+| core | `src/core/identity-api` | `:identity-api` | `soc.athara.app.core.identityapi` |
+| shared | `src/shared/design-system` | `:design-system` | `soc.athara.app.shared.designsystem` |
+| shared | `src/shared/authentication` | `:authentication` | `soc.athara.app.shared.authentication` |
+| modules | `src/modules/personal` | `:personal` | `soc.athara.app.modules.personal` |
+| modules | `src/modules/business` | `:business` | `soc.athara.app.modules.business` |
+| modules | `src/modules/organization` | `:organization` | `soc.athara.app.modules.organization` |
+| app | `src/app/application` | `:app` | `soc.athara.app.app` |
+| app | `src/app/onboarding` | `:onboarding` | `soc.athara.app.app.onboarding` |
 
 ## Dependency rule
 
@@ -38,12 +38,12 @@ changed and `MainActivity` routes again; any other result means the user left.
 
 `:personal` owns the home screen (`home/`: `HomeScreen`, `CollapsingHeaderState`, `components/`) and the screen state in `PersonalHomeScreen`.
 Personal's place models (`...personal.features.travel`) and social feed (`...personal.features.socialfeed`: UI, state, `FeedRepository`) live inside `:personal` as `internal` code. Feed data currently comes from `SampleFeedRepository`. Note: `:personal` may not depend on `:network` (see ISOLATION_AND_SHARING_GUIDELINES.md), so a backend-backed `FeedRepository` needs a decision first. Brand colours, typography and `AhtaraTheme`
-live in `:design-system` (`org.example.shared.designsystem.theme`).
+live in `:design-system` (`soc.athara.app.shared.designsystem.theme`).
 
 ## Unchanged on purpose
 
-- `applicationId` stays `org.example.test` (and `.staging`): changing it breaks installs and the Google OAuth Android client.
-- The Keystore alias `org.example.core.secure_store.v1` stays, or stored tokens become undecryptable.
+- `applicationId` is `soc.athara.app` (staging: `.staging`). Re-register the Google OAuth Android client for the new package.
+- The Keystore alias was renamed with the package; tokens stored by earlier builds will not decrypt (reinstall or sign in again).
 
 ## Known deviations from the layer descriptions
 

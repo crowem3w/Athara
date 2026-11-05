@@ -1,0 +1,13 @@
+package soc.athara.app.modules.personal.features.socialfeed.ui
+
+import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Color
+
+
+@Immutable
+internal data class FeedColors(
+    val divider: Color,
+    val heart: Color,
+    val textPrimary: Color,
+    val textSecondary: Color,
+)

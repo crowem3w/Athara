@@ -14,7 +14,7 @@ plugins {
 }
 
 android {
-    namespace = "org.example.app.onboarding"
+    namespace = "soc.athara.app.app.onboarding"
     compileSdk = 37
 
     defaultConfig {

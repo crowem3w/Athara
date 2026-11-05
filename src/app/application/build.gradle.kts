@@ -18,11 +18,11 @@ plugins {
 }
 
 android {
-    namespace = "org.example.app"
+    namespace = "soc.athara.app.app"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "org.example.test"
+        applicationId = "soc.athara.app"
         minSdk = 30
         targetSdk = 37
         versionCode = 1

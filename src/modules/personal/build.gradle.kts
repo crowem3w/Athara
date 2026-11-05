@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "org.example.modules.personal"
+    namespace = "soc.athara.app.modules.personal"
     compileSdk = 37
 
     defaultConfig {

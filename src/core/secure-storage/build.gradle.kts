@@ -11,7 +11,7 @@ plugins {
 }
 
 android {
-    namespace = "org.example.core.securestorage"
+    namespace = "soc.athara.app.core.securestorage"
     compileSdk = 37
 
     defaultConfig {

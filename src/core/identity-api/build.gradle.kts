@@ -11,7 +11,7 @@ plugins {
 }
 
 android {
-    namespace = "org.example.core.identityapi"
+    namespace = "soc.athara.app.core.identityapi"
     compileSdk = 37
 
     defaultConfig {

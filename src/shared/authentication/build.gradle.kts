@@ -15,7 +15,7 @@ plugins {
 }
 
 android {
-    namespace = "org.example.shared.authentication"
+    namespace = "soc.athara.app.shared.authentication"
     compileSdk = 37
 
     defaultConfig {

@@ -13,7 +13,7 @@ plugins {
 }
 
 android {
-    namespace = "org.example.modules.business"
+    namespace = "soc.athara.app.modules.business"
     compileSdk = 37
 
     defaultConfig {
@@ -27,6 +27,14 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
+    }
+}
+
+// Raster images live in assets/images/business (see assets/README.md).
+androidComponents {
+    val imagesDir = rootProject.file("assets/images/business").absolutePath
+    onVariants { variant ->
+        variant.sources.res?.addStaticSourceDirectory(imagesDir)
     }
 }
 

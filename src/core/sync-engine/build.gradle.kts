@@ -11,7 +11,7 @@ plugins {
 }
 
 android {
-    namespace = "org.example.core.syncengine"
+    namespace = "soc.athara.app.core.syncengine"
     compileSdk = 37
 
     defaultConfig {

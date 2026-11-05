@@ -13,7 +13,7 @@ plugins {
 }
 
 android {
-    namespace = "org.example.modules.organization"
+    namespace = "soc.athara.app.modules.organization"
     compileSdk = 37
 
     defaultConfig {
