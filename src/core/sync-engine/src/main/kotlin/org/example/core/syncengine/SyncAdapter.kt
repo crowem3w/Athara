@@ -34,6 +34,9 @@ interface SyncAdapter {
 
     
     suspend fun applyRemote(ownerId: String, records: List<RecordDto>)
+
+    /** Queue a delete of the record with [clientId]. False if it is gone or has unsynced edits (leave it alone). */
+    suspend fun requestDelete(ownerId: String, clientId: String): Boolean
 }
 
 
@@ -74,6 +77,11 @@ abstract class TableSync<E : SyncRow>(final override val resource: String) : Syn
     
     protected abstract fun markSynced(row: E): E
 
+    protected abstract fun markPendingDelete(row: E): E
+
+    /** Short name of the record for user-facing messages. */
+    protected abstract fun label(row: E): String
+
     final override suspend fun pendingMutations(ownerId: String): List<MutationDto> =
         pending(ownerId).map { row ->
             val delete = row.syncState == SyncState.PENDING_DELETE
@@ -90,13 +98,23 @@ abstract class TableSync<E : SyncRow>(final override val resource: String) : Syn
         val local = byClientId(ownerId, result.clientId) ?: return false
         val record = result.record
         return when {
-            record != null -> { applyRecord(ownerId, local, record); false }
+            record != null -> {
+                val wasPendingDelete = local.syncState == SyncState.PENDING_DELETE
+                applyRecord(ownerId, local, record)
+                // The server kept (and we restored) a record the user deleted: let them decide.
+                if (wasPendingDelete && result.status == SyncStatus.CONFLICT && !record.deleted) {
+                    SyncNotices.deleteConflict(label(local), resource, local.clientId)
+                }
+                false
+            }
             local.syncState == SyncState.PENDING_DELETE &&
                 (result.status == SyncStatus.APPLIED || result.status == SyncStatus.GONE) -> { delete(local.id); false }
             result.status == SyncStatus.GONE -> { delete(local.id); false }
             result.status == SyncStatus.REJECTED -> {
-                if (local.serverId == null) delete(local.id) else update(markSynced(local))
-                local.serverId != null 
+                val existing = local.serverId != null
+                if (existing) update(markSynced(local)) else delete(local.id)
+                SyncNotices.rejected(label(local), reverted = existing)
+                existing
             }
             else -> false 
         }
@@ -108,6 +126,13 @@ abstract class TableSync<E : SyncRow>(final override val resource: String) : Syn
             if (existing != null && existing.syncState != SyncState.SYNCED) continue
             applyRecord(ownerId, existing, record)
         }
+    }
+
+    final override suspend fun requestDelete(ownerId: String, clientId: String): Boolean {
+        val row = byClientId(ownerId, clientId) ?: return false
+        if (row.syncState != SyncState.SYNCED) return false
+        update(markPendingDelete(row))
+        return true
     }
 
     private suspend fun applyRecord(ownerId: String, existing: E?, record: RecordDto) {

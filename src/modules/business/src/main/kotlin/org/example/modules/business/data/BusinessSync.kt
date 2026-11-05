@@ -33,6 +33,8 @@ internal class CustomerSync(private val dao: BusinessDao) : TableSync<CustomerEn
         )
 
     override fun markSynced(row: CustomerEntity) = row.copy(syncState = SyncState.SYNCED)
+    override fun markPendingDelete(row: CustomerEntity) = row.copy(syncState = SyncState.PENDING_DELETE)
+    override fun label(row: CustomerEntity): String = row.name
 }
 
 internal class OrderSync(private val dao: BusinessDao) : TableSync<OrderEntity>("orders") {
@@ -63,6 +65,8 @@ internal class OrderSync(private val dao: BusinessDao) : TableSync<OrderEntity>(
         )
 
     override fun markSynced(row: OrderEntity) = row.copy(syncState = SyncState.SYNCED)
+    override fun markPendingDelete(row: OrderEntity) = row.copy(syncState = SyncState.PENDING_DELETE)
+    override fun label(row: OrderEntity): String = row.title
 }
 
 

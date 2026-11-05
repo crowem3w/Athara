@@ -39,10 +39,14 @@ internal class TokenAuthenticator(
                 retry(response, body.accessToken)
             }
             is ApiResult.Failure -> {
-                if (result.httpCode in 400..499) tokens.clear() 
+                if (result.httpCode in SESSION_ENDED) tokens.clear() // not 408/429: those are temporary, keep the session 
                 null
             }
         }
+    }
+
+    private companion object {
+        val SESSION_ENDED = setOf(400, 401, 403)
     }
 
     private fun retry(response: Response, token: String): Request =

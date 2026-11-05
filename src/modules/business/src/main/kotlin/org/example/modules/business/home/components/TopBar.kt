@@ -1,0 +1,34 @@
+package org.example.modules.business.home.components
+
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import org.example.modules.business.R
+
+/** Wordmark on the left; bookmark, notifications and the avatar on the right (same as the personal home). */
+@Composable
+internal fun TopBar(
+    modifier: Modifier = Modifier,
+    onLogoClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {},
+    userInitial: String? = null,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Wordmark(onClick = onLogoClick, onClickLabel = stringResource(R.string.business_scroll_top))
+        Spacer(modifier = Modifier.weight(1f))
+        BookmarkTab()
+        NotificationTab()
+        Spacer(modifier = Modifier.width(4.dp))
+        AvatarTab(onClick = onProfileClick, initial = userInitial)
+    }
+}

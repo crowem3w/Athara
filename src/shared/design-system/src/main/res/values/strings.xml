@@ -2,4 +2,12 @@
 <resources>
     <string name="designsystem_profile_cover">Cover photo</string>
     <string name="designsystem_profile_photo">Profile picture</string>
+    <string name="designsystem_ok">OK</string>
+    <string name="designsystem_sync_rejected_title">Change not saved</string>
+    <string name="designsystem_sync_rejected_removed">The server did not accept \"%1$s\", so it was removed from this device.</string>
+    <string name="designsystem_sync_rejected_reverted">The server did not accept your change to \"%1$s\", so it was set back to the server\'s version.</string>
+    <string name="designsystem_sync_conflict_title">Deleted here, changed elsewhere</string>
+    <string name="designsystem_sync_conflict_body">\"%1$s\" was changed on another device after you deleted it, so it was restored. Delete it anyway?</string>
+    <string name="designsystem_sync_conflict_delete">Delete anyway</string>
+    <string name="designsystem_sync_conflict_keep">Keep it</string>
 </resources>

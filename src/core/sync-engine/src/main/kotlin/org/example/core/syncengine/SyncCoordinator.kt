@@ -59,6 +59,16 @@ object SyncCoordinator {
         val work = WorkManager.getInstance(context)
         work.cancelUniqueWork(WORK_NOW)
         work.cancelUniqueWork(WORK_PERIODIC)
+        SyncNotices.clear()
+    }
+
+    /** The user's answer to a [SyncNotice.DeleteConflict]: delete the record anyway, or keep the restored one. */
+    suspend fun resolveDeleteConflict(context: Context, notice: SyncNotice.DeleteConflict, deleteAnyway: Boolean) {
+        SyncNotices.dismiss(notice.id)
+        if (!deleteAnyway) return
+        val userId = Core.tokens.userId ?: return
+        val adapter = adapters.firstOrNull { it.resource == notice.resource } ?: return
+        if (adapter.requestDelete(userId, notice.clientId)) requestSync(context)
     }
 
     

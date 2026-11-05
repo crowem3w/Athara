@@ -30,4 +30,25 @@
     <string name="business_error_amount">Enter a positive amount, e.g. 12.50</string>
     <string name="business_guest_login">Log in</string>
     <string name="business_guest_cta">Log in or sign up</string>
+    <string name="business_wordmark">Ahtara</string>
+    <string name="business_scroll_top">Back to top</string>
+    <string name="business_tab_saved">Saved</string>
+    <string name="business_tab_notifications">Notifications</string>
+    <string name="business_tab_login">Log in</string>
+    <string name="business_profile_close">Close</string>
+    <string name="business_collect_payment">Collect payment</string>
+    <string name="business_collect_hint">Tap the button below, then hold the customer\'s phone against yours, or scan their QR code.</string>
+    <string name="business_reader_title">Collect payment</string>
+    <string name="business_reader_hold">Hold the customer\'s phone against the back of this phone.</string>
+    <string name="business_reader_nfc_off">NFC is turned off. Turn it on to tap, or scan a QR code instead.</string>
+    <string name="business_reader_nfc_missing">This phone has no NFC. Scan a QR code instead.</string>
+    <string name="business_reader_open_nfc_settings">Turn on NFC</string>
+    <string name="business_reader_scan_qr">Scan QR code</string>
+    <string name="business_reader_read_ok">Payment code read</string>
+    <string name="business_reader_session">Session %1$s\u2026</string>
+    <string name="business_reader_not_connected">Charging is not connected yet. The code was read but no money moved.</string>
+    <string name="business_reader_read_another">Read another</string>
+    <string name="business_reader_invalid">That is not a valid payment code. Try again.</string>
+    <string name="business_reader_scanner_unavailable">The QR scanner is not available on this phone (it needs Google Play services).</string>
+    <string name="business_reader_try_again">Try again</string>
 </resources>

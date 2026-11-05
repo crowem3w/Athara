@@ -1,5 +1,6 @@
 package org.example.modules.organization
 
+import org.example.shared.designsystem.SyncNoticeHost
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -52,6 +53,8 @@ internal fun OrganizationHomeScreen(
     onSignOut: () -> Unit,
 ) {
     var dialog by remember { mutableStateOf<OrganizationDialog?>(null) }
+
+    SyncNoticeHost()
 
     Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.organization_home_title)) }) }) { padding ->
         LazyColumn(

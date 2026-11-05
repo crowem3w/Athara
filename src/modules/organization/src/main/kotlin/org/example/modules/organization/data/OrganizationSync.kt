@@ -36,6 +36,8 @@ internal class MemberSync(private val dao: OrganizationDao) : TableSync<MemberEn
         )
 
     override fun markSynced(row: MemberEntity) = row.copy(syncState = SyncState.SYNCED)
+    override fun markPendingDelete(row: MemberEntity) = row.copy(syncState = SyncState.PENDING_DELETE)
+    override fun label(row: MemberEntity): String = row.name
 }
 
 internal class TeamSync(private val dao: OrganizationDao) : TableSync<TeamEntity>("teams") {
@@ -58,6 +60,8 @@ internal class TeamSync(private val dao: OrganizationDao) : TableSync<TeamEntity
         )
 
     override fun markSynced(row: TeamEntity) = row.copy(syncState = SyncState.SYNCED)
+    override fun markPendingDelete(row: TeamEntity) = row.copy(syncState = SyncState.PENDING_DELETE)
+    override fun label(row: TeamEntity): String = row.name
 }
 
 internal class EventSync(private val dao: OrganizationDao) : TableSync<EventEntity>("events") {
@@ -84,6 +88,8 @@ internal class EventSync(private val dao: OrganizationDao) : TableSync<EventEnti
         )
 
     override fun markSynced(row: EventEntity) = row.copy(syncState = SyncState.SYNCED)
+    override fun markPendingDelete(row: EventEntity) = row.copy(syncState = SyncState.PENDING_DELETE)
+    override fun label(row: EventEntity): String = row.title
 }
 
 

@@ -51,14 +51,8 @@ class BusRegForm : ComponentActivity() {
                 if (user != null && setupPending) {
                     BusSetupAcc(onBack = { finishSetup(); setupPending = false }) 
                 } else if (user != null) {
-                    val state by viewModel.state.collectAsState()
                     BusinessHomeScreen(
                         user = user,
-                        state = state,
-                        onAddCustomer = viewModel::addCustomer,
-                        onAddOrder = viewModel::addOrder,
-                        onDeleteCustomer = viewModel::deleteCustomer,
-                        onDeleteOrder = viewModel::deleteOrder,
                         onSignOut = {
                             lifecycleScope.launch {
                                 Identity.signOut(this@BusRegForm)

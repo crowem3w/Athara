@@ -37,6 +37,7 @@ kotlin {
 
 dependencies {
     api(project(":identity-api"))
+    implementation(project(":sync-engine"))
     implementation(libs.androidx.core.ktx)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
