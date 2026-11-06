@@ -78,4 +78,25 @@
     <string name="personal_pay_err_network">Could not reach the server. Check your connection and try again.</string>
     <string name="personal_pay_err_rate">Too many tries. Wait a moment and try again.</string>
     <string name="personal_pay_err_other">Something went wrong. Please try again.</string>
+
+    <!-- Bluetooth payment (phones without NFC) -->
+    <string name="personal_ble_card_desc">Payment card. Hold your phone against the business\'s phone.</string>
+    <string name="personal_ble_searching">Looking for the business\'s phone\u2026 Hold your phone right next to theirs.</string>
+    <string name="personal_ble_move_closer">Move closer to the business\'s phone. Touch the phones together.</string>
+    <string name="personal_ble_connecting">Starting the payment\u2026</string>
+    <string name="personal_ble_holding">Keep the phones touching while the business confirms.</string>
+    <string name="personal_ble_holding_to">Paying %1$s. Keep the phones touching while they confirm.</string>
+    <string name="personal_ble_reduced">The business will see your request and confirm it in person.</string>
+    <string name="personal_ble_reduced_to">Paying %1$s. They will see your request and confirm it in person.</string>
+    <string name="personal_ble_unsupported">This phone has no Bluetooth Low Energy, so it cannot pay this way.</string>
+    <string name="personal_ble_off">Bluetooth is off. Turn it on to pay.</string>
+    <string name="personal_ble_needs_permission">Allow nearby devices access so your phone can find the business.</string>
+    <string name="personal_ble_location_off">Turn on location so Android lets your phone scan for the business (this phone\'s Android version needs it).</string>
+    <string name="personal_ble_allow">Allow</string>
+    <string name="personal_ble_open_settings">Bluetooth settings</string>
+    <string name="personal_ble_open_location">Location settings</string>
+    <string name="personal_pay_nobiz_title">No business found</string>
+    <string name="personal_pay_nobiz_body">Could not find the business\'s phone. Make sure they are collecting payment, then try again with the phones touching. No money was taken.</string>
+    <string name="personal_pay_err_over_limit">This amount is over the limit for Bluetooth payments. Try a smaller amount.</string>
+    <string name="personal_pay_err_daily">You have reached the daily limit for Bluetooth payments.</string>
 </resources>

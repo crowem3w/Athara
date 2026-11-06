@@ -31,6 +31,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -46,7 +47,10 @@ import soc.athara.app.modules.business.home.CollapsingHeaderState
 import soc.athara.app.modules.business.home.collapsingSection
 import soc.athara.app.modules.business.home.components.BottomNavBar
 import soc.athara.app.modules.business.home.components.TopBar
+import soc.athara.app.modules.business.reader.BleCollector
+import soc.athara.app.modules.business.reader.NfcAvailability
 import soc.athara.app.modules.business.reader.PaymentCollector
+import soc.athara.app.modules.business.reader.nfcAvailability
 import soc.athara.app.shared.designsystem.SyncNoticeHost
 
 /** The centre button is hidden once the header is half collapsed (same as the personal home). */
@@ -64,7 +68,10 @@ internal fun BusinessHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
     val layoutDirection = LocalLayoutDirection.current
     val headerState = remember { CollapsingHeaderState() }
     var bottomBarHeight by remember { mutableIntStateOf(0) }
+    val context = LocalContext.current
     var scanning by rememberSaveable { mutableStateOf(false) }
+    // Decided when scanning starts: tap with NFC where this phone has it on, otherwise collect over Bluetooth LE.
+    var bluetoothMode by rememberSaveable { mutableStateOf(false) }
     var showProfile by rememberSaveable { mutableStateOf(false) }
 
     val scrolled by remember {
@@ -82,7 +89,12 @@ internal fun BusinessHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
                     .graphicsLayer { translationY = bottomBarHeight * headerState.fraction },
             ) {
                 BottomNavBar(
-                    onReadClick = { if (user == null) onLogin() else scanning = !scanning },
+                    onReadClick = {
+                        if (user == null) onLogin() else {
+                            if (!scanning) bluetoothMode = nfcAvailability(context) != NfcAvailability.ENABLED
+                            scanning = !scanning
+                        }
+                    },
                     readerVisibility = { 1f - (headerState.fraction / ReaderButtonHideEnd).coerceIn(0f, 1f) },
                 )
             }
@@ -161,14 +173,15 @@ internal fun BusinessHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
     if (user != null) {
         val barHeight = with(LocalDensity.current) { bottomBarHeight.toDp() }
         Box(Modifier.fillMaxSize()) {
-            PaymentCollector(
-                scanning = scanning,
-                onScanningChange = { scanning = it },
-                pillModifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = barHeight + 12.dp)
-                    .graphicsLayer { translationY = bottomBarHeight * headerState.fraction },
-            )
+val pillModifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = barHeight + 12.dp)
+                .graphicsLayer { translationY = bottomBarHeight * headerState.fraction }
+            if (bluetoothMode) {
+                BleCollector(scanning = scanning, onScanningChange = { scanning = it }, pillModifier = pillModifier)
+            } else {
+                PaymentCollector(scanning = scanning, onScanningChange = { scanning = it }, pillModifier = pillModifier)
+            }
         }
     }
 

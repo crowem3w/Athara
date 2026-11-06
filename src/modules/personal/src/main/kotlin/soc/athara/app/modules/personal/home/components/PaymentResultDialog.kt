@@ -69,13 +69,17 @@ internal fun PaymentResultDialog(outcome: PayOutcome, onDone: () -> Unit) {
 private fun titleFor(outcome: PayOutcome): Int = when (outcome) {
     PayOutcome.Cancelled -> R.string.personal_pay_cancelled_title
     PayOutcome.Expired -> R.string.personal_pay_expired_title
+    PayOutcome.NoBusinessFound -> R.string.personal_pay_nobiz_title
     else -> R.string.personal_pay_failed_title
 }
 
 private fun messageFor(outcome: PayOutcome): Int = when (outcome) {
     PayOutcome.Cancelled -> R.string.personal_pay_cancelled_body
     PayOutcome.Expired -> R.string.personal_pay_expired_body
+    PayOutcome.NoBusinessFound -> R.string.personal_pay_nobiz_body
     is PayOutcome.Failed -> when (outcome.error) {
+        PaymentError.AMOUNT_OVER_LIMIT -> R.string.personal_pay_err_over_limit
+        PaymentError.DAILY_LIMIT -> R.string.personal_pay_err_daily
         PaymentError.INSUFFICIENT_FUNDS -> R.string.personal_pay_err_funds
         PaymentError.NETWORK -> R.string.personal_pay_err_network
         PaymentError.RATE_LIMITED -> R.string.personal_pay_err_rate

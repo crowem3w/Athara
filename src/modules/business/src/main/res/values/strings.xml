@@ -38,4 +38,23 @@
     <string name="business_pay_err_signin">Please sign in again.</string>
     <string name="business_pay_err_rate">Too many tries. Wait a moment and try again.</string>
     <string name="business_pay_err_other">Something went wrong. Please try again.</string>
+
+    <!-- Bluetooth collect (phones without NFC) -->
+    <string name="business_ble_ready">Ready: hold the customer\'s phone against yours</string>
+    <string name="business_ble_hint_closer">Hold the phones closer together</string>
+    <string name="business_ble_hint_several">More than one phone nearby. Ask one customer to touch phones</string>
+    <string name="business_ble_title">Bluetooth is not ready</string>
+    <string name="business_ble_unsupported">This phone has no Bluetooth Low Energy, so it cannot collect payments this way.</string>
+    <string name="business_ble_off">Bluetooth is off. Turn it on to collect payments.</string>
+    <string name="business_ble_location_off">Turn on location so Android lets this phone scan for customers (this phone\'s Android version needs it).</string>
+    <string name="business_ble_needs_permission">Allow nearby devices access so this phone can find customers.</string>
+    <string name="business_ble_open_settings">Bluetooth settings</string>
+    <string name="business_ble_open_location">Location settings</string>
+    <string name="business_ble_allow">Allow</string>
+    <string name="business_ble_err_advertise_unsupported">This phone cannot broadcast over Bluetooth, so customers cannot find it. Use a different phone to collect.</string>
+    <string name="business_ble_err_advertise">Could not start Bluetooth broadcasting. Turn Bluetooth off and on, then try again.</string>
+    <string name="business_ble_err_start">Could not start Bluetooth scanning. Turn Bluetooth off and on, then try again.</string>
+    <string name="business_ble_err_limit">This payment is over the Bluetooth limit.</string>
+    <string name="business_ble_warn_borderline">The signal was weak. Make sure the customer is standing right next to you before you accept.</string>
+    <string name="business_ble_warn_reduced">The customer\'s phone could not confirm it is nearby. Only accept if they are standing right next to you.</string>
 </resources>

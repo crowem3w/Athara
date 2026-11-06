@@ -304,6 +304,7 @@ private fun messageFor(error: PaymentError): Int = when (error) {
     PaymentError.NETWORK -> R.string.business_pay_err_network
     PaymentError.UNAUTHORIZED -> R.string.business_pay_err_signin
     PaymentError.RATE_LIMITED -> R.string.business_pay_err_rate
+    PaymentError.TOO_FAR, PaymentError.AMOUNT_OVER_LIMIT, PaymentError.DAILY_LIMIT,
     PaymentError.NOT_FOUND, PaymentError.OTHER -> R.string.business_pay_err_other
 }
 

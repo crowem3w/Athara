@@ -80,6 +80,8 @@ internal sealed interface PayOutcome {
     /** The business (or this phone, from another screen) cancelled before it completed. */
     data object Cancelled : PayOutcome
     data object Expired : PayOutcome
+    /** Bluetooth: no business beacon was found in time. */
+    data object NoBusinessFound : PayOutcome
     data class Failed(val error: PaymentError) : PayOutcome
 }
 
