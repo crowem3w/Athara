@@ -16,7 +16,7 @@ app  ->  modules  ->  shared  ->  core
 | Layer | Gradle projects | Role |
 |---|---|---|
 | core | `:secure-storage`, `:network`, `:sync-engine`, `:identity-api` | Infrastructure. No account-specific rules |
-| shared | `:design-system`, `:authentication` | Reusable across account types |
+| shared | `:design-system`, `:authentication`, `:payments` | Reusable across account types |
 | modules | `:personal`, `:business`, `:organization` | **Isolated** account features |
 | app | `:app`, `:onboarding` | Composition root and first-run flow |
 
@@ -27,10 +27,11 @@ Check this table before adding or editing any `implementation(project(...))` or 
 | Module | May depend on |
 |---|---|
 | `:app` | network, sync-engine, identity-api, onboarding, authentication, personal, business, organization |
-| `:business` | identity-api, design-system, authentication, network, sync-engine |
+| `:business` | identity-api, design-system, authentication, payments, network, sync-engine |
 | `:organization` | identity-api, design-system, authentication, network, sync-engine |
-| `:personal` | identity-api, design-system, authentication |
+| `:personal` | identity-api, design-system, authentication, payments |
 | `:authentication` | identity-api, design-system, network, secure-storage |
+| `:payments` | network |
 | `:design-system` | identity-api |
 | `:sync-engine` | network |
 | `:network` | secure-storage |
@@ -55,6 +56,7 @@ Do not add a dependency that is not in this table without asking the user.
 |---|---|---|
 | `design-system` | `AppTheme`, `AccountTypeBadge`, `ProfileHeader`, `ImageDecoding` | UI used by 2+ modules. Keep generic |
 | `authentication` | Login, sign-up, setup UI, `RemoteAuthRepository`, `AuthApi`, Google sign-in, photos | Features use only the three UI pieces in section 4 |
+| `payments` | `Payments` (tap-to-pay + wallet API client), `PaymentSession`, `PaymentResult` | Server contract only, no UI. Personal pays and Business collects, but each module keeps its own screens and flow |
 | `identity-api` | `Identity`, `AuthRepository`, `AuthUser`, `AccountType`, `PhoneVerifier` | Contracts and data classes only. No Compose UI, no network code |
 | `network` | `Core`, `apiCall`/`ApiResult`, interceptor, token refresh, `SyncApi` | No feature-specific endpoints |
 | `sync-engine` | `SyncAdapter`, `TableSync`, `SyncCoordinator`, `SyncInstaller` | Generic. Not tied to any one table |

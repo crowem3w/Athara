@@ -29,7 +29,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
@@ -44,7 +46,7 @@ import soc.athara.app.modules.business.home.CollapsingHeaderState
 import soc.athara.app.modules.business.home.collapsingSection
 import soc.athara.app.modules.business.home.components.BottomNavBar
 import soc.athara.app.modules.business.home.components.TopBar
-import soc.athara.app.modules.business.reader.PaymentReaderSheet
+import soc.athara.app.modules.business.reader.PaymentCollector
 import soc.athara.app.shared.designsystem.SyncNoticeHost
 
 /** The centre button is hidden once the header is half collapsed (same as the personal home). */
@@ -52,8 +54,8 @@ private const val ReaderButtonHideEnd = 0.5f
 
 /**
  * Business home, copied from the personal home: collapsing top bar, scrolling body, bottom bar with one centre
- * button. The feed, search bar, category filters and the four side tabs are removed; the centre button opens the
- * payment reader. The body is a placeholder until the business content is decided.
+ * button. The feed, search bar, category filters and the four side tabs are removed; the centre button starts
+ * scanning for a customer's card (no panel; see [PaymentCollector]). The body is a placeholder until the business content is decided.
  */
 @Composable
 internal fun BusinessHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin: () -> Unit) {
@@ -62,7 +64,7 @@ internal fun BusinessHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
     val layoutDirection = LocalLayoutDirection.current
     val headerState = remember { CollapsingHeaderState() }
     var bottomBarHeight by remember { mutableIntStateOf(0) }
-    var showReader by rememberSaveable { mutableStateOf(false) }
+    var scanning by rememberSaveable { mutableStateOf(false) }
     var showProfile by rememberSaveable { mutableStateOf(false) }
 
     val scrolled by remember {
@@ -80,7 +82,7 @@ internal fun BusinessHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
                     .graphicsLayer { translationY = bottomBarHeight * headerState.fraction },
             ) {
                 BottomNavBar(
-                    onReadClick = { if (user == null) onLogin() else showReader = true },
+                    onReadClick = { if (user == null) onLogin() else scanning = !scanning },
                     readerVisibility = { 1f - (headerState.fraction / ReaderButtonHideEnd).coerceIn(0f, 1f) },
                 )
             }
@@ -155,7 +157,20 @@ internal fun BusinessHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
         }
     }
 
-    if (showReader) PaymentReaderSheet(onDismiss = { showReader = false })
+    // Tap-to-collect: no panel. The pill sits just above the bottom bar and slides away with it.
+    if (user != null) {
+        val barHeight = with(LocalDensity.current) { bottomBarHeight.toDp() }
+        Box(Modifier.fillMaxSize()) {
+            PaymentCollector(
+                scanning = scanning,
+                onScanningChange = { scanning = it },
+                pillModifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = barHeight + 12.dp)
+                    .graphicsLayer { translationY = bottomBarHeight * headerState.fraction },
+            )
+        }
+    }
 
     if (showProfile && user != null) {
         AlertDialog(

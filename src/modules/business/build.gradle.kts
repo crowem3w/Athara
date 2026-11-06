@@ -53,13 +53,12 @@ dependencies {
     implementation(project(":identity-api"))
     implementation(project(":design-system"))
     implementation(project(":authentication")) 
+    implementation(project(":payments"))
     implementation(project(":network"))
     implementation(project(":sync-engine"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    // code-scanner pulls in an old androidx.fragment transitively; pin a modern one.
-    implementation(libs.androidx.fragment)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
@@ -70,6 +69,5 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
-    implementation(libs.play.services.code.scanner)
     debugImplementation(libs.androidx.ui.tooling)
 }

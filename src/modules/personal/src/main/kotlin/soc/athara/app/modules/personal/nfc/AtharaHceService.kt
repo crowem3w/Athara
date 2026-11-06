@@ -7,18 +7,19 @@ import android.os.Bundle
  * Host Card Emulation: answers a reader's SELECT for the Athara AID with the current payment token.
  * Android starts this service by itself when another phone's reader (see the Business module's `NfcTokenReader`)
  * selects [Aid]. It holds no state of its own; [PaymentTokenHost] owns the token.
+ * A read does not mean paid: the business claims the token on the server and the server completes the payment.
  */
 internal class AtharaHceService : HostApduService() {
 
     override fun processCommandApdu(commandApdu: ByteArray?, extras: Bundle?): ByteArray {
         if (commandApdu == null || !isSelectForOurAid(commandApdu)) return StatusInsNotSupported
-        // Null: no card is open, or this token was already read. Same answer either way.
-        val token = PaymentTokenHost.take() ?: return StatusConditionsNotSatisfied
+        // Null: no card is open.
+        val token = PaymentTokenHost.current() ?: return StatusConditionsNotSatisfied
         return token + StatusOk
     }
 
     override fun onDeactivated(reason: Int) {
-        // Nothing to clean up: the token is single-use and expires on its own.
+        // Nothing to clean up: the server expires the nonce on its own.
     }
 
     private fun isSelectForOurAid(apdu: ByteArray): Boolean {

@@ -12,6 +12,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -36,8 +37,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,52 +53,116 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import soc.athara.app.modules.personal.R
+import soc.athara.app.modules.personal.nfc.PaymentToken
 import soc.athara.app.modules.personal.nfc.PaymentTokenHost
 import soc.athara.app.modules.personal.nfc.TokenLifetimeSeconds
+import soc.athara.app.shared.payments.PaymentError
+import soc.athara.app.shared.payments.PaymentResult
+import soc.athara.app.shared.payments.PaymentStatus
+import soc.athara.app.shared.payments.Payments
 
 /** Width / height of `personal_nfc_card` (941 x 1672), so the card keeps its portrait shape on any screen. */
 private const val CardAspect = 941f / 1672f
 
 private val CardShape = RoundedCornerShape(28.dp)
 
+private const val PollMillis = 1_000L
+
+/** How a payment ended. The home screen shows the matching dialog. */
+internal sealed interface PayOutcome {
+    data class Completed(val amountMinor: Long) : PayOutcome
+    /** The business (or this phone, from another screen) cancelled before it completed. */
+    data object Cancelled : PayOutcome
+    data object Expired : PayOutcome
+    data class Failed(val error: PaymentError) : PayOutcome
+}
+
 /**
- * The receiver's digital card, shown over the (blurred) home screen after Confirm.
+ * The payer's digital card, shown over the (blurred) home screen after Pay.
  *
- * While it is open the phone serves a payment token over NFC ([PaymentTokenHost]). The line under the card
- * shrinks over [TokenLifetimeSeconds] seconds, then the token is replaced and the line resets, so a token
- * that is read or photographed becomes useless quickly. When a reader receives the token, the phone gives a
- * confirm haptic and [onScanned] runs. [onClose] runs from the X button or the back gesture.
+ * Opening it asks the server for a payment session for [amountMinor]. While it is open the phone serves
+ * the session's token over NFC ([PaymentTokenHost]). The line under the card shrinks over [TokenLifetimeSeconds]
+ * seconds, then the server replaces the nonce and the line resets, so a token that is read or photographed
+ * becomes useless quickly. When a business claims the token the line is replaced by a waiting note; the
+ * business then accepts (the server moves the money) or cancels.
+ * The card polls the server; on a final status it reports a [PayOutcome] (with a confirm haptic when completed).
+ * Closing the card early (X or back) cancels the session. Only the server moves money.
  */
 @Composable
-internal fun NfcCard(onClose: () -> Unit, onScanned: () -> Unit) {
+internal fun NfcCard(amountMinor: Long, onClose: () -> Unit, onOutcome: (PayOutcome) -> Unit) {
     val view = LocalView.current
     val context = LocalContext.current
-    val latestOnScanned by rememberUpdatedState(onScanned)
+    val latestOutcome by rememberUpdatedState(onOutcome)
 
     BackHandler(onBack = onClose)
+    DisposableEffect(Unit) { onDispose { PaymentTokenHost.clear() } }
 
-    // Serve a token only while the card is on screen.
-    DisposableEffect(Unit) {
-        PaymentTokenHost.start()
-        onDispose { PaymentTokenHost.stop() }
-    }
-
-    // Shrinking line; when it runs out, rotate the token and start again.
+    var ready by remember { mutableStateOf(false) }
+    var claimed by remember { mutableStateOf(false) }
     val progress = remember { Animatable(1f) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            progress.snapTo(1f)
-            progress.animateTo(0f, tween(durationMillis = TokenLifetimeSeconds * 1000, easing = LinearEasing))
-            PaymentTokenHost.rotate()
-        }
-    }
 
-    // A reader got the token: confirm haptic, then tell the screen.
     LaunchedEffect(Unit) {
-        PaymentTokenHost.delivered.collect {
-            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-            latestOnScanned()
+        val created = Payments.createSession(amountMinor)
+        if (created is PaymentResult.Failed) {
+            latestOutcome(PayOutcome.Failed(created.error))
+            return@LaunchedEffect
+        }
+        val session = (created as PaymentResult.Ok).value
+        val sessionId = session.sessionId
+        var finished = false
+        try {
+            PaymentTokenHost.set(PaymentToken(sessionId, session.nonce.orEmpty()))
+            ready = true
+            coroutineScope {
+                // Replace the nonce every TokenLifetimeSeconds; the line shows the time left.
+                val rotation = launch {
+                    while (true) {
+                        progress.snapTo(1f)
+                        progress.animateTo(0f, tween(durationMillis = TokenLifetimeSeconds * 1000, easing = LinearEasing))
+                        when (val r = Payments.rotate(sessionId)) {
+                            is PaymentResult.Ok -> r.value.nonce?.let { PaymentTokenHost.set(PaymentToken(sessionId, it)) }
+                            is PaymentResult.Failed ->
+                                // Not open any more: the poller below reports why. Anything else: try again next round.
+                                if (r.error == PaymentError.SESSION_NOT_OPEN || r.error == PaymentError.NOT_FOUND) return@launch
+                        }
+                    }
+                }
+                // Ask the server what happened to the payment.
+                launch {
+                    while (true) {
+                        delay(PollMillis)
+                        val r = Payments.status(sessionId) as? PaymentResult.Ok ?: continue
+                        when (r.value.status) {
+                            PaymentStatus.CLAIMED -> if (!claimed) {
+                                claimed = true
+                                rotation.cancel()
+                            }
+                            PaymentStatus.COMPLETED -> {
+                                finished = true
+                                view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                latestOutcome(PayOutcome.Completed(r.value.amountMinor))
+                            }
+                            PaymentStatus.CANCELLED -> { finished = true; latestOutcome(PayOutcome.Cancelled) }
+                            PaymentStatus.EXPIRED -> { finished = true; latestOutcome(PayOutcome.Expired) }
+                            PaymentStatus.CREATED -> Unit
+                        }
+                        if (finished) {
+                            rotation.cancel()
+                            return@launch
+                        }
+                    }
+                }
+            }
+        } finally {
+            PaymentTokenHost.clear()
+            // Left the card before it finished (X, back, rotation): cancel so the request cannot be claimed later.
+            if (!finished) withContext(NonCancellable) { Payments.cancel(sessionId) }
         }
     }
 
@@ -111,14 +178,14 @@ internal fun NfcCard(onClose: () -> Unit, onScanned: () -> Unit) {
         contentAlignment = Alignment.Center,
     ) {
         BoxWithConstraints(modifier = Modifier.fillMaxSize().safeDrawingPadding().padding(24.dp)) {
-            // Leave room under the card for the timer line and the NFC notice.
+            // Leave room under the card for the timer line and the notices.
             val reserved = 72.dp
             val cardWidth = minOf(maxWidth * 0.86f, (maxHeight - reserved) * CardAspect)
 
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+                verticalArrangement = Arrangement.Center,
             ) {
                 Box(modifier = Modifier.width(cardWidth)) {
                     Image(
@@ -153,19 +220,32 @@ internal fun NfcCard(onClose: () -> Unit, onScanned: () -> Unit) {
                 Spacer(Modifier.height(16.dp))
 
                 // Token timer: a straight line, as wide as the card, that shortens to nothing.
+                // Hidden until the server has made the payment, and once a business has claimed it.
                 Box(
                     modifier = Modifier
                         .width(cardWidth)
                         .height(4.dp)
                         .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.25f)),
+                        .background(if (ready && !claimed) Color.White.copy(alpha = 0.25f) else Color.Transparent),
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .width(cardWidth * progress.value)
-                            .clip(CircleShape)
-                            .background(Color.White),
+                    if (ready && !claimed) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .width(cardWidth * progress.value)
+                                .clip(CircleShape)
+                                .background(Color.White),
+                        )
+                    }
+                }
+
+                if (claimed) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = stringResource(R.string.personal_card_waiting),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
                     )
                 }
 

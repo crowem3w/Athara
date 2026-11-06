@@ -19,8 +19,6 @@
     <!-- Receive payment -->
     <string name="personal_receive_amount_label">Amount</string>
     <string name="personal_receive_cancel">Cancel</string>
-    <string name="personal_receive_paid_title">Payment received</string>
-    <string name="personal_receive_paid_body">Added to your balance.</string>
     <string name="personal_receive_done">Done</string>
 
     <!-- Fake balance (test money) -->
@@ -66,4 +64,18 @@
     <string name="personal_card_nfc_missing">This phone has no NFC.</string>
     <string name="personal_card_nfc_settings">NFC settings</string>
     <string name="personal_hce_description">Athara tap to pay</string>
+    <string name="personal_create_hint_funds">Not enough balance for this amount.</string>
+    <string name="personal_card_waiting">Waiting for the merchant to accept\u2026</string>
+    <!-- Payment result dialogs -->
+    <string name="personal_pay_complete_title">Payment complete</string>
+    <string name="personal_pay_complete_body">Paid from your balance.</string>
+    <string name="personal_pay_cancelled_title">Payment cancelled</string>
+    <string name="personal_pay_cancelled_body">This payment was cancelled. No money was taken.</string>
+    <string name="personal_pay_expired_title">Request expired</string>
+    <string name="personal_pay_expired_body">Nobody accepted the payment in time. No money was taken. Start again to pay.</string>
+    <string name="personal_pay_failed_title">Payment not started</string>
+    <string name="personal_pay_err_funds">You do not have enough balance for this amount.</string>
+    <string name="personal_pay_err_network">Could not reach the server. Check your connection and try again.</string>
+    <string name="personal_pay_err_rate">Too many tries. Wait a moment and try again.</string>
+    <string name="personal_pay_err_other">Something went wrong. Please try again.</string>
 </resources>

@@ -77,7 +77,7 @@ private val SheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
  * Bottom sheet opened by the centre button (replaces the old receive dialog).
  *
  * Top to bottom: currency picker, amount input, balance, operator row, 0-9 keypad, Pay.
- * Pay works for Philippine peso with an amount above zero: it closes the sheet and calls [onPay]
+ * Pay works for Philippine peso with an amount above zero that the balance covers: it closes the sheet and calls [onPay]
  * with the amount in minor units (the caller opens the NFC card).
  *
  * TODO: balances are one fake PHP balance; other currencies show 0.00 until the ledger supports them.
@@ -140,10 +140,16 @@ internal fun CreateSheet(balanceMinor: Long, onDismiss: () -> Unit, onPay: (Long
 
             val amountMinor = AmountCalculator.toMinor(input)
             val isPhp = currency.code == PhilippinePeso.code
-            val canPay = isPhp && amountMinor > 0
-            if (!isPhp) {
+            val enough = amountMinor <= balanceMinor
+            val canPay = isPhp && amountMinor > 0 && enough
+            val hint = when {
+                !isPhp -> R.string.personal_create_hint_php_only
+                amountMinor > 0 && !enough -> R.string.personal_create_hint_funds
+                else -> null
+            }
+            if (hint != null) {
                 Text(
-                    text = stringResource(R.string.personal_create_hint_php_only),
+                    text = stringResource(hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = TextSecondary,
                     textAlign = TextAlign.Center,

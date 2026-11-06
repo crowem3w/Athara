@@ -1,8 +1,8 @@
 package soc.athara.app.modules.personal.wallet
 
 /**
- * A currency the Send / Receive sheet can show. UI only for now: balances are still the single
- * fake PHP balance (see [FakeBalanceStore]); other currencies show 0.00 until the ledger is multi-currency.
+ * A currency the Pay sheet can show. UI only for now: there is still a single
+ * PHP wallet on the server; other currencies show 0.00 until the ledger is multi-currency.
  */
 internal data class Currency(val code: String, val symbol: String, val name: String)
 

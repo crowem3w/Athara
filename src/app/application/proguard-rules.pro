@@ -9,6 +9,9 @@
 -keepclassmembers class soc.athara.app.shared.authentication.data.** { *** Companion; }
 -keepclasseswithmembers class soc.athara.app.shared.authentication.data.** { kotlinx.serialization.KSerializer serializer(...); }
 -keep,includedescriptorclasses class soc.athara.app.shared.authentication.data.**$$serializer { *; }
+-keepclassmembers class soc.athara.app.shared.payments.data.** { *** Companion; }
+-keepclasseswithmembers class soc.athara.app.shared.payments.data.** { kotlinx.serialization.KSerializer serializer(...); }
+-keep,includedescriptorclasses class soc.athara.app.shared.payments.data.**$$serializer { *; }
 -keepclassmembers class soc.athara.app.core.securestorage.** { *** Companion; }
 -keepclasseswithmembers class soc.athara.app.core.securestorage.** { kotlinx.serialization.KSerializer serializer(...); }
 -keep,includedescriptorclasses class soc.athara.app.core.securestorage.**$$serializer { *; }
@@ -20,6 +23,7 @@
 -keep interface soc.athara.app.core.network.SyncApi { *; }
 -keep interface soc.athara.app.core.network.TokenRefreshApi { *; }
 -keep interface soc.athara.app.shared.authentication.data.AuthApi { *; }
+-keep interface soc.athara.app.shared.payments.data.PaymentsApi { *; }
 -dontwarn retrofit2.**
 -dontwarn okhttp3.**
 -dontwarn okio.**

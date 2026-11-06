@@ -11,12 +11,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import soc.athara.app.modules.personal.features.travel.model.PlaceCategory
 import soc.athara.app.modules.personal.features.travel.model.ServiceArea
@@ -24,11 +25,14 @@ import soc.athara.app.core.identityapi.AuthUser
 import soc.athara.app.modules.personal.home.HomeScreen
 import soc.athara.app.modules.personal.home.components.CreateSheet
 import soc.athara.app.modules.personal.home.components.NfcCard
-import soc.athara.app.modules.personal.home.components.PaymentReceivedDialog
-import soc.athara.app.modules.personal.wallet.FakeBalanceStore
+import soc.athara.app.modules.personal.home.components.PayOutcome
+import soc.athara.app.modules.personal.home.components.PaymentResultDialog
 import soc.athara.app.modules.personal.wallet.SetBalanceDialog
 import soc.athara.app.modules.personal.wallet.formatMoney
+import kotlinx.coroutines.launch
 import soc.athara.app.shared.designsystem.theme.AtharaTheme
+import soc.athara.app.shared.payments.PaymentResult
+import soc.athara.app.shared.payments.Payments
 
 private val CategorySaver = listSaver<Set<PlaceCategory>, String>(
     save = { selected -> selected.map { it.name } },
@@ -36,7 +40,7 @@ private val CategorySaver = listSaver<Set<PlaceCategory>, String>(
 )
 
 /**
- * Entry point of the Personal home. Owns the screen-level state (category filter, profile sheet, Send/Receive sheet, NFC card);
+ * Entry point of the Personal home. Owns the screen-level state (category filter, profile sheet, Pay sheet, NFC card);
  * layout and feed behaviour live in [HomeScreen].
  */
 @Composable
@@ -47,15 +51,16 @@ internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
     var showSetBalance by rememberSaveable { mutableStateOf(false) }
     // > 0 while the NFC card is open (the amount being requested, in minor units).
     var cardMinor by rememberSaveable { mutableStateOf(0L) }
-    // > 0 while the "payment received" dialog is showing.
-    var receivedMinor by rememberSaveable { mutableStateOf(0L) }
+    // How the last payment ended; the matching dialog shows until the user taps Done.
+    var outcome by remember { mutableStateOf<PayOutcome?>(null) }
 
-    // Fake test balance (minor units), kept on this device until the server ledger exists.
-    val context = LocalContext.current
-    val balanceStore = remember { FakeBalanceStore(context) }
-    var balanceMinor by remember(user?.id) {
-        mutableStateOf(user?.let { balanceStore.get(it.id) } ?: 0L)
+    // The balance lives on the server (minor units). This is the last value we fetched.
+    val scope = rememberCoroutineScope()
+    var balanceMinor by remember(user?.id) { mutableStateOf(0L) }
+    val refreshBalance: suspend () -> Unit = {
+        if (user != null) (Payments.wallet() as? PaymentResult.Ok)?.let { balanceMinor = it.value.balanceMinor }
     }
+    LaunchedEffect(user?.id) { refreshBalance() }
 
     AtharaTheme {
         // Blur the home screen while the card is open (no-op below Android 12; the dim layer still applies).
@@ -73,8 +78,13 @@ internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
                     userInitial = user?.let { it.displayName.trim().firstOrNull()?.uppercase() ?: "?" },
                     // Guest: the avatar opens login / sign-up. Signed in: it opens the profile dialog.
                     onProfileClick = { if (user == null) onLogin() else showProfile = true },
-                    // Centre button = Send / Receive sheet. Guests have no account to pay from or into, so it sends them to login.
-                    onCreateClick = { if (user == null) onLogin() else showCreate = true },
+                    // Centre button = Pay sheet. Guests have no account to pay from, so it sends them to login.
+                    onCreateClick = {
+                        if (user == null) onLogin() else {
+                            showCreate = true
+                            scope.launch { refreshBalance() }
+                        }
+                    },
                     // Guests can browse; likes and saves need an account and are ignored until they log in.
                     onRequireAccount = { user != null },
                 )
@@ -82,14 +92,13 @@ internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
 
             if (cardMinor > 0 && user != null) {
                 NfcCard(
+                    amountMinor = cardMinor,
                     onClose = { cardMinor = 0L },
-                    onScanned = {
-                        // Test only: credit the fake balance. The server ledger will own this later.
-                        val updated = balanceMinor + cardMinor
-                        balanceStore.set(user.id, updated)
-                        balanceMinor = updated
-                        receivedMinor = cardMinor
+                    onOutcome = { result ->
                         cardMinor = 0L
+                        outcome = result
+                        // The server moved the money (or did not): show its balance, not our guess.
+                        scope.launch { refreshBalance() }
                     },
                 )
             }
@@ -107,9 +116,7 @@ internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
             )
         }
 
-        if (receivedMinor > 0) {
-            PaymentReceivedDialog(amountMinor = receivedMinor, onDone = { receivedMinor = 0L })
-        }
+        outcome?.let { PaymentResultDialog(outcome = it, onDone = { outcome = null }) }
 
         if (showProfile && user != null) {
             AlertDialog(
@@ -141,9 +148,14 @@ internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
             SetBalanceDialog(
                 currentMinor = balanceMinor,
                 onSave = { minor ->
-                    balanceStore.set(user.id, minor)
-                    balanceMinor = minor
                     showSetBalance = false
+                    // Test money: the server only allows this while TEST_BALANCE_ENABLED is on.
+                    scope.launch {
+                        when (val r = Payments.setTestBalance(minor)) {
+                            is PaymentResult.Ok -> balanceMinor = r.value.balanceMinor
+                            is PaymentResult.Failed -> outcome = PayOutcome.Failed(r.error)
+                        }
+                    }
                 },
                 onDismiss = { showSetBalance = false },
             )
