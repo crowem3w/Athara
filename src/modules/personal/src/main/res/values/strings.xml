@@ -5,7 +5,6 @@
     <string name="personal_refresh_feed">Refresh feed</string>
     <string name="personal_search_hint">Search destinations, people, or topics...</string>
     <string name="personal_filter_all">All</string>
-    <string name="personal_receive">Receive payment</string>
     <string name="personal_tab_home">Home</string>
     <string name="personal_tab_transport">Transport</string>
     <string name="personal_tab_messages">Messages</string>
@@ -18,18 +17,8 @@
     <string name="personal_action_sign_out">Sign out</string>
 
     <!-- Receive payment -->
-    <string name="personal_receive_title">Receive payment</string>
     <string name="personal_receive_amount_label">Amount</string>
-    <string name="personal_receive_note_label">Note (optional)</string>
-    <string name="personal_receive_request">Request</string>
     <string name="personal_receive_cancel">Cancel</string>
-    <string name="personal_receive_ready_title">Ready to receive</string>
-    <string name="personal_receive_hold">Hold your phone against the other phone to get paid.</string>
-    <string name="personal_receive_expires">Expires in %1$s</string>
-    <string name="personal_receive_expired">This request has expired.</string>
-    <string name="personal_receive_new">New request</string>
-    <string name="personal_receive_cancel_request">Cancel request</string>
-    <string name="personal_receive_simulate">Simulate payment</string>
     <string name="personal_receive_paid_title">Payment received</string>
     <string name="personal_receive_paid_body">Added to your balance.</string>
     <string name="personal_receive_done">Done</string>
@@ -58,4 +47,23 @@
     <string name="socialfeed_empty_no_place">Add a place to see posts here.</string>
     <string name="socialfeed_empty_filtered">No posts in the selected categories yet. Pick other categories or select All.</string>
     <string name="socialfeed_empty">Nothing here yet.</string>
+    <!-- Pay sheet (centre button) -->
+    <string name="personal_create_currency_desc">Currency: %1$s. Tap to change.</string>
+    <string name="personal_create_balance_desc">Balance %1$s</string>
+    <string name="personal_create_key_plus">Plus</string>
+    <string name="personal_create_key_minus">Minus</string>
+    <string name="personal_create_key_times">Multiply</string>
+    <string name="personal_create_key_divide">Divide</string>
+    <string name="personal_create_key_equals">Equals</string>
+    <string name="personal_create_key_delete">Delete</string>
+    <string name="personal_create_pay">Pay</string>
+    <string name="personal_pay">Pay</string>
+    <string name="personal_create_hint_php_only">Only Philippine peso can be received for now.</string>
+    <!-- NFC card -->
+    <string name="personal_card_desc">Athara payment card. Hold your phone against the payer\'s phone.</string>
+    <string name="personal_card_close">Close card</string>
+    <string name="personal_card_nfc_off">NFC is off. Turn it on to receive.</string>
+    <string name="personal_card_nfc_missing">This phone has no NFC.</string>
+    <string name="personal_card_nfc_settings">NFC settings</string>
+    <string name="personal_hce_description">Athara tap to pay</string>
 </resources>

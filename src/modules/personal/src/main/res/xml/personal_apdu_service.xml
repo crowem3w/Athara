@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AID = F0 + "ATHARA" (ASCII 41 48 54 41 52 41). Keep in sync with AtharaHceService and the Business NfcProtocol. -->
+<host-apdu-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/personal_hce_description"
+    android:requireDeviceUnlock="false">
+    <aid-group
+        android:category="other"
+        android:description="@string/personal_hce_description">
+        <aid-filter android:name="F0414854415241" />
+    </aid-group>
+</host-apdu-service>
