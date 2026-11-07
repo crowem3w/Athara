@@ -1,15 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -41,7 +29,7 @@ android {
             
             
             
-            val apiBaseUrl = (project.findProperty("apiBaseUrl") as String?) ?: "http://127.0.0.1:8080/"
+            val apiBaseUrl = (project.findProperty("apiBaseUrl") as String?) ?: "http://10.72.170.220:8080/"
             buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
             buildConfigField("boolean", "ALLOW_CLEARTEXT", "true")
         }
