@@ -3,7 +3,7 @@ package soc.athara.app.modules.personal.features.socialfeed.model
 import androidx.compose.ui.graphics.Color
 import soc.athara.app.modules.personal.features.travel.model.PlaceCategory
 
-/** One post in the home feed. Presentation-ready: counts and times are already formatted. */
+
 internal data class FeedPost(
     val id: String,
     val authorName: String,
@@ -17,7 +17,7 @@ internal data class FeedPost(
     val commentCount: String,
     val isSaved: Boolean = false,
     val isLiked: Boolean = false,
-    /** Shown under the image for article/news style posts. */
+    
     val sourceLabel: String? = null,
     val sourceUrl: String? = null,
     val articleTitle: String? = null,

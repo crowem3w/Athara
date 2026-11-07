@@ -5,14 +5,14 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 
-/**
- * Login / sign-up. [AccountType] is the type already chosen on the account type screen (null = ask in the flow);
- * with it, "Sign up" goes straight to that type's registration form. Result: true once signed in.
- *
- * Lives in identity-api so features can launch authentication without depending on `:authentication`.
- * The activity is reached by class name; its extra key and class name must match
- * `AuthenticationActivity` in `:authentication`.
- */
+
+
+
+
+
+
+
+
 class AuthenticationContract : ActivityResultContract<AccountType?, Boolean>() {
     override fun createIntent(context: Context, input: AccountType?): Intent =
         Intent()

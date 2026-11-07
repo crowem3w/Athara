@@ -14,7 +14,7 @@ class RssiTrackerTest {
     @Test
     fun medianIgnoresOneWildReading() {
         val t = RssiTracker()
-        t.feed("a", -50, -52, -20, -51, -49) // one spike to -20
+        t.feed("a", -50, -52, -20, -51, -49) 
         val r = t.readings(nowMs = 400).single()
         assertEquals(-50, r.medianDbm)
         assertEquals(5, r.samples)
@@ -28,8 +28,8 @@ class RssiTrackerTest {
     @Test
     fun oldReadingsFallOutOfTheWindow() {
         val t = RssiTracker(windowMs = 1_000)
-        t.feed("a", -50, -50, -50, -50) // readings at t = 0, 100, 200, 300
-        // At t = 1200 the window starts at 200: the readings at 0 and 100 are gone, 200 and 300 stay.
+        t.feed("a", -50, -50, -50, -50) 
+        
         assertEquals(2, t.readings(nowMs = 1_200).single().samples)
         assertTrue(t.readings(nowMs = 5_000).isEmpty())
     }

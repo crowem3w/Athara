@@ -62,7 +62,7 @@ object SyncCoordinator {
         SyncNotices.clear()
     }
 
-    /** The user's answer to a [SyncNotice.DeleteConflict]: delete the record anyway, or keep the restored one. */
+    
     suspend fun resolveDeleteConflict(context: Context, notice: SyncNotice.DeleteConflict, deleteAnyway: Boolean) {
         SyncNotices.dismiss(notice.id)
         if (!deleteAnyway) return

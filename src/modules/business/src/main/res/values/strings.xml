@@ -14,7 +14,6 @@
     <string name="business_profile_close">Close</string>
     <string name="business_collect_payment">Collect payment</string>
     <string name="business_collect_hint">Tap the button below, then hold the customer\'s phone against the back of yours. You will see the amount and can accept or cancel.</string>
-    <!-- Tap-to-collect -->
     <string name="business_pay_stop">Stop scanning</string>
     <string name="business_pay_checking">Checking payment\u2026</string>
     <string name="business_pay_request_title">Payment request</string>
@@ -33,7 +32,6 @@
     <string name="business_pay_err_rate">Too many tries. Wait a moment and try again.</string>
     <string name="business_pay_err_other">Something went wrong. Please try again.</string>
 
-    <!-- Bluetooth collect -->
     <string name="business_ble_ready">Ready: hold the customer\'s phone against yours</string>
     <string name="business_ble_hint_closer">Hold the phones closer together</string>
     <string name="business_ble_hint_several">More than one phone nearby. Ask one customer to touch phones</string>

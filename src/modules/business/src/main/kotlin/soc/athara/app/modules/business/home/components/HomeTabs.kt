@@ -28,7 +28,7 @@ import soc.athara.app.shared.designsystem.theme.Teal
 import soc.athara.app.shared.designsystem.theme.TealLight
 import soc.athara.app.shared.designsystem.theme.TextPrimary
 
-/** Raised centre button. [visibility] (0..1) fades and shrinks it as the header collapses. */
+
 @Composable
 internal fun ReaderTab(
     onClick: () -> Unit,

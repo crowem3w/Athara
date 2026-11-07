@@ -116,8 +116,8 @@ internal class AuthViewModel(
         )
     }
 
-    // Real-time validation: errors appear shortly after the user pauses typing (sign-up only), never while the field
-    // is blank. Availability checks run after the format passes and are ignored if the user kept typing.
+    
+    
     private val liveJobs = mutableMapOf<String, Job>()
 
     private fun live(key: String, block: suspend () -> Unit) {
@@ -475,7 +475,7 @@ internal class AuthViewModel(
             industryErr == null && phoneErr == null
     }
 
-    /** Maps the server's per-field codes (INVALID_REQUEST.fieldErrors) onto the matching inputs. */
+    
     private fun fromServer(s: AuthUiState, codes: Map<String, String>): AuthUiState {
         fun res(@Suppress("UNUSED_PARAMETER") field: String, code: String?, invalid: Int, required: Int): Int? = if (code == null) null else when (code) {
             "REQUIRED" -> required

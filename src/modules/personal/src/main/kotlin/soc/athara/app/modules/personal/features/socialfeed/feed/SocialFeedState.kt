@@ -16,7 +16,7 @@ import soc.athara.app.modules.personal.features.socialfeed.data.formatCount
 import soc.athara.app.modules.personal.features.socialfeed.model.FeedPost
 import soc.athara.app.modules.personal.features.travel.model.PlaceSelection
 
-/** Feed shown on Home, loaded around the user's main place. */
+
 @Stable
 internal class SocialFeedState internal constructor(
     private val repository: FeedRepository,
@@ -34,7 +34,7 @@ internal class SocialFeedState internal constructor(
     private var nextCursor: String? = null
     private var area: PlaceSelection? = null
 
-    /** Loads the first page for the first of [places]. [force] reloads even if that place is already shown. */
+    
     suspend fun load(places: List<PlaceSelection>, force: Boolean) {
         val place = places.firstOrNull()
         if (place == null) {
@@ -49,7 +49,7 @@ internal class SocialFeedState internal constructor(
             area = place
             notice = null
         } catch (e: FeedException) {
-            // Keep whatever is already on screen; just say why it didn't refresh.
+            
             notice = e.message
         }
     }
@@ -71,7 +71,7 @@ internal class SocialFeedState internal constructor(
         }
     }
 
-    /** Optimistic like toggle; [requireAccount] must return true (signed in) or the toggle is skipped. */
+    
     fun toggleLike(post: FeedPost, requireAccount: () -> Boolean) {
         if (!requireAccount()) return
         val want = !post.isLiked

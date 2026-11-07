@@ -9,21 +9,21 @@ import android.location.LocationManager
 import android.os.Build
 import androidx.core.content.ContextCompat
 
-/** Can this phone do Bluetooth proximity payments right now, and if not, what is the person asked to fix? */
+
 enum class BleState {
-    /** No Bluetooth LE hardware. */
+    
     UNSUPPORTED,
-    /** Bluetooth is switched off. */
+    
     OFF,
-    /** Runtime permission(s) not granted yet: ask for [BlePermissions.required]. */
+    
     NEEDS_PERMISSION,
-    /** Android 11 and older only turn BLE scanning on when location is on. */
+    
     LOCATION_OFF,
     READY,
 }
 
 object BlePermissions {
-    /** Runtime permissions to request. Android 12+: scan, advertise, connect. Android 11: location (needed for scanning). */
+    
     fun required(): Array<String> =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_ADVERTISE, Manifest.permission.BLUETOOTH_CONNECT)

@@ -20,13 +20,13 @@ object Validators {
 
     private val MARKUP = Regex("<[A-Za-z/!?]")
 
-    /** Mirrors the server's sanitizer: drops control and invisible characters and collapses whitespace. */
+    
     fun sanitize(value: String): String =
         value.replace(Regex("\\s+"), " ")
             .filterNot { it.isISOControl() || it in '\u200B'..'\u200F' || it in '\u202A'..'\u202E' || it == '\uFEFF' }
             .trim()
 
-    /** Shared rule for free text: required, no markup (rejected, as on the server), length-capped. */
+    
     fun text(value: String, max: Int = MAX_TEXT): Problem? {
         val v = sanitize(value)
         return when {

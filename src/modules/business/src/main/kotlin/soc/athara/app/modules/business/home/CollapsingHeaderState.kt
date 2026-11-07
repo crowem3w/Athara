@@ -15,10 +15,10 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Constraints
 import kotlin.math.roundToInt
 
-/**
- * Copy of the personal home's collapsing header, reduced to the one section the business home keeps (the top bar).
- * Scrolling the body hides the top bar; [fraction] (0 = shown, 1 = hidden) also slides the bottom bar away.
- */
+
+
+
+
 @Stable
 internal class CollapsingHeaderState {
     var offset by mutableFloatStateOf(0f)
@@ -36,7 +36,7 @@ internal class CollapsingHeaderState {
 
     internal fun hidden(): Float = offset.coerceIn(0f, topBarHeight.toFloat())
 
-    /** Returns how much of [dy] was used. */
+    
     internal fun scrollBy(dy: Float): Float {
         val old = offset
         offset = (old - dy).coerceIn(0f, maxOffset)
@@ -53,7 +53,7 @@ internal class CollapsingHeaderState {
     }
 }
 
-/** Measures the content at full height, reports it, and lays it out shrunk and faded by the hidden amount. */
+
 internal fun Modifier.collapsingSection(state: CollapsingHeaderState): Modifier =
     this
         .clipToBounds()

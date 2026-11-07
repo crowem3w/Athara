@@ -35,7 +35,7 @@ interface SyncAdapter {
     
     suspend fun applyRemote(ownerId: String, records: List<RecordDto>)
 
-    /** Queue a delete of the record with [clientId]. False if it is gone or has unsynced edits (leave it alone). */
+    
     suspend fun requestDelete(ownerId: String, clientId: String): Boolean
 }
 
@@ -79,7 +79,7 @@ abstract class TableSync<E : SyncRow>(final override val resource: String) : Syn
 
     protected abstract fun markPendingDelete(row: E): E
 
-    /** Short name of the record for user-facing messages. */
+    
     protected abstract fun label(row: E): String
 
     final override suspend fun pendingMutations(ownerId: String): List<MutationDto> =
@@ -101,7 +101,7 @@ abstract class TableSync<E : SyncRow>(final override val resource: String) : Syn
             record != null -> {
                 val wasPendingDelete = local.syncState == SyncState.PENDING_DELETE
                 applyRecord(ownerId, local, record)
-                // The server kept (and we restored) a record the user deleted: let them decide.
+                
                 if (wasPendingDelete && result.status == SyncStatus.CONFLICT && !record.deleted) {
                     SyncNotices.deleteConflict(label(local), resource, local.clientId)
                 }

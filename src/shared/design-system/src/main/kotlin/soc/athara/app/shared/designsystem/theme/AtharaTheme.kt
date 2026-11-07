@@ -21,10 +21,10 @@ private val AtharaColorScheme = lightColorScheme(
     error = Badge,
 )
 
-/**
- * Brand theme for the social/travel surfaces (home feed). Account-colour theming for
- * sign-up and setup screens stays in [soc.athara.app.shared.designsystem.AppTheme].
- */
+
+
+
+
 @Composable
 fun AtharaTheme(content: @Composable () -> Unit) {
     MaterialTheme(colorScheme = AtharaColorScheme, typography = AtharaTypography, content = content)

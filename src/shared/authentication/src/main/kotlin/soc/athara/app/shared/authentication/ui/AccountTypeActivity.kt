@@ -16,10 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import soc.athara.app.shared.designsystem.AppTheme
 
-/**
- * Account type selection, shown after onboarding and before the guest Home.
- * Finishes with RESULT_OK and [EXTRA_ACCOUNT_TYPE] set, or RESULT_CANCELED when the user backs out.
- */
+
+
+
+
 class AccountTypeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

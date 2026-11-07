@@ -27,24 +27,24 @@ import soc.athara.app.shared.designsystem.theme.Background
 
 private val FabSize = 64.dp
 
-// Same geometry as the personal home bar: the button rises above the bar and sits in a dip cut into it.
+
 private val FabRise = 28.dp
 private val EdgeDrop = 12.dp
 private val FabGap = 12.dp
 private val DipDepth = FabSize - FabRise + FabGap
 private val DipHalfWidth = 66.dp
 
-/**
- * Bottom bar with only the centre button. The four side tabs of the personal home (Home, Transport, Messages,
- * Places) are gone; the centre button opens the payment reader.
- */
+
+
+
+
 @Composable
 internal fun BottomNavBar(
     modifier: Modifier = Modifier,
     onReadClick: () -> Unit = {},
     readerIcon: Painter = painterResource(R.drawable.business_ic_scan),
     readerLabel: String = stringResource(R.string.business_collect_payment),
-    /** 1 = fully visible, 0 = hidden (follows the collapsing header). */
+    
     readerVisibility: () -> Float = { 1f },
 ) {
     Box(modifier = modifier.fillMaxWidth()) {

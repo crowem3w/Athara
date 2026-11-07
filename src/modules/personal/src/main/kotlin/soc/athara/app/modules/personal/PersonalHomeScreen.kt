@@ -39,22 +39,22 @@ private val CategorySaver = listSaver<Set<PlaceCategory>, String>(
     restore = { names -> names.mapNotNull { PlaceCategory.fromName(it) }.toSet() },
 )
 
-/**
- * Entry point of the Personal home. Owns the screen-level state (category filter, profile sheet, Pay sheet, Bluetooth pay card);
- * layout and feed behaviour live in [HomeScreen].
- */
+
+
+
+
 @Composable
 internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin: () -> Unit) {
     var categories by rememberSaveable(stateSaver = CategorySaver) { mutableStateOf(emptySet<PlaceCategory>()) }
     var showProfile by rememberSaveable { mutableStateOf(false) }
     var showCreate by rememberSaveable { mutableStateOf(false) }
     var showSetBalance by rememberSaveable { mutableStateOf(false) }
-    // > 0 while the Bluetooth pay card is open (the amount being requested, in minor units).
+    
     var cardMinor by rememberSaveable { mutableStateOf(0L) }
-    // How the last payment ended; the matching dialog shows until the user taps Done.
+    
     var outcome by remember { mutableStateOf<PayOutcome?>(null) }
 
-    // The balance lives on the server (minor units). This is the last value we fetched.
+    
     val scope = rememberCoroutineScope()
     var balanceMinor by remember(user?.id) { mutableStateOf(0L) }
     val refreshBalance: suspend () -> Unit = {
@@ -63,12 +63,12 @@ internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
     LaunchedEffect(user?.id) { refreshBalance() }
 
     AtharaTheme {
-        // Blur the home screen while the pay card is open (no-op below Android 12; the dim layer still applies).
+        
         val blurRadius by animateDpAsState(if (cardMinor > 0) 18.dp else 0.dp, label = "homeBlur")
         Box {
             Box(modifier = Modifier.blur(blurRadius)) {
                 HomeScreen(
-                    // Default service area until place picking exists; use emptyList() to see the "add a place" state.
+                    
                     places = listOf(ServiceArea.default),
                     categories = categories,
                     onToggleCategory = { category ->
@@ -76,16 +76,16 @@ internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
                     },
                     onClearCategories = { categories = emptySet() },
                     userInitial = user?.let { it.displayName.trim().firstOrNull()?.uppercase() ?: "?" },
-                    // Guest: the avatar opens login / sign-up. Signed in: it opens the profile dialog.
+                    
                     onProfileClick = { if (user == null) onLogin() else showProfile = true },
-                    // Centre button = Pay sheet. Guests have no account to pay from, so it sends them to login.
+                    
                     onCreateClick = {
                         if (user == null) onLogin() else {
                             showCreate = true
                             scope.launch { refreshBalance() }
                         }
                     },
-                    // Guests can browse; likes and saves need an account and are ignored until they log in.
+                    
                     onRequireAccount = { user != null },
                 )
             }
@@ -95,7 +95,7 @@ internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
                 val onOutcome = { result: PayOutcome ->
                     cardMinor = 0L
                     outcome = result
-                    // The server moved the money (or did not): show its balance, not our guess.
+                    
                     scope.launch { refreshBalance() }
                     Unit
                 }
@@ -104,7 +104,7 @@ internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
         }
 
         if (showCreate && user != null) {
-            // Pay closes the sheet and opens the Bluetooth pay card.
+            
             CreateSheet(
                 balanceMinor = balanceMinor,
                 onDismiss = { showCreate = false },
@@ -148,7 +148,7 @@ internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
                 currentMinor = balanceMinor,
                 onSave = { minor ->
                     showSetBalance = false
-                    // Test money: the server only allows this while TEST_BALANCE_ENABLED is on.
+                    
                     scope.launch {
                         when (val r = Payments.setTestBalance(minor)) {
                             is PaymentResult.Ok -> balanceMinor = r.value.balanceMinor

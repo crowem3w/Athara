@@ -33,8 +33,8 @@ import soc.athara.app.shared.designsystem.theme.Teal
 import soc.athara.app.shared.designsystem.theme.TealLight
 import soc.athara.app.shared.designsystem.theme.TextPrimary
 
-// Stand-ins for the bottom-bar and top-bar tabs, built from Material icons.
-// The tab file was not part of the uploaded zip: replace this file with the real one.
+
+
 
 @Composable
 private fun IconTab(
@@ -66,7 +66,7 @@ internal fun MessageTab(selected: Boolean, modifier: Modifier = Modifier, onClic
 internal fun PlacesTab(selected: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit = {}) =
     IconTab(Icons.Outlined.Place, R.string.personal_tab_places, selected, modifier, onClick)
 
-/** Raised centre button. [visibility] (0..1) fades and shrinks it as the header collapses. */
+
 @Composable
 internal fun CreateTab(
     onClick: () -> Unit,
@@ -119,7 +119,7 @@ internal fun AvatarTab(onClick: () -> Unit, initial: String?, modifier: Modifier
         if (initial != null) {
             Text(text = initial, style = MaterialTheme.typography.labelLarge, color = Teal)
         } else {
-            // Guest: the avatar is the Log in entry point.
+            
             Icon(Icons.Filled.Person, stringResource(R.string.personal_tab_login), tint = Teal)
         }
     }

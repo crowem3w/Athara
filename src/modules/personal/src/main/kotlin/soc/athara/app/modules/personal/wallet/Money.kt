@@ -1,6 +1,6 @@
 package soc.athara.app.modules.personal.wallet
 
-/** Keeps digits and one decimal point, at most two decimals. Accepts a comma as the separator. */
+
 internal fun sanitizeAmount(input: String): String {
     val filtered = input.replace(',', '.').filter { it.isDigit() || it == '.' }
     val dot = filtered.indexOf('.')
@@ -10,10 +10,10 @@ internal fun sanitizeAmount(input: String): String {
     return "$whole.$fraction"
 }
 
-/** True when [text] holds a number (0 included), so a balance of 0 can be saved. */
+
 internal fun isValidAmount(text: String): Boolean = text.isNotBlank() && text != "." && text.any { it.isDigit() }
 
-/** "12.5" -> 1250. Integer math only, so money never touches floating point. */
+
 internal fun toMinorUnits(text: String): Long {
     if (!isValidAmount(text)) return 0L
     val parts = text.split('.')
@@ -24,8 +24,8 @@ internal fun toMinorUnits(text: String): Long {
 
 internal fun formatMinor(minor: Long): String = "%d.%02d".format(minor / 100, minor % 100)
 
-/** Philippine peso sign. Change here if the target currency differs. */
+
 internal const val CurrencySymbol = "\u20B1"
 
-/** 1250 -> "\u20B11250.00". Use for display; [formatMinor] stays plain for editable fields. */
+
 internal fun formatMoney(minor: Long): String = CurrencySymbol + formatMinor(minor)

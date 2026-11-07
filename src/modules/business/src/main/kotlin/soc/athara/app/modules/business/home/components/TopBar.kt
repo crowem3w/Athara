@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import soc.athara.app.modules.business.R
 
-/** Wordmark on the left; bookmark, notifications and the avatar on the right (same as the personal home). */
+
 @Composable
 internal fun TopBar(
     modifier: Modifier = Modifier,

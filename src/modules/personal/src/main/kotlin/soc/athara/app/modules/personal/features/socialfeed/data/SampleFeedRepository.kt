@@ -6,13 +6,13 @@ import soc.athara.app.modules.personal.features.travel.model.PlaceCategory
 import soc.athara.app.modules.personal.features.travel.model.PlaceSelection
 import kotlinx.coroutines.delay
 
-/** In-memory sample posts so the home feed can be built and reviewed before a feed backend exists. */
+
 internal class SampleFeedRepository : FeedRepository {
     private val liked = HashSet<String>()
     private val saved = HashSet<String>()
 
     override suspend fun page(place: PlaceSelection, cursor: String?): FeedPage {
-        delay(400) // let the skeleton and pull-to-refresh indicator show
+        delay(400) 
         val posts = SAMPLE.map { it.copy(isLiked = it.id in liked, isSaved = it.id in saved) }
         return FeedPage(posts, nextCursor = null)
     }

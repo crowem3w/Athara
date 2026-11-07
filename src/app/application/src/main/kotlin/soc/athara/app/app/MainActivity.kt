@@ -10,18 +10,18 @@ import soc.athara.app.app.onboarding.OnboardingContract
 import soc.athara.app.core.identityapi.Identity
 import soc.athara.app.shared.authentication.AccountTypeContract
 
-/**
- * Launcher and router; it draws no UI of its own. Screen order:
- *
- *   splash (system) -> onboarding (first launch only) -> account type -> Home of that type (guest)
- *                                                                          \-> avatar -> login / sign-up -> Home (signed in)
- *
- * A signed-in user skips straight to the Home of their own account type.
- *
- * Result contract with the account activities (PerRegForm, BusRegForm, OrgRegForm):
- * RESULT_OK = the session changed (signed in from the guest Home), so route again;
- * anything else = the user left that screen.
- */
+
+
+
+
+
+
+
+
+
+
+
+
 class MainActivity : ComponentActivity() {
 
     private val onboardingLauncher = registerForActivityResult(OnboardingContract()) { completed ->
@@ -34,9 +34,9 @@ class MainActivity : ComponentActivity() {
 
     private val homeLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when {
-            result.resultCode == Activity.RESULT_OK -> route() // signed in from the guest Home
-            Identity.isSignedIn(this) -> finish() // a signed-in user backed out of their Home
-            else -> route() // guest backed out, or signed out: back to account type
+            result.resultCode == Activity.RESULT_OK -> route() 
+            Identity.isSignedIn(this) -> finish() 
+            else -> route() 
         }
     }
 

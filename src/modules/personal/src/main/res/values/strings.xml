@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Home -->
     <string name="personal_wordmark_description">Athara</string>
     <string name="personal_refresh_feed">Refresh feed</string>
     <string name="personal_search_hint">Search destinations, people, or topics...</string>
@@ -16,25 +15,21 @@
     <string name="personal_profile_close">Close</string>
     <string name="personal_action_sign_out">Sign out</string>
 
-    <!-- Receive payment -->
     <string name="personal_receive_amount_label">Amount</string>
     <string name="personal_receive_cancel">Cancel</string>
     <string name="personal_receive_done">Done</string>
 
-    <!-- Fake balance (test money) -->
     <string name="personal_balance_line">Balance: %1$s (test money)</string>
     <string name="personal_balance_set">Set balance</string>
     <string name="personal_balance_title">Set test balance</string>
     <string name="personal_balance_hint">This is fake money for testing. Nothing here is real.</string>
     <string name="personal_balance_save">Save</string>
 
-    <!-- Account setup -->
     <string name="personal_setup_back_title">Go back to sign-up?</string>
     <string name="personal_setup_back_message">Your new account will be deleted. You can sign up again any time.</string>
     <string name="personal_setup_back_confirm">Delete and go back</string>
     <string name="personal_setup_back_stay">Stay</string>
 
-    <!-- Social feed -->
     <string name="socialfeed_promoted">Promoted</string>
     <string name="socialfeed_more_options">More options</string>
     <string name="socialfeed_like">Like</string>
@@ -45,7 +40,6 @@
     <string name="socialfeed_empty_no_place">Add a place to see posts here.</string>
     <string name="socialfeed_empty_filtered">No posts in the selected categories yet. Pick other categories or select All.</string>
     <string name="socialfeed_empty">Nothing here yet.</string>
-    <!-- Pay sheet (centre button) -->
     <string name="personal_create_currency_desc">Currency: %1$s. Tap to change.</string>
     <string name="personal_create_balance_desc">Balance %1$s</string>
     <string name="personal_create_key_plus">Plus</string>
@@ -57,11 +51,9 @@
     <string name="personal_create_pay">Pay</string>
     <string name="personal_pay">Pay</string>
     <string name="personal_create_hint_php_only">Only Philippine peso can be received for now.</string>
-    <!-- Pay card -->
     <string name="personal_card_close">Close card</string>
     <string name="personal_create_hint_funds">Not enough balance for this amount.</string>
     <string name="personal_card_waiting">Waiting for the merchant to accept\u2026</string>
-    <!-- Payment result dialogs -->
     <string name="personal_pay_complete_title">Payment complete</string>
     <string name="personal_pay_complete_body">Paid from your balance.</string>
     <string name="personal_pay_cancelled_title">Payment cancelled</string>
@@ -74,7 +66,6 @@
     <string name="personal_pay_err_rate">Too many tries. Wait a moment and try again.</string>
     <string name="personal_pay_err_other">Something went wrong. Please try again.</string>
 
-    <!-- Bluetooth payment -->
     <string name="personal_ble_card_desc">Payment card. Hold your phone against the business\'s phone.</string>
     <string name="personal_ble_searching">Looking for the business\'s phone\u2026 Hold your phone right next to theirs.</string>
     <string name="personal_ble_move_closer">Move closer to the business\'s phone. Touch the phones together.</string>

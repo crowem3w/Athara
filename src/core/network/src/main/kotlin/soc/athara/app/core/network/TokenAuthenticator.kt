@@ -39,7 +39,7 @@ internal class TokenAuthenticator(
                 retry(response, body.accessToken)
             }
             is ApiResult.Failure -> {
-                if (result.httpCode in SESSION_ENDED) tokens.clear() // not 408/429: those are temporary, keep the session 
+                if (result.httpCode in SESSION_ENDED) tokens.clear() 
                 null
             }
         }

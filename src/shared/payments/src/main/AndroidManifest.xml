@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Bluetooth proximity payments. Android 12+ asks for the three runtime permissions below; Android 11 uses the
-         legacy ones and needs location for scanning. The apps ask at the moment a payment starts. -->
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30" />
@@ -12,7 +10,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
-    <!-- Not required: phones without Bluetooth LE can still use the rest of the app. -->
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
 
 </manifest>

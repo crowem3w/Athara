@@ -76,7 +76,7 @@ import soc.athara.app.shared.designsystem.AppTheme
 
 class AuthenticationActivity : ComponentActivity() {
 
-    /** Type already chosen before the guest Home; null when the flow has to ask. */
+    
     private val preselected: AccountType? by lazy {
         AccountType.entries.firstOrNull { it.name == intent.getStringExtra(EXTRA_ACCOUNT_TYPE) }
     }
@@ -85,7 +85,7 @@ class AuthenticationActivity : ComponentActivity() {
         AuthViewModel.factory(AuthMode.SIGN_IN, preselected ?: AccountType.PERSONAL)
     }
 
-    /** "Sign up": straight to the registration form of the chosen type, or to the chooser if none was chosen. */
+    
     private fun openSignUp() {
         val type = preselected
         if (type != null) viewModel.selectAccountType(type) else viewModel.setMode(AuthMode.SELECT_ACCOUNT, null)

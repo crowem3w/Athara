@@ -42,7 +42,7 @@ object Authentication {
 }
 
 
-/** Account type selection. Result: the chosen [AccountType], or null if the user backed out. */
+
 class AccountTypeContract : ActivityResultContract<Unit, AccountType?>() {
     override fun createIntent(context: Context, input: Unit): Intent =
         Intent(context, AccountTypeActivity::class.java)

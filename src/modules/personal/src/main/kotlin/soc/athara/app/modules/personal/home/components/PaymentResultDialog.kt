@@ -29,7 +29,7 @@ import soc.athara.app.shared.payments.PaymentError
 
 private val SuccessGreen = Color(0xFF2E9E5B)
 
-/** Tells the payer how the payment ended: a green check when it completed, a short message otherwise. */
+
 @Composable
 internal fun PaymentResultDialog(outcome: PayOutcome, onDone: () -> Unit) {
     when (outcome) {

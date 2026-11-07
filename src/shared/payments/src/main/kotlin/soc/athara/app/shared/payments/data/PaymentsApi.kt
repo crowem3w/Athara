@@ -8,9 +8,9 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
-/** Server contract for wallet and Bluetooth payments (backend `/v1/wallet` and `/v1/proximity`). Internal: callers use [soc.athara.app.shared.payments.Payments]. */
+
 internal interface PaymentsApi {
-    // Bluetooth proximity payments (backend `/v1/proximity`).
+    
     @POST("v1/proximity/beacon") suspend fun proximityBeacon(): Response<BeaconDto>
     @POST("v1/proximity/intents") suspend fun createIntent(@Body body: CreateIntentRequest): Response<IntentDto>
     @POST("v1/proximity/intents/claim") suspend fun claimIntent(@Body body: ClaimIntentRequest): Response<IntentDto>

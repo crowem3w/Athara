@@ -2,7 +2,6 @@
 <resources>
     <style name="Theme.Test" parent="android:Theme.Material.Light.NoActionBar" />
 
-    <!-- System splash (androidx.core:core-splashscreen): shown on cold start, then hands over to Theme.Test. -->
     <style name="Theme.Test.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/splash_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>

@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import soc.athara.app.core.identityapi.AccountType
 import soc.athara.app.shared.designsystem.AccountTypeBadge
 
-/** Home shown to a signed-out visitor who chose the organization type. The top bar and the button open login / sign-up. */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun OrganizationGuestHome(onLogin: () -> Unit) {

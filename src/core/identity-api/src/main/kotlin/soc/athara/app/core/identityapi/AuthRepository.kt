@@ -38,10 +38,10 @@ interface AuthRepository {
     suspend fun signUpWithSocial(account: SocialAccount, identifier: String, accountType: AccountType): AuthResult =
         AuthResult.Failure(AuthError.UNKNOWN)
     
-    /**
-     * Live server check of one signup field ("username", "email", "identifier").
-     * Returns null when the answer is unknown (offline, rate limited) so the UI stays quiet instead of blocking.
-     */
+    
+
+
+
     suspend fun checkAvailable(field: String, value: String): Boolean? = null
 
     suspend fun resetPassword(identifier: String, newPassword: String): AuthResult

@@ -76,26 +76,26 @@ import soc.athara.app.shared.payments.ble.BleState
 import soc.athara.app.shared.payments.ble.ProximityTuning
 import soc.athara.app.shared.payments.ble.RssiTracker
 
-/** Width / height of `personal_pay_card` (941 x 1672), so the card keeps its portrait shape on any screen. */
+
 private const val BleCardAspect = 941f / 1672f
 
 private val BleCardShape = RoundedCornerShape(28.dp)
 
-/** What the card tells the person. */
+
 private enum class Phase { Searching, MoveCloser, Connecting, Holding, HoldingReduced, Claimed }
 
-/**
- * The payer's screen for a Bluetooth payment.
- *
- *  1. Scans for the business's beacon and watches its signal for about a second.
- *  2. When one business clearly stands out, creates the payment on the server (amount fixed here), bound to that business.
- *  3. Broadcasts the single-use payer beacon so the business phone can measure it, and waits.
- *  4. Polls the server until the business accepts or declines, or it expires.
- *
- * Both phones must stay in front with the screen on, so leaving the screen (or the X / back) cancels the payment.
- * A phone that cannot broadcast runs in reduced mode: the business sees the request in its inbox and confirms in person.
- * Only the server moves money.
- */
+
+
+
+
+
+
+
+
+
+
+
+
 @Composable
 internal fun BlePayCard(amountMinor: Long, onClose: () -> Unit, onOutcome: (PayOutcome) -> Unit) {
     val context = LocalContext.current
@@ -113,8 +113,8 @@ internal fun BlePayCard(amountMinor: Long, onClose: () -> Unit, onOutcome: (PayO
         bleState = BlePermissions.state(context)
     }
 
-    // Keep the screen on, re-check Bluetooth when coming back from Settings, and cancel when the screen is left
-    // (Android limits Bluetooth in the background, and a payment must not sit half-open).
+    
+    
     val lifecycleOwner = remember(context) { context.findComponentActivity() }
     DisposableEffect(lifecycleOwner) {
         view.keepScreenOn = true
@@ -136,7 +136,7 @@ internal fun BlePayCard(amountMinor: Long, onClose: () -> Unit, onOutcome: (PayO
         if (BlePermissions.state(context) == BleState.NEEDS_PERMISSION) permissionLauncher.launch(BlePermissions.required())
     }
 
-    // The whole payment runs here, and starts (or restarts) only when Bluetooth is ready.
+    
     LaunchedEffect(bleState == BleState.READY) {
         if (bleState != BleState.READY) return@LaunchedEffect
         phase = Phase.Searching
@@ -150,7 +150,7 @@ internal fun BlePayCard(amountMinor: Long, onClose: () -> Unit, onOutcome: (PayO
         )
     }
 
-    // Dim layer. Swallows touches so the blurred home screen behind cannot be used.
+    
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -159,7 +159,7 @@ internal fun BlePayCard(amountMinor: Long, onClose: () -> Unit, onOutcome: (PayO
         contentAlignment = Alignment.Center,
     ) {
         BoxWithConstraints(modifier = Modifier.fillMaxSize().safeDrawingPadding().padding(24.dp)) {
-            val reserved = 140.dp // room under the card for the message and a button
+            val reserved = 140.dp 
             val cardWidth = minOf(maxWidth * 0.78f, (maxHeight - reserved) * BleCardAspect)
 
             Column(
@@ -271,12 +271,12 @@ private fun openSettings(context: Context, action: String) {
     context.startActivity(Intent(action).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
 }
 
-/**
- * The payer's side of the payment, start to finish. Returns when an outcome was reported or the caller cancelled it.
- * Everything it starts (scan, broadcast, the server request) is stopped or cancelled in `finally`, so leaving
- * the card at any moment cannot leave a claimable request behind. Runs on the main thread (a LaunchedEffect),
- * which is also where the scanner delivers readings, so the tracker needs no locking.
- */
+
+
+
+
+
+
 private suspend fun runBlePayment(
     context: Context,
     amountMinor: Long,
@@ -288,7 +288,7 @@ private suspend fun runBlePayment(
     val scanner = BeaconScanner(context, BeaconCodec.TYPE_MERCHANT)
     val advertiser = BeaconAdvertiser(context)
     val tracker = RssiTracker()
-    val heard = HashMap<String, BeaconCodec.Heard.Merchant>() // handle -> the newest beacon from that business
+    val heard = HashMap<String, BeaconCodec.Heard.Merchant>() 
     val reduced = !advertiser.isSupported()
     var intentId: String? = null
     var finished = false
@@ -310,7 +310,7 @@ private suspend fun runBlePayment(
         )
         if (!started) return finish(PayOutcome.Failed(PaymentError.OTHER))
 
-        // ---- 1-2. find the business and create the payment ----
+        
         setPhase(Phase.Searching)
         val intent: ProximityIntent = withTimeoutOrNull(ProximityTuning.SEARCH_TIMEOUT_MS) {
             var created: ProximityIntent? = null
@@ -325,9 +325,9 @@ private suspend fun runBlePayment(
                         when (val r = Payments.createIntent(amountMinor, beacon.handle, beacon.nonce, pick.best.medianDbm, reduced)) {
                             is PaymentResult.Ok -> created = r.value
                             is PaymentResult.Failed -> when (r.error) {
-                                // The server says the phones are not close enough. Collect fresh readings and ask the person to come closer.
+                                
                                 PaymentError.TOO_FAR -> { tracker.clear(); setPhase(Phase.MoveCloser); delay(500) }
-                                // The nonce changed while we were reading it: wait for the next beacon.
+                                
                                 PaymentError.INVALID_TOKEN -> { tracker.clear(); setPhase(Phase.Searching); delay(500) }
                                 else -> { finish(PayOutcome.Failed(r.error)); return@withTimeoutOrNull null }
                             }
@@ -341,10 +341,10 @@ private suspend fun runBlePayment(
             return
         }
         intentId = intent.intentId
-        scanner.stop() // heard enough: save battery
+        scanner.stop() 
         setMerchant(intent.merchantName)
 
-        // ---- 3. broadcast our single-use id (unless this phone cannot) ----
+        
         if (reduced) {
             setPhase(Phase.HoldingReduced)
         } else {
@@ -353,7 +353,7 @@ private suspend fun runBlePayment(
             setPhase(Phase.Holding)
         }
 
-        // ---- 4. wait for the business ----
+        
         while (true) {
             delay(ProximityTuning.POLL_MS)
             val r = Payments.intentStatus(intent.intentId) as? PaymentResult.Ok ?: continue
@@ -361,7 +361,7 @@ private suspend fun runBlePayment(
                 PaymentStatus.CREATED -> Unit
                 PaymentStatus.CLAIMED -> {
                     setPhase(Phase.Claimed)
-                    advertiser.stop() // the id is spent
+                    advertiser.stop() 
                 }
                 PaymentStatus.COMPLETED -> { onCompleted(); return finish(PayOutcome.Completed(r.value.amountMinor)) }
                 PaymentStatus.CANCELLED -> return finish(PayOutcome.Cancelled)
@@ -371,7 +371,7 @@ private suspend fun runBlePayment(
     } finally {
         scanner.stop()
         advertiser.stop()
-        // Left before it finished (X, back, screen off): cancel so the request cannot be claimed later.
+        
         val id = intentId
         if (id != null && !finished) withContext(NonCancellable) { Payments.cancelIntent(id) }
     }

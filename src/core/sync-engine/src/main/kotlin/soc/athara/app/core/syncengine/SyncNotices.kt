@@ -6,16 +6,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-/** Things the sync engine needs the user to know about or decide. Shown by `SyncNoticeHost` (design-system). */
+
 sealed interface SyncNotice {
     val id: Long
-    /** Human-readable name of the record (customer name, order title, ...). */
+    
     val label: String
 
-    /** The server refused [label]. [reverted] = an existing record went back to the server's version; otherwise a new record was removed. */
+    
     data class Rejected(override val id: Long, override val label: String, val reverted: Boolean) : SyncNotice
 
-    /** [label] was deleted here but changed elsewhere; the server's version was restored. The user chooses whether to delete it anyway. */
+    
     data class DeleteConflict(
         override val id: Long,
         override val label: String,
@@ -24,7 +24,7 @@ sealed interface SyncNotice {
     ) : SyncNotice
 }
 
-/** In-memory queue (notices are lost if the process dies before they are shown). */
+
 object SyncNotices {
     private val nextId = AtomicLong(1)
     private val state = MutableStateFlow<List<SyncNotice>>(emptyList())

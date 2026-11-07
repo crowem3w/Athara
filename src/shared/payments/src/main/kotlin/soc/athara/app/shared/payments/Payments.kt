@@ -14,54 +14,54 @@ enum class PaymentStatus { CREATED, CLAIMED, COMPLETED, CANCELLED, EXPIRED }
 
 data class Wallet(val balanceMinor: Long, val currency: String)
 
-/** The business's rotating Bluetooth beacon: broadcast [handle] and [nonce] (see `ble.BeaconCodec`); ask again after [ttlSeconds]. */
+
 data class MerchantBeaconInfo(val handle: String, val nonce: String, val ttlSeconds: Int)
 
-/** How clean the signal check was once the business claimed the payment. */
+
 enum class Proximity {
-    /** Both phones measured a strong signal. */
+    
     NEAR,
-    /** The check was not clean (weak or disagreeing readings, or the payer phone could not broadcast): confirm the customer is right there. */
+    
     BORDERLINE,
 }
 
-/** A Bluetooth payment. [beaconId] is only present right after the payer creates it. */
+
 data class ProximityIntent(
     val intentId: String,
     val status: PaymentStatus,
     val amountMinor: Long,
     val currency: String,
     val beaconId: String? = null,
-    /** Only filled in for the business. */
+    
     val payerName: String? = null,
-    /** Only filled in for the payer. */
+    
     val merchantName: String? = null,
-    /** Set once claimed. */
+    
     val proximity: Proximity? = null,
-    /** The payer phone could not broadcast, so the business must confirm in person. */
+    
     val reducedMode: Boolean = false,
 )
 
 enum class PaymentError {
-    /** Payer cannot afford it. */
+    
     INSUFFICIENT_FUNDS,
-    /** The code the payer's phone sent is wrong or too old. */
+    
     INVALID_TOKEN,
-    /** Already claimed, finished, cancelled or expired. */
+    
     SESSION_NOT_OPEN,
-    /** This account type may not do that (for example a personal account trying to collect). */
+    
     NOT_ALLOWED,
     NOT_FOUND,
-    /** Not signed in, or the session could not be refreshed. */
+    
     UNAUTHORIZED,
     RATE_LIMITED,
-    /** Bluetooth: the signal says the phones are not close enough. Move closer and try again. */
+    
     TOO_FAR,
-    /** This amount is over the per-payment limit for Bluetooth payments. */
+    
     AMOUNT_OVER_LIMIT,
-    /** Bluetooth payments have a daily limit and it is reached. */
+    
     DAILY_LIMIT,
-    /** No connection or the server could not be reached. */
+    
     NETWORK,
     OTHER,
 }
@@ -71,32 +71,32 @@ sealed interface PaymentResult<out T> {
     data class Failed(val error: PaymentError) : PaymentResult<Nothing>
 }
 
-/**
- * Client for the server's wallet and Bluetooth payment API. Money only moves on the server: the app asks, the server decides.
- * All calls go through the signed-in [Core] HTTP client (token refresh included).
- *
- * Payer (personal): [createIntent] -> broadcast the returned beacon id, poll [intentStatus] -> done.
- * Receiver (business): [proximityBeacon] -> hear the payer, [claimIntent], show the amount, then [acceptIntent] or [declineIntent].
- */
+
+
+
+
+
+
+
 object Payments {
     private val api: PaymentsApi by lazy { Core.create(PaymentsApi::class.java) }
 
     suspend fun wallet(): PaymentResult<Wallet> = call({ api.wallet() }) { it.toWallet() }
 
-    /** TEST MONEY: only works while the server has TEST_BALANCE_ENABLED on (it is off in production). */
+    
     suspend fun setTestBalance(minor: Long): PaymentResult<Wallet> =
         call({ api.setTestBalance(TestBalanceRequest(minor)) }) { it.toWallet() }
 
-    // ---- Bluetooth proximity payments ----
+    
 
-    /** Business: the next beacon nonce to broadcast. Call again before it expires while scanning. */
+    
     suspend fun proximityBeacon(): PaymentResult<MerchantBeaconInfo> =
         call({ api.proximityBeacon() }) { MerchantBeaconInfo(it.handle, it.nonce, it.ttlSeconds) }
 
-    /**
-     * Payer: start a payment to the business whose beacon ([merchantHandle], [merchantNonce]) was heard.
-     * [rssi] is the median signal strength measured; [reducedMode] is true when this phone cannot broadcast.
-     */
+    
+
+
+
     suspend fun createIntent(
         amountMinor: Long,
         merchantHandle: String,
@@ -107,15 +107,15 @@ object Payments {
     ): PaymentResult<ProximityIntent> =
         call({ api.createIntent(CreateIntentRequest(amountMinor, currency, merchantHandle, merchantNonce, rssi, reducedMode)) }) { it.toIntent() }
 
-    /** Business: claim the payer beacon it heard, with the median signal strength it measured. */
+    
     suspend fun claimIntent(beaconId: String, rssi: Int): PaymentResult<ProximityIntent> =
         call({ api.claimIntent(ClaimIntentRequest(beaconId = beaconId, rssi = rssi)) }) { it.toIntent() }
 
-    /** Business, reduced mode only: claim a request from [proximityInbox]. */
+    
     suspend fun claimIntentById(intentId: String): PaymentResult<ProximityIntent> =
         call({ api.claimIntent(ClaimIntentRequest(intentId = intentId)) }) { it.toIntent() }
 
-    /** Business: requests waiting from payer phones that could not broadcast. */
+    
     suspend fun proximityInbox(): PaymentResult<List<ProximityIntent>> =
         call({ api.proximityInbox() }) { box -> box.requests.map { it.toIntent() } }
 

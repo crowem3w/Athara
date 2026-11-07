@@ -24,7 +24,7 @@ import soc.athara.app.shared.designsystem.AppTheme
 
 class BusRegForm : ComponentActivity() {
 
-    /** Login / sign-up for this account type, opened from the guest Home. Signed in: tell the app layer to route again. */
+    
     private val authLauncher = registerForActivityResult(AuthenticationContract()) { signedIn ->
         if (signedIn) {
             setResult(Activity.RESULT_OK)

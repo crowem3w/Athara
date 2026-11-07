@@ -21,7 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import soc.athara.app.modules.personal.R
 
-/** Lets the tester choose how much fake money the account holds. [onSave] gets minor units. */
+
 @Composable
 internal fun SetBalanceDialog(currentMinor: Long, onSave: (Long) -> Unit, onDismiss: () -> Unit) {
     var text by rememberSaveable { mutableStateOf(formatMinor(currentMinor)) }

@@ -38,9 +38,9 @@ android {
     
     buildTypes {
         debug {
-            // Backend runs on this same phone (Termux/proot) by default. Override for other setups, e.g.
-            // ./gradlew assembleDebug -PapiBaseUrl=http://10.0.2.2:8080/   (Android emulator)
-            // ./gradlew assembleDebug -PapiBaseUrl=http://192.168.x.x:8080/ (backend on a PC / another device)
+            
+            
+            
             val apiBaseUrl = (project.findProperty("apiBaseUrl") as String?) ?: "http://127.0.0.1:8080/"
             buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
             buildConfigField("boolean", "ALLOW_CLEARTEXT", "true")
@@ -67,7 +67,7 @@ android {
     }
 }
 
-// Splash logo lives in assets/images/app (see assets/README.md).
+
 androidComponents {
     val imagesDir = rootProject.file("assets/images/app").absolutePath
     onVariants { variant ->

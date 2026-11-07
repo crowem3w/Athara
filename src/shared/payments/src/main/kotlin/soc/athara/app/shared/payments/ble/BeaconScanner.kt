@@ -9,18 +9,18 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 
-/**
- * Listens for beacons of ONE kind ([BeaconCodec.TYPE_MERCHANT] for a payer, [BeaconCodec.TYPE_PAYER] for a merchant).
- * The filter runs in the Bluetooth chip, so other devices' adverts never wake the app. Results are delivered on the main thread.
- *
- * Start it once per payment and stop it when done: Android limits how often a scan may be restarted.
- */
+
+
+
+
+
+
 class BeaconScanner(private val context: Context, private val type: Byte) {
 
     private val main = Handler(Looper.getMainLooper())
     private var callback: ScanCallback? = null
 
-    /** [onHeard] gets each beacon with its signal strength (dBm). [onFailed] gets the ScanCallback error code. False when it could not start. */
+    
     @SuppressLint("MissingPermission")
     fun start(onHeard: (BeaconCodec.Heard, Int) -> Unit, onFailed: (Int) -> Unit = {}): Boolean {
         val scanner = try {
@@ -67,9 +67,9 @@ class BeaconScanner(private val context: Context, private val type: Byte) {
         try {
             BlePermissions.adapter(context)?.bluetoothLeScanner?.stopScan(cb)
         } catch (e: SecurityException) {
-            // Permission taken away while running: nothing left to stop.
+            
         } catch (e: IllegalStateException) {
-            // Bluetooth turned off: the scan already stopped.
+            
         }
     }
 }

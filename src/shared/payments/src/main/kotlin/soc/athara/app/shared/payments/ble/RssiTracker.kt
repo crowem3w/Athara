@@ -1,23 +1,23 @@
 package soc.athara.app.shared.payments.ble
 
-/**
- * Turns the stream of raw signal-strength readings (RSSI, dBm; closer to 0 = stronger) into one steady number per
- * beacon: the MEDIAN of the readings from the last [windowMs], never a single reading (design section 7).
- * Also decides whether one beacon clearly stands out from the others.
- *
- * No Android types, so it is plain unit-testable. Not thread-safe: call it from one thread (the scan callback posts to main).
- */
+
+
+
+
+
+
+
 class RssiTracker(private val windowMs: Long = DEFAULT_WINDOW_MS) {
 
     data class Reading(val key: String, val medianDbm: Int, val samples: Int, val lastSeenMs: Long)
 
-    /** What [pick] concluded. */
+    
     sealed interface Pick {
-        /** Nothing heard (or nothing loud enough). */
+        
         data object None : Pick
-        /** Something is there but there are not enough readings yet. */
+        
         data class Settling(val best: Reading) : Pick
-        /** The strongest two are too close to tell apart: ask the person to move closer to ONE phone. */
+        
         data class Ambiguous(val best: Reading, val second: Reading) : Pick
         data class Clear(val best: Reading) : Pick
     }
@@ -32,7 +32,7 @@ class RssiTracker(private val windowMs: Long = DEFAULT_WINDOW_MS) {
 
     fun clear() = samples.clear()
 
-    /** Every beacon heard inside the window, strongest first. */
+    
     fun readings(nowMs: Long): List<Reading> {
         val out = ArrayList<Reading>(samples.size)
         val iterator = samples.entries.iterator()
@@ -48,12 +48,12 @@ class RssiTracker(private val windowMs: Long = DEFAULT_WINDOW_MS) {
         return out.sortedByDescending { it.medianDbm }
     }
 
-    /**
-     * The strongest beacon, if it is a safe pick.
-     * [floorDbm]: ignore beacons weaker than this. [minSamples]: readings needed before trusting the median.
-     * [marginDb]: how much stronger than the runner-up the best must be.
-     * [exclude]: keys to leave out (for example a beacon the server already refused).
-     */
+    
+
+
+
+
+
     fun pick(
         nowMs: Long,
         floorDbm: Int,
@@ -74,7 +74,7 @@ class RssiTracker(private val windowMs: Long = DEFAULT_WINDOW_MS) {
         const val DEFAULT_MIN_SAMPLES = 4
         const val DEFAULT_MARGIN_DB = 6
 
-        /** Median of a non-empty list; the lower middle value for an even count (the cautious one: weaker signal). */
+        
         fun median(values: List<Int>): Int {
             val sorted = values.sorted()
             return sorted[(sorted.size - 1) / 2]

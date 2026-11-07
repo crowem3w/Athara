@@ -14,7 +14,7 @@ import soc.athara.app.core.syncengine.SyncCoordinator
 import soc.athara.app.core.syncengine.SyncNotice
 import soc.athara.app.core.syncengine.SyncNotices
 
-/** Shows the oldest pending sync notice as a dialog. Put it once on every screen that lists synced data. */
+
 @Composable
 fun SyncNoticeHost() {
     val context = LocalContext.current.applicationContext

@@ -6,7 +6,7 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 class BeaconCodecTest {
-    // 6, 8 and 12 bytes in the server's unpadded base64url form: 8, 11 and 16 characters.
+    
     private val handle = "AQIDBAUG"
     private val nonce = "AQIDBAUGBwg"
     private val beaconId = "AQIDBAUGBwgJCgsM"
@@ -28,7 +28,7 @@ class BeaconCodecTest {
 
     @Test
     fun payloadsFitInALegacyAdvert() {
-        // 31 bytes minus 4 bytes of manufacturer-data header.
+        
         assert(BeaconCodec.merchantPayload(handle, nonce)!!.size <= 27)
         assert(BeaconCodec.payerPayload(beaconId)!!.size <= 27)
     }
@@ -46,7 +46,7 @@ class BeaconCodecTest {
         assertNull(BeaconCodec.parse(null))
         assertNull(BeaconCodec.parse(byteArrayOf()))
         assertNull(BeaconCodec.parse(byteArrayOf(0x99.toByte(), 1, 2, 3)))
-        // right type byte, wrong length
+        
         assertNull(BeaconCodec.parse(byteArrayOf(BeaconCodec.TYPE_MERCHANT, 1, 2)))
         assertNull(BeaconCodec.parse(byteArrayOf(BeaconCodec.TYPE_PAYER) + ByteArray(20)))
         assertNotNull(BeaconCodec.parse(byteArrayOf(BeaconCodec.TYPE_PAYER) + ByteArray(12)))

@@ -76,7 +76,7 @@ private val WarningAmber = Color(0xFFB26A00)
 
 private sealed interface BleStep {
     data object Idle : BleStep
-    /** The server returned the amount; waiting for Accept or Cancel. */
+    
     data class Review(val intent: ProximityIntent) : BleStep
     data class Accepting(val intent: ProximityIntent) : BleStep
     data class Done(val intent: ProximityIntent) : BleStep
@@ -92,19 +92,19 @@ private fun Context.findComponentActivity(): ComponentActivity? {
     return null
 }
 
-/**
- * The business's Bluetooth collect flow (see Proximity_Payment_Design.md).
- * Same look as [PaymentCollector]: no panel, the centre button turns scanning on and a small pill shows it.
- *
- * While [scanning] is on and the phone is Bluetooth-ready, three things run together:
- *  - the BEACON: asks the server for a rotating nonce every few seconds and broadcasts {handle, nonce}, so a paying phone can find this business;
- *  - the SCANNER: listens for payer beacons, keeps the median signal strength of each over about a second, and when one clearly
- *    stands out claims it on the server with that reading (if two are about equally strong it asks for the phones to be held closer);
- *  - the INBOX: picks up requests from payer phones that cannot broadcast (reduced mode).
- * A claimed payment stops all three and shows the amount with Accept or Cancel. When the signal check was not clean
- * (or the payer phone could not broadcast) the dialog says so: look at the customer before accepting.
- * Accept makes the server move the money. Scanning switches itself off after a result so the next payment is deliberate.
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
 @Composable
 internal fun BleCollector(
     scanning: Boolean,
@@ -123,7 +123,7 @@ internal fun BleCollector(
     var hintSetAtMs by remember { mutableStateOf(0L) }
     var checking by remember { mutableStateOf(false) }
     val currentStep by rememberUpdatedState(step)
-    // Beacons the server refused (or that were too weak), skipped for a while so one bad phone cannot make us hammer the server.
+    
     val ignoredUntil = remember { HashMap<String, Long>() }
 
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
@@ -136,7 +136,7 @@ internal fun BleCollector(
         if (bleState == BleState.NEEDS_PERMISSION) permissionLauncher.launch(BlePermissions.required())
     }
 
-    // Re-check Bluetooth after coming back from Settings; Android limits Bluetooth in the background, so stop when the screen is left.
+    
     DisposableEffect(activity) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -156,7 +156,7 @@ internal fun BleCollector(
         onDispose { view.keepScreenOn = false }
     }
 
-    /** Claims in its own coroutine (not the engine's): if the engine stops because a claim succeeded, the request must not be cancelled half-way. */
+    
     fun attemptClaim(key: String, call: suspend () -> PaymentResult<ProximityIntent>) {
         if (checking || step != BleStep.Idle) return
         checking = true
@@ -170,13 +170,13 @@ internal fun BleCollector(
                     step = BleStep.Review(result.value)
                 }
                 is PaymentResult.Failed -> when (result.error) {
-                    // Not close enough: try again in a moment; the payment stays open for the customer.
+                    
                     PaymentError.TOO_FAR -> {
                         hint = R.string.business_ble_hint_closer
                         hintSetAtMs = SystemClock.elapsedRealtime()
                         ignoredUntil[key] = SystemClock.elapsedRealtime() + 1_000
                     }
-                    // Someone else's payment, already used or expired: ignore this beacon for a while.
+                    
                     PaymentError.INVALID_TOKEN, PaymentError.SESSION_NOT_OPEN ->
                         ignoredUntil[key] = SystemClock.elapsedRealtime() + ProximityTuning.IGNORE_BEACON_MS
                     else -> step = BleStep.Problem(bleMessageFor(result.error))
@@ -185,7 +185,7 @@ internal fun BleCollector(
         }
     }
 
-    // ---- the engine: beacon + scanner + inbox, only while listening ----
+    
     LaunchedEffect(listening) {
         if (!listening) return@LaunchedEffect
         hint = null
@@ -208,7 +208,7 @@ internal fun BleCollector(
                 return@LaunchedEffect
             }
             coroutineScope {
-                // 1. Broadcast a fresh nonce before the old one expires.
+                
                 launch {
                     while (true) {
                         when (val r = Payments.proximityBeacon()) {
@@ -226,19 +226,19 @@ internal fun BleCollector(
                                     step = BleStep.Problem(bleMessageFor(r.error))
                                     return@launch
                                 }
-                                delay(2_000) // a network blip: the last nonce is still being broadcast and is accepted a little late
+                                delay(2_000) 
                             }
                         }
                     }
                 }
-                // 2. Pick the payer phone that clearly stands out and claim it.
+                
                 launch {
                     while (true) {
                         delay(ProximityTuning.TICK_MS)
                         if (checking) continue
                         val now = SystemClock.elapsedRealtime()
                         ignoredUntil.entries.removeAll { it.value <= now }
-                        // A hint is advice for the moment: let it go once nothing has refreshed it for a few seconds.
+                        
                         if (hint != null && now - hintSetAtMs > 4_000) hint = null
                         when (val pick = tracker.pick(now, ProximityTuning.CLIENT_FLOOR_DBM, exclude = { ignoredUntil.containsKey(it) })) {
                             RssiTracker.Pick.None, is RssiTracker.Pick.Settling -> Unit
@@ -252,7 +252,7 @@ internal fun BleCollector(
                         }
                     }
                 }
-                // 3. Requests from phones that cannot broadcast (reduced mode): the customer is expected to be right here.
+                
                 launch {
                     while (true) {
                         delay(ProximityTuning.INBOX_POLL_MS)
@@ -269,7 +269,7 @@ internal fun BleCollector(
         }
     }
 
-    // ---- the pill ----
+    
     if (listening) {
         Surface(
             modifier = pillModifier,
@@ -290,7 +290,7 @@ internal fun BleCollector(
         }
     }
 
-    // ---- Bluetooth cannot be used yet ----
+    
     if (scanning && bleState != BleState.READY && step == BleStep.Idle) {
         val message = when (bleState) {
             BleState.UNSUPPORTED -> R.string.business_ble_unsupported
@@ -324,7 +324,7 @@ internal fun BleCollector(
         )
     }
 
-    // ---- a claim is being checked with the server ----
+    
     if (checking) {
         AlertDialog(
             onDismissRequest = {},
@@ -335,7 +335,7 @@ internal fun BleCollector(
         )
     }
 
-    // ---- dialogs for each step ----
+    
     when (val s = step) {
         BleStep.Idle -> Unit
 
@@ -344,7 +344,7 @@ internal fun BleCollector(
             val busy = s is BleStep.Accepting
             val unsure = intent.proximity == Proximity.BORDERLINE || intent.reducedMode
             AlertDialog(
-                // Back or a tap outside counts as Cancel, so a claimed payment is never left hanging.
+                
                 onDismissRequest = {
                     if (!busy) {
                         scope.launch { Payments.declineIntent(intent.intentId) }
@@ -458,5 +458,5 @@ private fun bleMessageFor(error: PaymentError): Int = when (error) {
     PaymentError.NOT_FOUND, PaymentError.OTHER -> R.string.business_pay_err_other
 }
 
-/** 1250 -> "₱12.50". Integer math only. */
+
 private fun formatBlePeso(minor: Long): String = "₱%d.%02d".format(minor / 100, minor % 100)

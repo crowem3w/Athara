@@ -73,15 +73,15 @@ private val KeyShape = RoundedCornerShape(16.dp)
 private val KeyGap = 10.dp
 private val SheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
 
-/**
- * Bottom sheet opened by the centre button (replaces the old receive dialog).
- *
- * Top to bottom: currency picker, amount input, balance, operator row, 0-9 keypad, Pay.
- * Pay works for Philippine peso with an amount above zero that the balance covers: it closes the sheet and calls [onPay]
- * with the amount in minor units (the caller opens the Bluetooth pay card).
- *
- * TODO: balances are one fake PHP balance; other currencies show 0.00 until the ledger supports them.
- */
+
+
+
+
+
+
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CreateSheet(balanceMinor: Long, onDismiss: () -> Unit, onPay: (Long) -> Unit) {
@@ -91,7 +91,7 @@ internal fun CreateSheet(balanceMinor: Long, onDismiss: () -> Unit, onPay: (Long
     var input by rememberSaveable { mutableStateOf("") }
 
     val currency = currencyByCode(currencyCode)
-    // Only PHP has a (fake) balance today.
+    
     val shownBalance = if (currency.code == PhilippinePeso.code) balanceMinor else 0L
     val balanceText = "${currency.symbol} ${formatMinor(shownBalance)}"
     val balanceDescription = stringResource(R.string.personal_create_balance_desc, balanceText)
@@ -158,7 +158,7 @@ internal fun CreateSheet(balanceMinor: Long, onDismiss: () -> Unit, onPay: (Long
             }
             Button(
                 onClick = {
-                    // Slide the sheet away first, then hand over to the card.
+                    
                     scope.launch { sheetState.hide() }.invokeOnCompletion { onPay(amountMinor) }
                 },
                 enabled = canPay,
@@ -212,7 +212,7 @@ private fun CurrencyPicker(currency: Currency, onSelect: (Currency) -> Unit) {
     }
 }
 
-/** Round "currency icon": the currency sign on a soft teal disc. */
+
 @Composable
 private fun CurrencyBadge(currency: Currency, size: Int) {
     Box(
@@ -234,7 +234,7 @@ private fun CurrencyBadge(currency: Currency, size: Int) {
 
 @Composable
 private fun AmountField(currency: Currency, input: String) {
-    // Spaces around operators keep "120 + 30" readable; the stored string stays compact.
+    
     val shown = buildString {
         input.forEach { c ->
             if (AmountCalculator.isOperator(c)) append(' ').append(c).append(' ') else append(c)
@@ -318,7 +318,7 @@ private fun Keypad(
         Row(horizontalArrangement = Arrangement.spacedBy(KeyGap)) {
             Key(onClick = onDot, modifier = Modifier.weight(1f)) { KeyLabel(".") }
             Key(onClick = { onDigit('0') }, modifier = Modifier.weight(1f)) { KeyLabel("0") }
-            // The "x" key: tap deletes the last character, long-press clears everything.
+            
             Key(onClick = onBackspace, onLongClick = onClear, modifier = Modifier.weight(1f)) {
                 Icon(
                     Icons.AutoMirrored.Outlined.Backspace,

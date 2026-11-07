@@ -49,14 +49,14 @@ import soc.athara.app.modules.business.home.components.TopBar
 import soc.athara.app.modules.business.reader.BleCollector
 import soc.athara.app.shared.designsystem.SyncNoticeHost
 
-/** The centre button is hidden once the header is half collapsed (same as the personal home). */
+
 private const val ReaderButtonHideEnd = 0.5f
 
-/**
- * Business home, copied from the personal home: collapsing top bar, scrolling body, bottom bar with one centre
- * button. The feed, search bar, category filters and the four side tabs are removed; the centre button starts
- * scanning for a customer's phone over Bluetooth (no panel; see [BleCollector]). The body is a placeholder until the business content is decided.
- */
+
+
+
+
+
 @Composable
 internal fun BusinessHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin: () -> Unit) {
     val listState = rememberLazyListState()
@@ -159,7 +159,7 @@ internal fun BusinessHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
         }
     }
 
-    // Bluetooth collect: no panel. The pill sits just above the bottom bar and slides away with it.
+    
     if (user != null) {
         val barHeight = with(LocalDensity.current) { bottomBarHeight.toDp() }
         Box(Modifier.fillMaxSize()) {

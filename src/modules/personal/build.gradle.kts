@@ -23,7 +23,7 @@ android {
     }
 }
 
-// Raster images live in assets/images/personal (see assets/README.md).
+
 androidComponents {
     val imagesDir = rootProject.file("assets/images/personal").absolutePath
     onVariants { variant ->

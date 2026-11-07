@@ -74,12 +74,12 @@ internal fun HomeScreen(
     categories: Set<PlaceCategory> = emptySet(),
     onToggleCategory: (PlaceCategory) -> Unit = {},
     onClearCategories: () -> Unit = {},
-    /** First letter of the signed-in user's name; null for a guest (the avatar then reads as "Log in"). */
+    
     userInitial: String? = null,
     onPlacesClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
     onCreateClick: () -> Unit = {},
-    /** Gate for feed actions (like, save). Return false to ignore the action. */
+    
     onRequireAccount: () -> Boolean = { true },
 ) {
     val listState = rememberLazyListState()

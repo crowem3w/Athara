@@ -17,16 +17,16 @@ import soc.athara.app.core.identityapi.Identity
 import soc.athara.app.core.identityapi.AuthenticationContract
 import soc.athara.app.shared.designsystem.AppTheme
 
-/**
- * Entry of the Personal experience.
- *
- * - Signed out: the guest Home. The avatar opens login / sign-up for the Personal type.
- * - Signed in, setup pending (just registered): the setup screen, then the Home.
- * - Signed in: the Home.
- *
- * Result contract with the app layer: RESULT_OK = the session changed (signed in from the guest Home),
- * so route again; anything else = the user left.
- */
+
+
+
+
+
+
+
+
+
+
 class PerRegForm : ComponentActivity() {
 
     private val authLauncher = registerForActivityResult(AuthenticationContract()) { signedIn ->
