@@ -1,6 +1,5 @@
 package soc.athara.app.modules.personal
 
-import android.nfc.NfcAdapter
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import soc.athara.app.modules.personal.features.travel.model.PlaceCategory
 import soc.athara.app.modules.personal.features.travel.model.ServiceArea
@@ -27,7 +25,6 @@ import soc.athara.app.core.identityapi.AuthUser
 import soc.athara.app.modules.personal.home.HomeScreen
 import soc.athara.app.modules.personal.home.components.CreateSheet
 import soc.athara.app.modules.personal.home.components.BlePayCard
-import soc.athara.app.modules.personal.home.components.NfcCard
 import soc.athara.app.modules.personal.home.components.PayOutcome
 import soc.athara.app.modules.personal.home.components.PaymentResultDialog
 import soc.athara.app.modules.personal.wallet.SetBalanceDialog
@@ -43,7 +40,7 @@ private val CategorySaver = listSaver<Set<PlaceCategory>, String>(
 )
 
 /**
- * Entry point of the Personal home. Owns the screen-level state (category filter, profile sheet, Pay sheet, NFC card);
+ * Entry point of the Personal home. Owns the screen-level state (category filter, profile sheet, Pay sheet, Bluetooth pay card);
  * layout and feed behaviour live in [HomeScreen].
  */
 @Composable
@@ -52,11 +49,8 @@ internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
     var showProfile by rememberSaveable { mutableStateOf(false) }
     var showCreate by rememberSaveable { mutableStateOf(false) }
     var showSetBalance by rememberSaveable { mutableStateOf(false) }
-    // > 0 while the NFC card is open (the amount being requested, in minor units).
-    val context = LocalContext.current
+    // > 0 while the Bluetooth pay card is open (the amount being requested, in minor units).
     var cardMinor by rememberSaveable { mutableStateOf(0L) }
-    // Which way this payment goes, decided when Pay is pressed: NFC if this phone has it on, else Bluetooth LE.
-    var nfcReady by rememberSaveable { mutableStateOf(true) }
     // How the last payment ended; the matching dialog shows until the user taps Done.
     var outcome by remember { mutableStateOf<PayOutcome?>(null) }
 
@@ -69,7 +63,7 @@ internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
     LaunchedEffect(user?.id) { refreshBalance() }
 
     AtharaTheme {
-        // Blur the home screen while the card is open (no-op below Android 12; the dim layer still applies).
+        // Blur the home screen while the pay card is open (no-op below Android 12; the dim layer still applies).
         val blurRadius by animateDpAsState(if (cardMinor > 0) 18.dp else 0.dp, label = "homeBlur")
         Box {
             Box(modifier = Modifier.blur(blurRadius)) {
@@ -105,23 +99,17 @@ internal fun PersonalHomeScreen(user: AuthUser?, onSignOut: () -> Unit, onLogin:
                     scope.launch { refreshBalance() }
                     Unit
                 }
-                // Tap with NFC where this phone has it switched on; otherwise pay over Bluetooth LE.
-                if (nfcReady) {
-                    NfcCard(amountMinor = cardMinor, onClose = onClose, onOutcome = onOutcome)
-                } else {
-                    BlePayCard(amountMinor = cardMinor, onClose = onClose, onOutcome = onOutcome)
-                }
+                BlePayCard(amountMinor = cardMinor, onClose = onClose, onOutcome = onOutcome)
             }
         }
 
         if (showCreate && user != null) {
-            // Pay closes the sheet and opens the NFC card.
+            // Pay closes the sheet and opens the Bluetooth pay card.
             CreateSheet(
                 balanceMinor = balanceMinor,
                 onDismiss = { showCreate = false },
                 onPay = { minor ->
                     showCreate = false
-                    nfcReady = NfcAdapter.getDefaultAdapter(context)?.isEnabled == true
                     cardMinor = minor
                 },
             )

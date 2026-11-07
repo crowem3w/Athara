@@ -72,7 +72,7 @@ internal fun BottomNavBar(
     showTransport: Boolean = true,
     showPlaces: Boolean = true,
     
-    centerIcon: Painter = painterResource(R.drawable.personal_ic_nfc_tag),
+    centerIcon: Painter = painterResource(R.drawable.personal_ic_pay),
     centerLabel: String = stringResource(R.string.personal_pay),
     
     createVisibility: () -> Float = { 1f },

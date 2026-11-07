@@ -21,12 +21,3 @@ val TextTertiary = Color(0xFF9AA7AB)
 val Heart = Color(0xFFE94D6C)
 val Badge = Color(0xFFF14C6B)
 val NavInactive = Color(0xFF9AA7AB)
-
-
-
-val PlaceholderTealSea = Color(0xFF8FC3BC)
-val PlaceholderSand = Color(0xFFE3B98C)
-val PlaceholderSky = Color(0xFF93B9D6)
-val PlaceholderMoss = Color(0xFFA9BE8C)
-val PlaceholderCoral = Color(0xFFE0917E)
-val PlaceholderLavender = Color(0xFFA79BC7)

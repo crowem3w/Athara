@@ -27,7 +27,7 @@ Check this table before adding or editing any `implementation(project(...))` or 
 | Module | May depend on |
 |---|---|
 | `:app` | network, sync-engine, identity-api, onboarding, authentication, personal, business, organization |
-| `:business` | identity-api, design-system, authentication, payments, network, sync-engine |
+| `:business` | identity-api, design-system, authentication, payments, network |
 | `:organization` | identity-api, design-system, authentication, network, sync-engine |
 | `:personal` | identity-api, design-system, authentication, payments |
 | `:authentication` | identity-api, design-system, network, secure-storage |
@@ -46,7 +46,7 @@ Do not add a dependency that is not in this table without asking the user.
 - NEVER merge `:business` and `:organization`. They share only the sync pattern, which lives in `core`.
 - ALWAYS keep feature internals `internal`: entities, DAOs, ViewModels, screens, API interfaces. The only public surface of a feature is its entry activity and its `SyncInstaller` object.
 - ALWAYS get the signed-in user in a feature through `Identity` (`identity-api`), never through `Authentication`.
-- From `:authentication`, a feature may use only `AccountSignUp`, `AccountSetupScreen` and `PersonalSetupFields`. Do not import anything else from it.
+- From `:authentication`, a feature may use only `AccountSetupScreen` and `PersonalSetupFields`. Do not import anything else from it.
 - ALWAYS let `:app` reach a feature by class name (`AccountType.activityClassName` + `Intent.setClassName`), not by importing its activity.
 - ALWAYS register feature sync through a `SyncInstaller`. `:app` only holds a list of installers. Do not add feature-specific sync code to `:app`.
 
@@ -54,10 +54,10 @@ Do not add a dependency that is not in this table without asking the user.
 
 | Module | Holds | Constraints |
 |---|---|---|
-| `design-system` | `AppTheme`, `AccountTypeBadge`, `ProfileHeader`, `ImageDecoding` | UI used by 2+ modules. Keep generic |
+| `design-system` | `AppTheme`, `AccountTypeBadge`, `ImageDecoding` | UI used by 2+ modules. Keep generic |
 | `authentication` | Login, sign-up, setup UI, `RemoteAuthRepository`, `AuthApi`, Google sign-in, photos | Features use only the three UI pieces in section 4 |
-| `payments` | `Payments` (tap-to-pay + wallet API client), `PaymentSession`, `PaymentResult` | Server contract only, no UI. Personal pays and Business collects, but each module keeps its own screens and flow |
-| `identity-api` | `Identity`, `AuthRepository`, `AuthUser`, `AccountType`, `PhoneVerifier` | Contracts and data classes only. No Compose UI, no network code |
+| `payments` | `Payments` (Bluetooth payments + wallet API client), `ProximityIntent`, `PaymentResult` | Server contract only, no UI. Personal pays and Business collects, but each module keeps its own screens and flow |
+| `identity-api` | `Identity`, `AuthRepository`, `AuthUser`, `AccountType` | Contracts and data classes only. No Compose UI, no network code |
 | `network` | `Core`, `apiCall`/`ApiResult`, interceptor, token refresh, `SyncApi` | No feature-specific endpoints |
 | `sync-engine` | `SyncAdapter`, `TableSync`, `SyncCoordinator`, `SyncInstaller` | Generic. Not tied to any one table |
 | `secure-storage` | `SecureStore`, `TokenStore`, Keystore cipher | No dependencies |

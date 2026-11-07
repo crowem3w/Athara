@@ -78,7 +78,7 @@ private val SheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
  *
  * Top to bottom: currency picker, amount input, balance, operator row, 0-9 keypad, Pay.
  * Pay works for Philippine peso with an amount above zero that the balance covers: it closes the sheet and calls [onPay]
- * with the amount in minor units (the caller opens the NFC card).
+ * with the amount in minor units (the caller opens the Bluetooth pay card).
  *
  * TODO: balances are one fake PHP balance; other currencies show 0.00 until the ledger supports them.
  */

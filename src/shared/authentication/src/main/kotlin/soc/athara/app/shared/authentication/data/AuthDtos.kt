@@ -48,15 +48,6 @@ internal data class ValidateResponse(val valid: Boolean, val code: String? = nul
 internal data class LogoutRequest(val refreshToken: String)
 
 @Serializable
-internal data class SendCodeRequest(val phone: String)
-
-@Serializable
-internal data class VerifyCodeRequest(val phone: String, val code: String)
-
-@Serializable
-internal data class VerifyCodeResponse(val verificationToken: String)
-
-@Serializable
 internal data class ProfileUpdateRequest(val about: String? = null, val location: String? = null)
 
 @Serializable

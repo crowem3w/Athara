@@ -76,7 +76,7 @@ import soc.athara.app.shared.payments.ble.BleState
 import soc.athara.app.shared.payments.ble.ProximityTuning
 import soc.athara.app.shared.payments.ble.RssiTracker
 
-/** Width / height of `personal_nfc_card` (941 x 1672), so the card keeps its portrait shape on any screen. */
+/** Width / height of `personal_pay_card` (941 x 1672), so the card keeps its portrait shape on any screen. */
 private const val BleCardAspect = 941f / 1672f
 
 private val BleCardShape = RoundedCornerShape(28.dp)
@@ -85,7 +85,7 @@ private val BleCardShape = RoundedCornerShape(28.dp)
 private enum class Phase { Searching, MoveCloser, Connecting, Holding, HoldingReduced, Claimed }
 
 /**
- * The payer's screen for a Bluetooth payment, used on phones where NFC is missing or off.
+ * The payer's screen for a Bluetooth payment.
  *
  *  1. Scans for the business's beacon and watches its signal for about a second.
  *  2. When one business clearly stands out, creates the payment on the server (amount fixed here), bound to that business.
@@ -169,7 +169,7 @@ internal fun BlePayCard(amountMinor: Long, onClose: () -> Unit, onOutcome: (PayO
             ) {
                 Box(modifier = Modifier.width(cardWidth)) {
                     Image(
-                        painter = painterResource(R.drawable.personal_nfc_card),
+                        painter = painterResource(R.drawable.personal_pay_card),
                         contentDescription = stringResource(R.string.personal_ble_card_desc),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxWidth().height(cardWidth / BleCardAspect).clip(BleCardShape),

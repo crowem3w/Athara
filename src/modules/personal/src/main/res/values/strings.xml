@@ -57,13 +57,8 @@
     <string name="personal_create_pay">Pay</string>
     <string name="personal_pay">Pay</string>
     <string name="personal_create_hint_php_only">Only Philippine peso can be received for now.</string>
-    <!-- NFC card -->
-    <string name="personal_card_desc">Athara payment card. Hold your phone against the payer\'s phone.</string>
+    <!-- Pay card -->
     <string name="personal_card_close">Close card</string>
-    <string name="personal_card_nfc_off">NFC is off. Turn it on to receive.</string>
-    <string name="personal_card_nfc_missing">This phone has no NFC.</string>
-    <string name="personal_card_nfc_settings">NFC settings</string>
-    <string name="personal_hce_description">Athara tap to pay</string>
     <string name="personal_create_hint_funds">Not enough balance for this amount.</string>
     <string name="personal_card_waiting">Waiting for the merchant to accept\u2026</string>
     <!-- Payment result dialogs -->
@@ -79,7 +74,7 @@
     <string name="personal_pay_err_rate">Too many tries. Wait a moment and try again.</string>
     <string name="personal_pay_err_other">Something went wrong. Please try again.</string>
 
-    <!-- Bluetooth payment (phones without NFC) -->
+    <!-- Bluetooth payment -->
     <string name="personal_ble_card_desc">Payment card. Hold your phone against the business\'s phone.</string>
     <string name="personal_ble_searching">Looking for the business\'s phone\u2026 Hold your phone right next to theirs.</string>
     <string name="personal_ble_move_closer">Move closer to the business\'s phone. Touch the phones together.</string>

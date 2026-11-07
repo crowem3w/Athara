@@ -23,8 +23,6 @@ internal interface AuthApi {
     @POST("v1/auth/social/login") suspend fun socialLogin(@Body body: SocialLoginRequest): Response<TokenResponse>
     @POST("v1/auth/social/signup") suspend fun socialSignUp(@Body body: SocialSignUpRequest): Response<TokenResponse>
     @POST("v1/auth/password/reset") suspend fun resetPassword(@Body body: ResetPasswordRequest): Response<UserDto>
-    @POST("v1/auth/phone/send-code") suspend fun sendCode(@Body body: SendCodeRequest): Response<Unit>
-    @POST("v1/auth/phone/verify") suspend fun verifyCode(@Body body: VerifyCodeRequest): Response<VerifyCodeResponse>
     @POST("v1/auth/validate") suspend fun validate(@Body body: ValidateRequest): Response<ValidateResponse>
     @POST("v1/auth/logout") suspend fun logout(@Body body: LogoutRequest): Response<Unit>
 

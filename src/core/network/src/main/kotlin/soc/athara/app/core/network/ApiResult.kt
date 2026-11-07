@@ -19,10 +19,7 @@ sealed interface ApiResult<out T> {
         val network: Boolean = false,
         
         val fieldErrors: Map<String, String> = emptyMap(),
-    ) : ApiResult<Nothing> {
-        
-        val retryable: Boolean get() = network || httpCode == 408 || httpCode == 429 || (httpCode ?: 0) >= 500
-    }
+    ) : ApiResult<Nothing>
 }
 
 suspend fun <T> apiCall(block: suspend () -> Response<T>): ApiResult<T> = try {

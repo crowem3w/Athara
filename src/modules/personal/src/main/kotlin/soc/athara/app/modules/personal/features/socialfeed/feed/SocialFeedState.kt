@@ -34,8 +34,6 @@ internal class SocialFeedState internal constructor(
     private var nextCursor: String? = null
     private var area: PlaceSelection? = null
 
-    val canLoadMore: Boolean get() = nextCursor != null && !isLoadingMore
-
     /** Loads the first page for the first of [places]. [force] reloads even if that place is already shown. */
     suspend fun load(places: List<PlaceSelection>, force: Boolean) {
         val place = places.firstOrNull()

@@ -7,7 +7,6 @@ package soc.athara.app.modules.personal.features.travel.model
 
 internal object ServiceArea {
     const val NAME = "Guimaras, Philippines"
-    const val COUNTRY_CODE = "ph"
 
     
     const val CENTER_LAT = 10.59
@@ -35,8 +34,6 @@ internal object ServiceArea {
     )
 
     
-    val quickPicks: List<PlaceSelection> = listOf(default) + municipalities
-
     fun contains(latitude: Double, longitude: Double): Boolean =
         latitude in SOUTH..NORTH && longitude in WEST..EAST
 

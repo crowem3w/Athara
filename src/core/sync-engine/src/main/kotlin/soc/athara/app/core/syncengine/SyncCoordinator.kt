@@ -75,8 +75,6 @@ object SyncCoordinator {
 
 
 
-    fun resetCursors(context: Context) = prefs(context).edit { clear() }
-
     suspend fun syncNow(): SyncOutcome = mutex.withLock {
         val userId = Core.tokens.userId ?: return SyncOutcome.SIGNED_OUT
         var retry = false

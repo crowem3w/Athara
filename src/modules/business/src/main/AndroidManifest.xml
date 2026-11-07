@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.NFC" />
-    <!-- Not required: phones without NFC can still use the QR scanner. -->
-    <uses-feature android:name="android.hardware.nfc" android:required="false" />
-
     <application>
         <activity
             android:name=".BusRegForm"

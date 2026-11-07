@@ -1,30 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.NFC" />
-    <!-- Not required: phones without NFC can still use the rest of the app. -->
-    <uses-feature android:name="android.hardware.nfc" android:required="false" />
-    <uses-feature android:name="android.hardware.nfc.hce" android:required="false" />
-
     <application>
         <activity
             android:name=".PerRegForm"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.Personal" />
-
-        <!-- Receiver side of a tap payment: serves the payment token to the payer's reader. -->
-        <service
-            android:name=".nfc.AtharaHceService"
-            android:exported="true"
-            android:permission="android.permission.BIND_NFC_SERVICE">
-            <intent-filter>
-                <action android:name="android.nfc.cardemulation.action.HOST_APDU_SERVICE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.nfc.cardemulation.host_apdu_service"
-                android:resource="@xml/personal_apdu_service" />
-        </service>
     </application>
 
 </manifest>

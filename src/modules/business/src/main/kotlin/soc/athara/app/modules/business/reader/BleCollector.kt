@@ -93,7 +93,7 @@ private fun Context.findComponentActivity(): ComponentActivity? {
 }
 
 /**
- * The business's Bluetooth collect flow, for phones where NFC is missing or off (see Proximity_Payment_Design.md).
+ * The business's Bluetooth collect flow (see Proximity_Payment_Design.md).
  * Same look as [PaymentCollector]: no panel, the centre button turns scanning on and a small pill shows it.
  *
  * While [scanning] is on and the phone is Bluetooth-ready, three things run together:
@@ -103,7 +103,7 @@ private fun Context.findComponentActivity(): ComponentActivity? {
  *  - the INBOX: picks up requests from payer phones that cannot broadcast (reduced mode).
  * A claimed payment stops all three and shows the amount with Accept or Cancel. When the signal check was not clean
  * (or the payer phone could not broadcast) the dialog says so: look at the customer before accepting.
- * Accept makes the server move the money. Scanning switches itself off after a result, like the NFC collector.
+ * Accept makes the server move the money. Scanning switches itself off after a result so the next payment is deliberate.
  */
 @Composable
 internal fun BleCollector(

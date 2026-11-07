@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import soc.athara.app.shared.authentication.Authentication
-import soc.athara.app.modules.business.data.BusinessSync
 import soc.athara.app.core.identityapi.Identity
 import soc.athara.app.core.network.Core
 import soc.athara.app.core.network.CoreConfig
@@ -20,7 +19,7 @@ class App : Application() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     
-    private val syncInstallers: List<SyncInstaller> = listOf(BusinessSync, OrganizationSync)
+    private val syncInstallers: List<SyncInstaller> = listOf(OrganizationSync)
 
     override fun onCreate() {
         super.onCreate()

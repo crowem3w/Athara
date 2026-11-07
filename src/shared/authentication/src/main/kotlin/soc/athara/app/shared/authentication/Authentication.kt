@@ -4,17 +4,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
-import soc.athara.app.shared.authentication.data.AuthApi
 import soc.athara.app.shared.authentication.data.PhoneProofStore
 import soc.athara.app.shared.authentication.data.RemoteAuthRepository
-import soc.athara.app.shared.authentication.data.RemotePhoneVerifier
 import soc.athara.app.shared.authentication.ui.AccountTypeActivity
 import soc.athara.app.shared.authentication.ui.AuthenticationActivity
 import soc.athara.app.core.identityapi.AccountType
 import soc.athara.app.core.identityapi.AuthRepository
 import soc.athara.app.core.identityapi.Identity
-import soc.athara.app.core.identityapi.PhoneVerifier
-import soc.athara.app.core.network.Core
 
 
 
@@ -29,9 +25,6 @@ object Authentication {
     @Volatile
     private var repository: AuthRepository? = null
 
-    @Volatile
-    private var verifier: PhoneVerifier? = null
-
     
     fun init() {
         Identity.provide { context -> repository(context) }
@@ -45,16 +38,6 @@ object Authentication {
     
     fun install(repository: AuthRepository) {
         this.repository = repository
-    }
-
-    
-    fun phoneVerifier(): PhoneVerifier =
-        verifier ?: synchronized(this) {
-            verifier ?: RemotePhoneVerifier(Core.create(AuthApi::class.java), proofs).also { verifier = it }
-        }
-
-    fun installPhoneVerifier(verifier: PhoneVerifier) {
-        this.verifier = verifier
     }
 }
 
