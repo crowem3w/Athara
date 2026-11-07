@@ -1,6 +1,21 @@
 package soc.athara.app.modules.business.home.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.ui.semantics.Role
+import soc.athara.app.modules.business.home.BusinessTab
+import soc.athara.app.shared.designsystem.theme.Badge as BadgeRed
+import soc.athara.app.shared.designsystem.theme.NavInactive
+import soc.athara.app.shared.designsystem.theme.Teal
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,6 +55,9 @@ private val DipHalfWidth = 66.dp
 
 @Composable
 internal fun BottomNavBar(
+    selected: BusinessTab,
+    onSelect: (BusinessTab) -> Unit,
+    bookingsBadge: Int,
     modifier: Modifier = Modifier,
     onReadClick: () -> Unit = {},
     readerIcon: Painter = painterResource(R.drawable.business_ic_scan),
@@ -58,7 +76,14 @@ internal fun BottomNavBar(
             Row(
                 modifier = Modifier.fillMaxWidth().navigationBarsPadding().height(64.dp).padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
-            ) {}
+            ) {
+                NavItem(BusinessTab.Home, selected, 0, onSelect)
+                NavItem(BusinessTab.Bookings, selected, bookingsBadge, onSelect)
+                // Room for the raised centre button.
+                Spacer(Modifier.width(FabSize + 24.dp))
+                NavItem(BusinessTab.Store, selected, 0, onSelect)
+                NavItem(BusinessTab.Account, selected, 0, onSelect)
+            }
         }
         ReaderTab(
             onClick = onReadClick,
@@ -67,6 +92,25 @@ internal fun BottomNavBar(
             contentDescription = readerLabel,
             modifier = Modifier.align(Alignment.TopCenter).size(FabSize),
         )
+    }
+}
+
+@Composable
+private fun RowScope.NavItem(tab: BusinessTab, selected: BusinessTab, badge: Int, onSelect: (BusinessTab) -> Unit) {
+    val isSelected = tab == selected
+    val tint = if (isSelected) Teal else NavInactive
+    Column(
+        modifier = Modifier
+            .weight(1f)
+            .fillMaxHeight()
+            .selectable(selected = isSelected, role = Role.Tab, onClick = { onSelect(tab) }),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        BadgedBox(badge = { if (badge > 0) Badge(containerColor = BadgeRed) { Text(badge.toString()) } }) {
+            Icon(tab.icon, contentDescription = null, tint = tint)
+        }
+        Text(tab.label, style = MaterialTheme.typography.labelSmall, color = tint, maxLines = 1)
     }
 }
 
